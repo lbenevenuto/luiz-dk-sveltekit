@@ -1,8 +1,10 @@
 // See https://svelte.dev/docs/kit/types#app.d.ts
 // for information about these interfaces
 
-interface GlobalCounterDurableObject {
+interface GlobalCounterDurableObject extends Rpc.DurableObjectBranded {
 	nextValue(): Promise<number>;
+	reset(): Promise<void>;
+	resetToValue(value: number): Promise<void>;
 }
 
 declare global {
