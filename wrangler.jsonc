@@ -6,5 +6,14 @@
 	"pages_build_output_dir": ".svelte-kit/cloudflare",
 	"observability": {
 		"enabled": true
+	},
+	"durable_objects": {
+		"bindings": [
+			{
+				"name": "GLOBAL_COUNTER_DO",
+				"class_name": "GlobalCounterDurableObject",
+				"script_name": "durable-object-global-counter"
+			}
+		]
 	}
 }
