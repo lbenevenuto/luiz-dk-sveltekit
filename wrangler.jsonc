@@ -2,7 +2,7 @@
 	"$schema": "./node_modules/wrangler/config-schema.json",
 	"name": "luiz-dk-sveltekit",
 	"compatibility_date": "2026-01-02",
-	"compatibility_flags": ["nodejs_als"],
+	"compatibility_flags": ["nodejs_als", "nodejs_compat"],
 	"pages_build_output_dir": ".svelte-kit/cloudflare",
 	"observability": {
 		"enabled": true
@@ -15,5 +15,12 @@
 				"script_name": "durable-object-global-counter"
 			}
 		]
-	}
+	},
+	"d1_databases": [
+		{
+			"binding": "DB",
+			"database_name": "luiz_dk",
+			"database_id": "f3811db7-7a47-4476-af34-8bb5d8ad7358"
+		}
+	]
 }

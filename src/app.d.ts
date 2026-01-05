@@ -12,6 +12,7 @@ declare global {
 		interface Platform {
 			env: {
 				GLOBAL_COUNTER_DO: DurableObjectNamespace<GlobalCounterDurableObject>;
+				DB: D1Database;
 			};
 			ctx: ExecutionContext;
 			caches: CacheStorage;
