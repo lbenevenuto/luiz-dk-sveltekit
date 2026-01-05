@@ -4,6 +4,11 @@
 	import { page } from '$app/stores';
 
 	let { children } = $props();
+	let isMobileMenuOpen = $state(false);
+
+	function toggleMobileMenu() {
+		isMobileMenuOpen = !isMobileMenuOpen;
+	}
 </script>
 
 <svelte:head><link rel="icon" href={favicon} /></svelte:head>
@@ -55,29 +60,86 @@
 				<div class="-mr-2 flex md:hidden">
 					<button
 						type="button"
-						class="inline-flex items-center justify-center rounded-md bg-gray-800 p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800 focus:outline-none"
+						class="inline-flex items-center justify-center rounded-md bg-gray-800 p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
+						aria-controls="mobile-menu"
+						aria-expanded={isMobileMenuOpen}
+						onclick={toggleMobileMenu}
 					>
 						<span class="sr-only">Open main menu</span>
-						<!-- Heroicon name: outline/bars-3 -->
-						<svg
-							class="block h-6 w-6"
-							xmlns="http://www.w3.org/2000/svg"
-							fill="none"
-							viewBox="0 0 24 24"
-							stroke-width="1.5"
-							stroke="currentColor"
-							aria-hidden="true"
-						>
-							<path
-								stroke-linecap="round"
-								stroke-linejoin="round"
-								d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
-							/>
-						</svg>
+						{#if !isMobileMenuOpen}
+							<svg
+								class="block h-6 w-6"
+								fill="none"
+								viewBox="0 0 24 24"
+								stroke-width="1.5"
+								stroke="currentColor"
+								aria-hidden="true"
+							>
+								<path
+									stroke-linecap="round"
+									stroke-linejoin="round"
+									d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
+								/>
+							</svg>
+						{:else}
+							<svg
+								class="block h-6 w-6"
+								fill="none"
+								viewBox="0 0 24 24"
+								stroke-width="1.5"
+								stroke="currentColor"
+								aria-hidden="true"
+							>
+								<path
+									stroke-linecap="round"
+									stroke-linejoin="round"
+									d="M6 18L18 6M6 6l12 12"
+								/>
+							</svg>
+						{/if}
 					</button>
 				</div>
 			</div>
 		</div>
+
+		<!-- Mobile menu, show/hide based on menu state. -->
+		{#if isMobileMenuOpen}
+			<div class="md:hidden" id="mobile-menu">
+				<div class="space-y-1 px-2 pb-3 pt-2 sm:px-3">
+					<a
+						href="/"
+						class="block rounded-md px-3 py-2 text-base font-medium transition-colors {$page.url
+							.pathname === '/'
+							? 'bg-gray-900 text-white'
+							: 'text-gray-300 hover:bg-gray-700 hover:text-white'}"
+						onclick={toggleMobileMenu}
+					>
+						Home
+					</a>
+					<a
+						href="/shortener"
+						class="block rounded-md px-3 py-2 text-base font-medium transition-colors {$page.url.pathname.startsWith(
+							'/shortener'
+						)
+							? 'bg-gray-900 text-white'
+							: 'text-gray-300 hover:bg-gray-700 hover:text-white'}"
+						onclick={toggleMobileMenu}
+					>
+						Shortener
+					</a>
+					<a
+						href="/about"
+						class="block rounded-md px-3 py-2 text-base font-medium transition-colors {$page.url
+							.pathname === '/about'
+							? 'bg-gray-900 text-white'
+							: 'text-gray-300 hover:bg-gray-700 hover:text-white'}"
+						onclick={toggleMobileMenu}
+					>
+						About
+					</a>
+				</div>
+			</div>
+		{/if}
 	</nav>
 
 	<main class="w-full flex-1 overflow-y-auto">
