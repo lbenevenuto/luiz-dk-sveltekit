@@ -15,7 +15,9 @@ export interface CacheAdapter {
  * KV Cache Adapter (Cloudflare Production)
  */
 export class KVAdapter implements CacheAdapter {
-	constructor(private kv: KVNamespace) {}
+	constructor(private kv: KVNamespace) {
+		console.log('Constructor called for KVAdapter');
+	}
 
 	async get(key: string): Promise<string | null> {
 		try {
@@ -49,7 +51,9 @@ export class KVAdapter implements CacheAdapter {
  * Redis Cache Adapter (Local Development)
  */
 export class RedisAdapter implements CacheAdapter {
-	constructor(private redis: Redis) {}
+	constructor(private redis: Redis) {
+		console.log('Constructor called for RedisAdapter');
+	}
 
 	async get(key: string): Promise<string | null> {
 		try {

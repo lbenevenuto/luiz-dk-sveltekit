@@ -10,6 +10,7 @@ import * as schema from '$lib/server/db/schemas';
  */
 export async function createD1Client(d1: D1Database) {
 	console.log('Creating D1 client');
+
 	const { drizzle: drizzleD1 } = await import('drizzle-orm/d1');
 	return drizzleD1(d1, { schema });
 }

@@ -83,7 +83,7 @@
 
 <div class="flex min-h-full flex-col justify-center">
 	<div
-		class="mx-auto my-auto w-full max-w-xl rounded-2xl bg-white p-6 shadow-2xl md:p-8 dark:bg-slate-800"
+		class="mx-auto my-auto w-full max-w-3xl rounded-2xl bg-white p-6 shadow-2xl md:p-8 dark:bg-slate-800"
 	>
 		<h1 class="mb-2 text-center text-3xl font-bold text-slate-800 md:text-4xl dark:text-white">
 			🔗 URL Shortener

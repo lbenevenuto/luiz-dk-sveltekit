@@ -11,7 +11,9 @@ export interface IdGeneratorAdapter {
 }
 
 export class DurableObjectIdGenerator implements IdGeneratorAdapter {
-	constructor(private idGeneratorStub: DurableObjectStub<GlobalCounterDurableObject>) {}
+	constructor(private idGeneratorStub: DurableObjectStub<GlobalCounterDurableObject>) {
+		console.log('Constructor called for DurableObjectIdGenerator');
+	}
 
 	async getNextId(): Promise<number> {
 		return this.idGeneratorStub.nextValue();
@@ -26,6 +28,7 @@ export class RedisIdGenerator implements IdGeneratorAdapter {
 	private redis: Redis;
 
 	constructor(redis: Redis) {
+		console.log('Constructor called for RedisIdGenerator');
 		this.redis = redis;
 	}
 
