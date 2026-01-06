@@ -7,6 +7,7 @@
 		originalUrl: string;
 		shortCode: string;
 		expiresAt: string;
+		isExisting?: boolean;
 	} | null = null;
 	let error: string | null = null;
 	let loading = false;
@@ -47,6 +48,7 @@
 				shortCode: string;
 				expiresAt: string;
 				error?: string;
+				isExisting?: boolean;
 			};
 
 			if (response.ok) {
@@ -142,7 +144,11 @@
 				class="mb-8 rounded-lg border-2 border-green-200 bg-green-50 p-6 dark:border-green-800 dark:bg-green-900/20"
 			>
 				<h3 class="mb-4 text-lg font-bold text-green-700 dark:text-green-400">
-					✅ Short URL Created!
+					{#if result.isExisting}
+						ℹ️ Existing Short URL Found
+					{:else}
+						✅ Short URL Created!
+					{/if}
 				</h3>
 				<div class="mb-2 flex flex-col gap-2 sm:flex-row">
 					<a

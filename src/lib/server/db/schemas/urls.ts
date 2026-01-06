@@ -15,5 +15,8 @@ export const urls = sqliteTable(
 			.default(sql`(unixepoch())`),
 		expiresAt: integer('expires_at', { mode: 'timestamp' })
 	},
-	(table) => [index('urls_created_at_idx').on(table.createdAt)]
+	(table) => [
+		index('urls_created_at_idx').on(table.createdAt),
+		index('urls_original_url_idx').on(table.originalUrl)
+	]
 );

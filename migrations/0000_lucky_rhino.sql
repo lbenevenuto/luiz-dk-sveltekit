@@ -8,4 +8,5 @@ CREATE TABLE `urls` (
 );
 --> statement-breakpoint
 CREATE UNIQUE INDEX `urls_short_code_unique` ON `urls` (`short_code`);--> statement-breakpoint
-CREATE INDEX `urls_created_at_idx` ON `urls` (`created_at`);
+CREATE INDEX `urls_created_at_idx` ON `urls` (`created_at`);--> statement-breakpoint
+CREATE INDEX `urls_original_url_idx` ON `urls` (`original_url`);

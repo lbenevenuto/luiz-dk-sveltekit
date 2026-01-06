@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "ebc7d7fd-6149-4391-8c9a-eea97b475cc4",
+  "id": "f359911a-b8ac-4fb7-b4db-28b4e7bc4631",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "urls": {
@@ -64,6 +64,13 @@
           "name": "urls_created_at_idx",
           "columns": [
             "created_at"
+          ],
+          "isUnique": false
+        },
+        "urls_original_url_idx": {
+          "name": "urls_original_url_idx",
+          "columns": [
+            "original_url"
           ],
           "isUnique": false
         }

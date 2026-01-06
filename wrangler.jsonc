@@ -22,5 +22,11 @@
 			"database_name": "luiz_dk",
 			"database_id": "f3811db7-7a47-4476-af34-8bb5d8ad7358"
 		}
+	],
+	"kv_namespaces": [
+		{
+			"binding": "CACHE",
+			"id": "6f8d5d94a48a49559128d83a18022d30"
+		}
 	]
 }

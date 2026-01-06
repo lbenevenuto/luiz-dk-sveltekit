@@ -1,3 +1,7 @@
+<script>
+	import { resolve } from '$app/paths';
+</script>
+
 <svelte:head>
 	<title>luiz.dk - Personal Cloud Services</title>
 	<meta
@@ -18,7 +22,7 @@
 			</p>
 			<div class="mt-10 flex items-center justify-center gap-x-6">
 				<a
-					href="/about"
+					href={resolve('/about', {})}
 					class="text-sm leading-6 font-semibold text-white transition-colors hover:text-indigo-400"
 				>
 					Learn more <span aria-hidden="true">→</span>
@@ -42,7 +46,7 @@
 						</p>
 						<p class="mt-6">
 							<a
-								href="/shortener"
+								href={resolve('/shortener', {})}
 								class="text-sm leading-6 font-semibold text-indigo-400 hover:text-indigo-300"
 							>
 								Start shortening <span aria-hidden="true">→</span>
