@@ -7,6 +7,9 @@
 	"observability": {
 		"enabled": true
 	},
+	"vars": {
+		"CLOUDFLARE_ACCOUNT_ID": "a45f184e872199b343e927925cbf57b5"
+	},
 	"durable_objects": {
 		"bindings": [
 			{
@@ -27,6 +30,12 @@
 		{
 			"binding": "CACHE",
 			"id": "6f8d5d94a48a49559128d83a18022d30"
+		}
+	],
+	"analytics_engine_datasets": [
+		{
+			"binding": "ANALYTICS",
+			"dataset": "luiz_dk_analytics"
 		}
 	]
 }

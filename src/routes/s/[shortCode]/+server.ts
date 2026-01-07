@@ -4,7 +4,7 @@ import { getDb } from '$lib/server/db';
 import { eq } from 'drizzle-orm';
 import { urls } from '$lib/server/db/schemas';
 
-export const GET: RequestHandler = async ({ platform, url, params }) => {
+export const GET: RequestHandler = async ({ platform, url, params, request }) => {
 	console.log('GET');
 	console.log(url);
 	console.log(params);
@@ -16,6 +16,30 @@ export const GET: RequestHandler = async ({ platform, url, params }) => {
 	if (res) {
 		console.log('******* Found');
 		console.log(res);
+
+		// Track analytics (fire and forget)
+		try {
+			const { getAnalyticsAdapter } = await import('$lib/adapters/factory');
+			const analytics = getAnalyticsAdapter(platform);
+			if (analytics) {
+				const userAgent = request.headers.get('user-agent') || 'unknown';
+				const referrer = request.headers.get('referer') || 'direct';
+				const country = platform?.cf?.country || 'unknown';
+				const ipHash = platform?.cf?.colo || 'unknown'; // Using colo as proxy for IP hash for privacy
+
+				platform?.ctx.waitUntil(
+					analytics.trackRedirect(shortCode, {
+						ipHash,
+						userAgent,
+						referrer,
+						country
+					})
+				);
+			}
+		} catch (err) {
+			console.error('Failed to track analytics:', err);
+		}
+
 		throw redirect(302, res.originalUrl);
 	}
 

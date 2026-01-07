@@ -15,10 +15,13 @@ declare global {
 				GLOBAL_COUNTER_DO: DurableObjectNamespace<GlobalCounterDurableObject>;
 				DB: D1Database;
 				CACHE: KVNamespace;
+				ANALYTICS: AnalyticsEngineDataset;
 
 				// Environment variables
 				BASE_URL?: string;
 				SALT?: string;
+				CLOUDFLARE_ACCOUNT_ID: string;
+				CLOUDFLARE_API_TOKEN_ANALYTICS: string;
 			};
 			ctx: ExecutionContext;
 			caches: CacheStorage;
