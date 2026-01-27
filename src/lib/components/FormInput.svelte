@@ -39,7 +39,7 @@
 		{placeholder}
 		{required}
 		{disabled}
-		autocomplete={autocomplete || undefined}
+		{autocomplete}
 		aria-invalid={error ? 'true' : 'false'}
 		aria-describedby={error ? errorId : undefined}
 		class="w-full rounded-lg border-2 bg-transparent px-4 py-3 text-white transition-all placeholder:text-gray-400 focus:outline-none {error

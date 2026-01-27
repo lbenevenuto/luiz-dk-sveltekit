@@ -8,8 +8,6 @@ export const POST: RequestHandler = async ({ platform, request, locals }) => {
 	const { url: originalUrl } = body as { url: string };
 	const { auth } = locals;
 
-	console.log('auth:', auth);
-
 	// Check rate limit for anonymous users
 	if (!auth.userId) {
 		const ip = request.headers.get('CF-Connecting-IP') || request.headers.get('X-Forwarded-For') || 'unknown';

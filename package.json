@@ -18,6 +18,7 @@
 		"deploy": "CF_PAGES=1 bun run build && CF_PAGES=1 wrangler pages deploy",
 		"db:generate": "drizzle-kit generate",
 		"db:migrate": "drizzle-kit migrate",
+		"db:migrate:prod": "drizzle-kit migrate --config=drizzle.prod.config.ts",
 		"db:push": "drizzle-kit push"
 	},
 	"devDependencies": {

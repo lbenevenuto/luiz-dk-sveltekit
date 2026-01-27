@@ -57,8 +57,6 @@ function getAuthorizedParties(baseUrl?: string): string[] {
 export const handle: Handle = async ({ event, resolve }) => {
 	const { platform, url } = event;
 
-	console.log('Handling request:', url.pathname);
-
 	// Initialize default auth state
 	event.locals.auth = {
 		userId: null,
@@ -138,8 +136,6 @@ export const handle: Handle = async ({ event, resolve }) => {
 						user,
 						role
 					};
-
-					console.log('[Auth] Authenticated via Bearer token:', { userId, role });
 				}
 			} else {
 				// Fall back to cookie-based authentication
@@ -160,11 +156,6 @@ export const handle: Handle = async ({ event, resolve }) => {
 						user,
 						role
 					};
-
-					console.log('[Auth] Authenticated via cookie:', {
-						userId: authData.userId,
-						role
-					});
 				}
 			}
 		} catch (error) {

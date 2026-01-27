@@ -19,6 +19,7 @@
 		children: any;
 		data: LayoutData;
 	} = $props();
+
 	let isMobileMenuOpen = $state(false);
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	let user = $state<any>(null);
@@ -28,13 +29,6 @@
 	}
 
 	onMount(async () => {
-		console.log('Layout mounted - Clerk debug:', {
-			browser,
-			hasClerk: !!window.Clerk,
-			publishableKey: data.clerkPublishableKey,
-			frontendApi: data.clerkFrontendApi
-		});
-
 		if (!browser || !data.clerkPublishableKey) {
 			console.warn('Not in browser or missing publishable key');
 			return;
@@ -46,7 +40,6 @@
 			const maxAttempts = 50; // 5 seconds max (50 * 100ms)
 
 			while (!window.Clerk && attempts < maxAttempts) {
-				console.log(`Waiting for Clerk script to load... (attempt ${attempts + 1})`);
 				await new Promise((resolve) => setTimeout(resolve, 100));
 				attempts++;
 			}
@@ -67,21 +60,17 @@
 				return;
 			}
 
-			console.log('Clerk script loaded, initializing with key:', data.clerkPublishableKey);
 			await window.Clerk.load({
 				publishableKey: data.clerkPublishableKey
 			});
-			console.log('Clerk loaded successfully');
 
 			// Listen for user changes
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			window.Clerk.addListener((resources: any) => {
 				user = resources.user;
-				console.log('Clerk user updated:', user);
 			});
 
 			user = window.Clerk.user;
-			console.log('Initial Clerk user:', user);
 		} catch (error) {
 			console.error('Failed to load Clerk:', error);
 		}

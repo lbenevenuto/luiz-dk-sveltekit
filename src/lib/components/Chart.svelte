@@ -8,7 +8,7 @@
 		options?: ChartConfiguration['options'];
 	}
 
-	let { type, data, options = {} } = $props<Props>();
+	let { type, data, options = {} }: Props = $props();
 	let canvas: HTMLCanvasElement;
 	let chart: Chart;
 

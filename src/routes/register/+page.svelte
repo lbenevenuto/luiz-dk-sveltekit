@@ -138,7 +138,7 @@
 			});
 
 			if (result.status === 'complete') {
-				await window.Clerk.setActive({ session: result.createdSessionId });
+				await window.Clerk?.setActive({ session: result.createdSessionId });
 				goto(resolve('/', {}));
 			} else {
 				error = 'Verification failed. Please try again.';

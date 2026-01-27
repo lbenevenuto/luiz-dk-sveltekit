@@ -69,7 +69,6 @@
 			};
 
 			if (response.ok) {
-				console.log(data);
 				result = data;
 				url = '';
 

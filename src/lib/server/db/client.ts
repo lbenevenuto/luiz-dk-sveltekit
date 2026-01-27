@@ -4,6 +4,8 @@
  */
 
 import * as schema from '$lib/server/db/schemas';
+import type { DrizzleD1Database } from 'drizzle-orm/d1';
+import type { BetterSQLite3Database } from 'drizzle-orm/better-sqlite3';
 
 /**
  * Create Drizzle client for Cloudflare D1
@@ -31,6 +33,6 @@ export async function createSQLiteClient(dbPath: string = './data/local.db') {
 /**
  * Type exports
  */
-export type D1DrizzleClient = ReturnType<typeof createD1Client>;
-export type SQLiteDrizzleClient = ReturnType<typeof createSQLiteClient>;
+export type D1DrizzleClient = DrizzleD1Database<typeof schema>;
+export type SQLiteDrizzleClient = BetterSQLite3Database<typeof schema>;
 export type DrizzleClient = D1DrizzleClient | SQLiteDrizzleClient;

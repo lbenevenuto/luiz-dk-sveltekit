@@ -1,22 +1,17 @@
 import { redirect } from '@sveltejs/kit';
-import type { RequestHandler } from '../$types';
+import type { RequestHandler } from './$types';
 import { getDb } from '$lib/server/db';
 import { eq } from 'drizzle-orm';
 import { urls } from '$lib/server/db/schemas';
 
-export const GET: RequestHandler = async ({ platform, url, params, request }) => {
+export const GET: RequestHandler = async ({ platform, params, request }) => {
 	console.log('GET');
-	console.log(url);
-	console.log(params);
 
-	const { shortCode } = params as { shortCode: string };
+	const { shortCode } = params;
 
 	const db = await getDb(platform);
 	const res = await db.query.urls.findFirst({ where: eq(urls.shortCode, shortCode) });
 	if (res) {
-		console.log('******* Found');
-		console.log(res);
-
 		// Track analytics (fire and forget)
 		try {
 			const { getAnalyticsAdapter } = await import('$lib/adapters/factory');

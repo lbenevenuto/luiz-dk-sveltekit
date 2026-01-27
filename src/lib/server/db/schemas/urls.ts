@@ -23,3 +23,6 @@ export const urls = sqliteTable(
 		index('urls_user_id_idx').on(table.userId)
 	]
 );
+
+export type Url = typeof urls.$inferSelect;
+export type NewUrl = typeof urls.$inferInsert;
