@@ -1,6 +1,10 @@
-import { type Handle, redirect } from '@sveltejs/kit';
+import { type Handle, redirect, type HandleServerError } from '@sveltejs/kit';
 import { getClerkClient } from '$lib/server/clerk';
 import type { UserRole } from './app';
+
+import { sentryHandle, initCloudflareSentryHandle } from '@sentry/sveltekit';
+import { sequence } from '@sveltejs/kit/hooks';
+import * as Sentry from '@sentry/sveltekit';
 
 /**
  * Define public routes that don't require authentication
@@ -53,7 +57,13 @@ function getAuthorizedParties(baseUrl?: string): string[] {
 	return parties;
 }
 
-export const handle: Handle = async ({ event, resolve }) => {
+const myErrorHandler: HandleServerError = ({ error, event }) => {
+	console.error('An error occurred on the server side:', error, event);
+};
+
+export const handleError = Sentry.handleErrorWithSentry(myErrorHandler);
+
+export const firstStep: Handle = async ({ event, resolve }) => {
 	const { platform, url } = event;
 	console.log('url:', url.href);
 
@@ -68,6 +78,7 @@ export const handle: Handle = async ({ event, resolve }) => {
 	};
 
 	const isPublic = isPublicRoute(url.pathname);
+	console.log('isPublic:', isPublic);
 	const clerkClient = getClerkClient(platform.env);
 	const requestState = await clerkClient.authenticateRequest(event.request, {
 		authorizedParties: getAuthorizedParties(platform.env.BASE_URL)
@@ -106,3 +117,14 @@ export const handle: Handle = async ({ event, resolve }) => {
 
 	return resolve(event);
 };
+
+export const handle: Handle = sequence(
+	initCloudflareSentryHandle({
+		dsn: 'https://examplePublicKey@o0.ingest.sentry.io/0',
+		// Adds request headers and IP for users, for more info visit:
+		// https://docs.sentry.io/platforms/javascript/guides/sveltekit/configuration/options/#sendDefaultPii
+		sendDefaultPii: true
+	}),
+	sentryHandle(),
+	firstStep
+);

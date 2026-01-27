@@ -32,6 +32,7 @@
 			<span class="text-red-500">*</span>
 		{/if}
 	</label>
+	<!-- eslint-disable @typescript-eslint/no-explicit-any -->
 	<input
 		{id}
 		{type}
@@ -48,6 +49,7 @@
 			? 'cursor-not-allowed opacity-50'
 			: ''}"
 	/>
+	<!-- eslint-enable @typescript-eslint/no-explicit-any -->
 	{#if error}
 		<p id={errorId} class="text-sm text-red-400">
 			{error}

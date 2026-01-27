@@ -25,6 +25,7 @@
 		"@clerk/backend": "^2.29.5",
 		"@eslint/compat": "^2.0.1",
 		"@eslint/js": "^9.39.2",
+		"@sentry/sveltekit": "^10.37.0",
 		"@sveltejs/adapter-cloudflare": "^7.2.6",
 		"@sveltejs/kit": "^2.50.1",
 		"@sveltejs/vite-plugin-svelte": "^6.2.4",

@@ -8,6 +8,11 @@ const config = {
 	preprocess: vitePreprocess(),
 
 	kit: {
+		experimental: {
+			instrumentation: {
+				server: true
+			}
+		},
 		adapter: adapter({
 			routes: {
 				include: ['/*'],
