@@ -59,6 +59,7 @@ export const load: PageServerLoad = async ({ platform }) => {
 
 		const analytics = result.data.map((row) => ({
 			...row,
+			id: crypto.randomUUID(),
 			timestamp: new Date(row.timestamp).toISOString()
 		}));
 

@@ -4,8 +4,8 @@
  */
 
 import { createD1Client, createSQLiteClient } from '$lib/server/db/client';
-import { DurableObjectIdGenerator, RedisIdGenerator, type IdGeneratorAdapter } from './id-generator';
-import { KVAdapter, RedisAdapter, type CacheAdapter } from './cache';
+import { DurableObjectIdGenerator, type IdGeneratorAdapter, RedisIdGenerator } from './id-generator';
+import { type CacheAdapter, KVAdapter, RedisAdapter } from './cache';
 import { type AnalyticsAdapter, CloudflareAnalyticsAdapter, ConsoleAnalyticsAdapter } from './analytics';
 import { dev } from '$app/environment';
 import Redis from 'ioredis';
@@ -38,8 +38,7 @@ export async function getDatabaseAdapter(platform: Readonly<App.Platform> | unde
 	if (dev) {
 		// Local: Use SQLite with Drizzle
 		const sqlitePath = './data/local.db';
-		const db = createSQLiteClient(sqlitePath);
-		return db;
+		return createSQLiteClient(sqlitePath);
 	}
 
 	if (!platform) {
@@ -47,8 +46,7 @@ export async function getDatabaseAdapter(platform: Readonly<App.Platform> | unde
 	}
 
 	// Production: Use D1 with Drizzle
-	const db = createD1Client(platform.env.DB);
-	return db;
+	return createD1Client(platform.env.DB);
 }
 
 /**

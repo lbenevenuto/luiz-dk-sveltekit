@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "03028870-592b-4d94-b2f9-1173939594a0",
+  "id": "25cc28be-1a3d-445f-9b97-04cd6f15beb9",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "urls": {
@@ -85,6 +85,61 @@
           "name": "urls_user_id_idx",
           "columns": [
             "user_id"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "rate_limits": {
+      "name": "rate_limits",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "ip_hash": {
+          "name": "ip_hash",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "requests": {
+          "name": "requests",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": 0
+        },
+        "window_start": {
+          "name": "window_start",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {
+        "rate_limits_ip_window_idx": {
+          "name": "rate_limits_ip_window_idx",
+          "columns": [
+            "ip_hash",
+            "window_start"
+          ],
+          "isUnique": false
+        },
+        "rate_limits_window_start_idx": {
+          "name": "rate_limits_window_start_idx",
+          "columns": [
+            "window_start"
           ],
           "isUnique": false
         }
