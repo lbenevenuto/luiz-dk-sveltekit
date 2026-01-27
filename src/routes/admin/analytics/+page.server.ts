@@ -1,10 +1,10 @@
-import { error } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 
-export const load: PageServerLoad = async ({ platform }) => {
+async function getAnalytics(platform: App.Platform | undefined, days: number) {
 	if (!platform?.env.CLOUDFLARE_ACCOUNT_ID || !platform?.env.CLOUDFLARE_API_TOKEN_ANALYTICS) {
 		return {
 			analytics: [],
+			charts: undefined,
 			error: 'Cloudflare credentials not configured'
 		};
 	}
@@ -21,9 +21,9 @@ export const load: PageServerLoad = async ({ platform }) => {
             index1 as ipHash,
             toDateTime(double1 / 1000) as timestamp
         FROM luiz_dk_analytics
-        WHERE timestamp > NOW() - INTERVAL '7' DAY
+        WHERE timestamp > NOW() - INTERVAL '${days}' DAY
         ORDER BY timestamp DESC
-        LIMIT 100
+        LIMIT 1000
     `;
 
 	try {
@@ -39,7 +39,7 @@ export const load: PageServerLoad = async ({ platform }) => {
 		if (!response.ok) {
 			const text = await response.text();
 			console.error('Analytics SQL Error:', text);
-			throw error(500, `Failed to fetch analytics data: ${response.statusText}`);
+			throw new Error(`Failed to fetch analytics data: ${response.statusText}`);
 		}
 
 		interface SqlApiResponse {
@@ -69,8 +69,8 @@ export const load: PageServerLoad = async ({ platform }) => {
 		const browserStats = new Map<string, number>();
 		const referrerStats = new Map<string, number>();
 
-		// Initialize last 7 days with 0
-		for (let i = 0; i < 7; i++) {
+		// Initialize last N days with 0
+		for (let i = 0; i < days; i++) {
 			const d = new Date();
 			d.setDate(d.getDate() - i);
 			dailyClicks.set(d.toISOString().split('T')[0], 0);
@@ -129,7 +129,23 @@ export const load: PageServerLoad = async ({ platform }) => {
 		console.error('Analytics Fetch Error:', err);
 		return {
 			analytics: [],
+			charts: undefined,
 			error: 'Failed to fetch analytics data'
 		};
 	}
+}
+
+export const load: PageServerLoad = ({ platform, url }) => {
+	const daysParam = url.searchParams.get('days');
+	let days = daysParam ? parseInt(daysParam) : 7;
+	if (isNaN(days) || ![7, 30, 90].includes(days)) {
+		days = 7;
+	}
+
+	return {
+		streamed: {
+			analytics: getAnalytics(platform, days)
+		},
+		days
+	};
 };
