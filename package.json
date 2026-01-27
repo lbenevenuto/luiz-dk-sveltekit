@@ -51,5 +51,9 @@
 		"vite": "^7.3.1",
 		"vitest": "^4.0.18",
 		"wrangler": "^4.60.0"
+	},
+	"dependencies": {
+		"@clerk/backend": "^2.29.5",
+		"svix": "^1.84.1"
 	}
 }

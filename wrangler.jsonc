@@ -8,7 +8,12 @@
 		"enabled": true
 	},
 	"vars": {
-		"CLOUDFLARE_ACCOUNT_ID": "a45f184e872199b343e927925cbf57b5"
+		"CLOUDFLARE_ACCOUNT_ID": "a45f184e872199b343e927925cbf57b5",
+		"CLERK_PUBLISHABLE_KEY": "pk_test_anVzdC1zcGlkZXItNDQuY2xlcmsuYWNjb3VudHMuZGV2JA",
+		"CLERK_FRONTEND_API": "just-spider-44.clerk.accounts.dev",
+		"BASE_URL": "https://luiz.dk",
+		"RATE_LIMIT_MAX_REQUESTS": "10",
+		"RATE_LIMIT_WINDOW_SECONDS": "60"
 	},
 	"durable_objects": {
 		"bindings": [

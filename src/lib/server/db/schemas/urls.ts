@@ -13,10 +13,13 @@ export const urls = sqliteTable(
 		updatedAt: integer('updated_at', { mode: 'timestamp' })
 			.notNull()
 			.default(sql`(unixepoch())`),
-		expiresAt: integer('expires_at', { mode: 'timestamp' })
+		expiresAt: integer('expires_at', { mode: 'timestamp' }),
+		// Clerk user ID (null for anonymous users)
+		userId: text('user_id')
 	},
 	(table) => [
 		index('urls_created_at_idx').on(table.createdAt),
-		index('urls_original_url_idx').on(table.originalUrl)
+		index('urls_original_url_idx').on(table.originalUrl),
+		index('urls_user_id_idx').on(table.userId)
 	]
 );

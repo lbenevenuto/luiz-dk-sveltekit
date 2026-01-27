@@ -1,7 +1,11 @@
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
+import { requireAdmin } from '$lib/server/auth';
 
-export const POST: RequestHandler = async ({ request, platform }) => {
+export const POST: RequestHandler = async ({ request, platform, locals }) => {
+	// Only admins can reset the counter
+	requireAdmin(locals);
+
 	if (!platform) {
 		return json({ count: 'Platform not available (Local Dev?)' });
 	}

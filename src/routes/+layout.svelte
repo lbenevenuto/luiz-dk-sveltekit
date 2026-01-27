@@ -1,18 +1,110 @@
 <script lang="ts">
 	import './layout.css';
 	import favicon from '$lib/assets/favicon.svg';
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import { resolve } from '$app/paths';
+	import { onMount } from 'svelte';
+	import { browser } from '$app/environment';
 
-	let { children } = $props();
+	interface LayoutData {
+		clerkPublishableKey: string;
+		clerkFrontendApi: string;
+	}
+
+	let { children, data }: { children: any; data: LayoutData } = $props();
 	let isMobileMenuOpen = $state(false);
+	let clerkLoaded = $state(false);
+	let user = $state<any>(null);
 
 	function toggleMobileMenu() {
 		isMobileMenuOpen = !isMobileMenuOpen;
 	}
+
+	onMount(async () => {
+		console.log('Layout mounted - Clerk debug:', {
+			browser,
+			hasClerk: !!window.Clerk,
+			publishableKey: data.clerkPublishableKey,
+			frontendApi: data.clerkFrontendApi
+		});
+
+		if (!browser || !data.clerkPublishableKey) {
+			console.warn('Not in browser or missing publishable key');
+			return;
+		}
+
+		// Wait for Clerk script to load (it's async)
+		const waitForClerk = async () => {
+			let attempts = 0;
+			const maxAttempts = 50; // 5 seconds max (50 * 100ms)
+
+			while (!window.Clerk && attempts < maxAttempts) {
+				console.log(`Waiting for Clerk script to load... (attempt ${attempts + 1})`);
+				await new Promise((resolve) => setTimeout(resolve, 100));
+				attempts++;
+			}
+
+			if (!window.Clerk) {
+				console.error('Clerk script failed to load after 5 seconds');
+				return false;
+			}
+
+			return true;
+		};
+
+		try {
+			const clerkAvailable = await waitForClerk();
+
+			if (!clerkAvailable || !window.Clerk) {
+				console.error('Clerk not available after timeout');
+				return;
+			}
+
+			console.log('Clerk script loaded, initializing with key:', data.clerkPublishableKey);
+			await window.Clerk.load({
+				publishableKey: data.clerkPublishableKey
+			});
+			clerkLoaded = true;
+			console.log('Clerk loaded successfully');
+
+			// Listen for user changes
+			window.Clerk.addListener((resources: any) => {
+				user = resources.user;
+				console.log('Clerk user updated:', user);
+			});
+
+			user = window.Clerk.user;
+			console.log('Initial Clerk user:', user);
+		} catch (error) {
+			console.error('Failed to load Clerk:', error);
+		}
+	});
+
+	async function handleSignOut() {
+		if (window.Clerk) {
+			await window.Clerk.signOut();
+			window.location.href = '/';
+		}
+	}
+
+	$effect(() => {
+		// Check if user is admin
+		const isAdmin = user?.publicMetadata?.role === 'admin';
+	});
 </script>
 
-<svelte:head><link rel="icon" href={favicon} /></svelte:head>
+<svelte:head>
+	<link rel="icon" href={favicon} />
+	{#if data.clerkFrontendApi && data.clerkPublishableKey}
+		<script
+			async
+			crossorigin="anonymous"
+			data-clerk-publishable-key={data.clerkPublishableKey}
+			src="https://{data.clerkFrontendApi}/npm/@clerk/clerk-js@latest/dist/clerk.browser.js"
+			type="text/javascript"
+		></script>
+	{/if}
+</svelte:head>
 
 <div
 	class="flex h-screen flex-col overflow-hidden bg-gray-900 font-sans text-gray-100 selection:bg-indigo-500 selection:text-white"
@@ -28,7 +120,7 @@
 						<div class="ml-10 flex items-baseline space-x-4">
 							<a
 								href={resolve('/', {})}
-								class="rounded-md px-3 py-2 text-sm font-medium transition-colors {$page.url
+								class="rounded-md px-3 py-2 text-sm font-medium transition-colors {page.url
 									.pathname === '/'
 									? 'bg-gray-900 text-white'
 									: 'text-gray-300 hover:bg-gray-700 hover:text-white'}"
@@ -37,7 +129,7 @@
 							</a>
 							<a
 								href={resolve('/shortener', {})}
-								class="rounded-md px-3 py-2 text-sm font-medium transition-colors {$page.url.pathname.startsWith(
+								class="rounded-md px-3 py-2 text-sm font-medium transition-colors {page.url.pathname.startsWith(
 									'/shortener'
 								)
 									? 'bg-gray-900 text-white'
@@ -47,17 +139,62 @@
 							</a>
 							<a
 								href={resolve('/about', {})}
-								class="rounded-md px-3 py-2 text-sm font-medium transition-colors {$page.url
+								class="rounded-md px-3 py-2 text-sm font-medium transition-colors {page.url
 									.pathname === '/about'
 									? 'bg-gray-900 text-white'
 									: 'text-gray-300 hover:bg-gray-700 hover:text-white'}"
 							>
 								About
 							</a>
+							{#if user && user.publicMetadata?.role === 'admin'}
+								<a
+									href={resolve('/admin/analytics', {})}
+									class="rounded-md px-3 py-2 text-sm font-medium transition-colors {page.url.pathname.startsWith(
+										'/admin'
+									)
+										? 'bg-gray-900 text-white'
+										: 'text-gray-300 hover:bg-gray-700 hover:text-white'}"
+								>
+									Admin
+								</a>
+							{/if}
 						</div>
 					</div>
 				</div>
-				<!-- Mobile menu button placeholder -->
+
+				<!-- Auth buttons (desktop) -->
+				<div class="hidden items-center space-x-4 md:flex">
+					{#if user}
+						<!-- User menu -->
+						<div class="flex items-center space-x-3">
+							<span class="text-sm text-gray-300">
+								{user.firstName || user.username || user.emailAddresses?.[0]?.emailAddress}
+							</span>
+							<button
+								onclick={handleSignOut}
+								class="rounded-md bg-gray-700 px-3 py-2 text-sm font-medium text-white transition-colors hover:bg-gray-600"
+							>
+								Sign Out
+							</button>
+						</div>
+					{:else}
+						<!-- Sign in/up buttons - always show -->
+						<a
+							href={resolve('/login', {})}
+							class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 transition-colors hover:text-white"
+						>
+							Sign In
+						</a>
+						<a
+							href={resolve('/register', {})}
+							class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-medium text-white transition-colors hover:bg-indigo-700"
+						>
+							Sign Up
+						</a>
+					{/if}
+				</div>
+
+				<!-- Mobile menu button -->
 				<div class="-mr-2 flex md:hidden">
 					<button
 						type="button"
@@ -99,13 +236,13 @@
 			</div>
 		</div>
 
-		<!-- Mobile menu, show/hide based on menu state. -->
+		<!-- Mobile menu -->
 		{#if isMobileMenuOpen}
 			<div class="md:hidden" id="mobile-menu">
 				<div class="space-y-1 px-2 pt-2 pb-3 sm:px-3">
 					<a
 						href={resolve('/', {})}
-						class="block rounded-md px-3 py-2 text-base font-medium transition-colors {$page.url
+						class="block rounded-md px-3 py-2 text-base font-medium transition-colors {page.url
 							.pathname === '/'
 							? 'bg-gray-900 text-white'
 							: 'text-gray-300 hover:bg-gray-700 hover:text-white'}"
@@ -115,7 +252,7 @@
 					</a>
 					<a
 						href={resolve('/shortener', {})}
-						class="block rounded-md px-3 py-2 text-base font-medium transition-colors {$page.url.pathname.startsWith(
+						class="block rounded-md px-3 py-2 text-base font-medium transition-colors {page.url.pathname.startsWith(
 							'/shortener'
 						)
 							? 'bg-gray-900 text-white'
@@ -126,7 +263,7 @@
 					</a>
 					<a
 						href={resolve('/about', {})}
-						class="block rounded-md px-3 py-2 text-base font-medium transition-colors {$page.url
+						class="block rounded-md px-3 py-2 text-base font-medium transition-colors {page.url
 							.pathname === '/about'
 							? 'bg-gray-900 text-white'
 							: 'text-gray-300 hover:bg-gray-700 hover:text-white'}"
@@ -134,6 +271,51 @@
 					>
 						About
 					</a>
+					{#if user && user.publicMetadata?.role === 'admin'}
+						<a
+							href={resolve('/admin/analytics', {})}
+							class="block rounded-md px-3 py-2 text-base font-medium transition-colors {page.url.pathname.startsWith(
+								'/admin'
+							)
+								? 'bg-gray-900 text-white'
+								: 'text-gray-300 hover:bg-gray-700 hover:text-white'}"
+							onclick={toggleMobileMenu}
+						>
+							Admin
+						</a>
+					{/if}
+
+					<!-- Mobile auth -->
+					{#if user}
+						<div class="mt-4 border-t border-gray-700 pt-4">
+							<div class="px-3 py-2 text-sm text-gray-400">
+								{user.firstName || user.username || user.emailAddresses?.[0]?.emailAddress}
+							</div>
+							<button
+								onclick={handleSignOut}
+								class="block w-full rounded-md px-3 py-2 text-left text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white"
+							>
+								Sign Out
+							</button>
+						</div>
+					{:else}
+						<div class="mt-4 space-y-1 border-t border-gray-700 pt-4">
+							<a
+								href={resolve('/login', {})}
+								class="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white"
+								onclick={toggleMobileMenu}
+							>
+								Sign In
+							</a>
+							<a
+								href={resolve('/register', {})}
+								class="block rounded-md bg-indigo-600 px-3 py-2 text-base font-medium text-white hover:bg-indigo-700"
+								onclick={toggleMobileMenu}
+							>
+								Sign Up
+							</a>
+						</div>
+					{/if}
 				</div>
 			</div>
 		{/if}

@@ -6,7 +6,8 @@ import { eq } from 'drizzle-orm';
 export const createShortUrl = async (
 	url: string,
 	expiresAt: number | null,
-	platform: Readonly<App.Platform> | undefined
+	platform: Readonly<App.Platform> | undefined,
+	userId: string | null = null
 ) => {
 	// Step 1: Check cache (FASTEST)
 	const cacheKey = `url:${url}`;
@@ -37,8 +38,12 @@ export const createShortUrl = async (
 	const newCount = await idGeneratorAdapter.getNextId();
 	const shortCode = generateShortCode(newCount, 'abd');
 
-	// Insert to DB
-	await db.insert(urls).values({ shortCode, originalUrl: url });
+	// Insert to DB with user information
+	await db.insert(urls).values({
+		shortCode,
+		originalUrl: url,
+		userId
+	});
 
 	// Cache for future requests (only if non-expiring)
 	if (cacheAdapter && !expiresAt) {

@@ -34,11 +34,26 @@
 				body.expiresIn = parseInt(expiresIn) * 3600;
 			}
 
+			// Get Clerk session token if user is logged in
+			const headers: Record<string, string> = {
+				'Content-Type': 'application/json'
+			};
+
+			if (window.Clerk?.session) {
+				try {
+					const token = await window.Clerk.session.getToken();
+					if (token) {
+						headers['Authorization'] = `Bearer ${token}`;
+					}
+				} catch (err) {
+					console.warn('Failed to get Clerk session token:', err);
+					// Continue without token - API supports anonymous users
+				}
+			}
+
 			const response = await fetch('/api/v1/shorten', {
 				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json'
-				},
+				headers,
 				body: JSON.stringify(body)
 			});
 
