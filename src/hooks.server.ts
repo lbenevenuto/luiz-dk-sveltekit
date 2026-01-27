@@ -99,7 +99,7 @@ export const firstStep: Handle = async ({ event, resolve }) => {
 		const locationHeader = requestState.headers.get('location');
 		if (locationHeader) {
 			console.log('locationHeader inside --->', locationHeader);
-			// return redirect(307, locationHeader);
+			return redirect(307, locationHeader);
 		}
 	}
 
@@ -119,12 +119,11 @@ export const firstStep: Handle = async ({ event, resolve }) => {
 };
 
 export const handle: Handle = sequence(
-	initCloudflareSentryHandle({
-		dsn: 'https://examplePublicKey@o0.ingest.sentry.io/0',
-		// Adds request headers and IP for users, for more info visit:
-		// https://docs.sentry.io/platforms/javascript/guides/sveltekit/configuration/options/#sendDefaultPii
+	// @ts-expect-error - callback pattern is valid but types might be strict
+	initCloudflareSentryHandle((event) => ({
+		dsn: event.platform?.env?.SENTRY_DSN,
 		sendDefaultPii: true
-	}),
+	})),
 	sentryHandle(),
 	firstStep
 );

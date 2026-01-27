@@ -16,7 +16,9 @@
 		"CLERK_FRONTEND_API": "just-spider-44.clerk.accounts.dev",
 		"BASE_URL": "https://luiz.dk",
 		"RATE_LIMIT_MAX_REQUESTS": "10",
-		"RATE_LIMIT_WINDOW_SECONDS": "60"
+		"RATE_LIMIT_WINDOW_SECONDS": "60",
+		"SENTRY_DSN": "https://5852440bce4280c4f682558c65a35bb4@o4505868707495936.ingest.us.sentry.io/4510782741807104",
+		"PUBLIC_SENTRY_DSN": "https://5852440bce4280c4f682558c65a35bb4@o4505868707495936.ingest.us.sentry.io/4510782741807104"
 	},
 	"durable_objects": {
 		"bindings": [

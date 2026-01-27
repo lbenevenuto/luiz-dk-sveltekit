@@ -4,7 +4,22 @@ import { sveltekit } from '@sveltejs/kit/vite';
 import { sentrySvelteKit } from '@sentry/sveltekit';
 
 export default defineConfig({
-	plugins: [sentrySvelteKit(), tailwindcss(), sveltekit()],
+	plugins: [
+		sentrySvelteKit({
+			adapter: 'cloudflare',
+			telemetry: false,
+			org: 'luiz-personal',
+			project: 'luiz-dk',
+			// store your auth token in an environment variable
+			authToken: process.env.SENTRY_AUTH_TOKEN
+		}),
+		tailwindcss(),
+		sveltekit()
+	],
+
+	ssr: {
+		noExternal: ['@sentry/sveltekit']
+	},
 
 	test: {
 		expect: { requireAssertions: true },

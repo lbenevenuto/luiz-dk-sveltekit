@@ -16,16 +16,18 @@
 		"test": "bun run test:unit -- --run",
 		"types": "wrangler types",
 		"deploy": "CF_PAGES=1 bun run build && CF_PAGES=1 wrangler pages deploy",
+		"tail:pages": "wrangler pages deployment tail --project-name luiz-dk-sveltekit",
 		"db:generate": "drizzle-kit generate",
 		"db:migrate": "drizzle-kit migrate",
 		"db:migrate:prod": "drizzle-kit migrate --config=drizzle.prod.config.ts",
-		"db:push": "drizzle-kit push"
+		"db:push": "drizzle-kit push",
+		"clear": "rm -rf node_modules/ .svelte-kit/ .wrangler/ dist/ coverage/ pnpm-lock.yaml bun.lockb bun.lock package-lock.json yarn.lock"
 	},
 	"devDependencies": {
 		"@clerk/backend": "^2.29.5",
 		"@eslint/compat": "^2.0.1",
 		"@eslint/js": "^9.39.2",
-		"@sentry/sveltekit": "^10",
+		"@sentry/sveltekit": "^10.37.0",
 		"@sveltejs/adapter-cloudflare": "^7.2.6",
 		"@sveltejs/kit": "^2.50.1",
 		"@sveltejs/vite-plugin-svelte": "^6.2.4",
@@ -54,6 +56,6 @@
 		"typescript-eslint": "^8.54.0",
 		"vite": "^7.3.1",
 		"vitest": "^4.0.18",
-		"wrangler": "^4.60.0"
+		"wrangler": "^4.61.0"
 	}
 }
