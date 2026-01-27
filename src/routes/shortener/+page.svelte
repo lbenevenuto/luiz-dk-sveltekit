@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { resolve } from '$app/paths';
+
 	let url = '';
 
 	let expiresIn = '';
@@ -97,12 +99,8 @@
 </svelte:head>
 
 <div class="flex min-h-full flex-col justify-center">
-	<div
-		class="mx-auto my-auto w-full max-w-3xl rounded-2xl bg-white p-6 shadow-2xl md:p-8 dark:bg-slate-800"
-	>
-		<h1 class="mb-2 text-center text-3xl font-bold text-slate-800 md:text-4xl dark:text-white">
-			🔗 URL Shortener
-		</h1>
+	<div class="mx-auto my-auto w-full max-w-3xl rounded-2xl bg-white p-6 shadow-2xl md:p-8 dark:bg-slate-800">
+		<h1 class="mb-2 text-center text-3xl font-bold text-slate-800 md:text-4xl dark:text-white">🔗 URL Shortener</h1>
 		<p class="mb-8 text-center text-sm text-slate-500 dark:text-slate-400">
 			Built with Hashids, Drizzle ORM, Bun & Cloudflare Pages
 		</p>
@@ -155,9 +153,7 @@
 		{/if}
 
 		{#if result}
-			<div
-				class="mb-8 rounded-lg border-2 border-green-200 bg-green-50 p-6 dark:border-green-800 dark:bg-green-900/20"
-			>
+			<div class="mb-8 rounded-lg border-2 border-green-200 bg-green-50 p-6 dark:border-green-800 dark:bg-green-900/20">
 				<h3 class="mb-4 text-lg font-bold text-green-700 dark:text-green-400">
 					{#if result.isExisting}
 						ℹ️ Existing Short URL Found
@@ -167,7 +163,7 @@
 				</h3>
 				<div class="mb-2 flex flex-col gap-2 sm:flex-row">
 					<a
-						href={result.shortUrl}
+						href={resolve(result.shortUrl, {})}
 						target="_blank"
 						rel="noopener"
 						class="flex-1 rounded-lg border-2 border-green-200 bg-white p-3 text-center font-semibold break-all text-indigo-600 hover:underline sm:text-left dark:border-green-800 dark:bg-slate-900 dark:text-indigo-400"
@@ -183,22 +179,18 @@
 				</div>
 				<p class="text-sm text-slate-500 dark:text-slate-400">
 					Original: <a
-						href={result.originalUrl}
+						href={resolve(result.originalUrl, {})}
 						target="_blank"
 						rel="noopener"
 						class="break-all text-indigo-500 hover:underline"
 					>
-						{result.originalUrl.length > 60
-							? result.originalUrl.substring(0, 60) + '...'
-							: result.originalUrl}
+						{result.originalUrl.length > 60 ? result.originalUrl.substring(0, 60) + '...' : result.originalUrl}
 					</a>
 				</p>
 			</div>
 		{/if}
 
-		<div
-			class="mt-8 grid grid-cols-1 gap-6 border-t border-slate-100 pt-8 sm:grid-cols-3 dark:border-slate-700"
-		>
+		<div class="mt-8 grid grid-cols-1 gap-6 border-t border-slate-100 pt-8 sm:grid-cols-3 dark:border-slate-700">
 			<div class="text-center">
 				<h3 class="mb-1 font-bold text-slate-800 dark:text-white">🔢 Hashids</h3>
 				<p class="text-sm text-slate-500 dark:text-slate-400">Obfuscated sequential IDs</p>

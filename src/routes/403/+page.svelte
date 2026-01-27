@@ -14,16 +14,8 @@
 	<div class="w-full max-w-md text-center">
 		<!-- Icon -->
 		<div class="mb-8">
-			<div
-				class="mx-auto flex h-24 w-24 items-center justify-center rounded-full bg-red-500/10 ring-8 ring-red-500/5"
-			>
-				<svg
-					class="h-12 w-12 text-red-500"
-					fill="none"
-					viewBox="0 0 24 24"
-					stroke="currentColor"
-					stroke-width="2"
-				>
+			<div class="mx-auto flex h-24 w-24 items-center justify-center rounded-full bg-red-500/10 ring-8 ring-red-500/5">
+				<svg class="h-12 w-12 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
 					<path
 						stroke-linecap="round"
 						stroke-linejoin="round"
@@ -70,20 +62,13 @@
 				class="inline-flex items-center justify-center gap-2 rounded-lg border border-gray-700 bg-gray-800 px-6 py-3 font-semibold text-gray-300 transition-colors hover:bg-gray-700"
 			>
 				<svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-					<path
-						stroke-linecap="round"
-						stroke-linejoin="round"
-						stroke-width="2"
-						d="M10 19l-7-7m0 0l7-7m-7 7h18"
-					/>
+					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
 				</svg>
 				Go Back
 			</button>
 		</div>
 
 		<!-- Help text -->
-		<p class="mt-8 text-sm text-gray-500">
-			If you believe you should have access, please contact an administrator.
-		</p>
+		<p class="mt-8 text-sm text-gray-500">If you believe you should have access, please contact an administrator.</p>
 	</div>
 </div>

@@ -1,13 +1,7 @@
 import { requireAdmin } from '$lib/server/auth';
 import { getClerkClient } from '$lib/server/clerk';
 
-export const load = async ({
-	platform,
-	locals
-}: {
-	platform?: App.Platform;
-	locals: App.Locals;
-}) => {
+export const load = async ({ platform, locals }: { platform?: App.Platform; locals: App.Locals }) => {
 	requireAdmin(locals);
 
 	if (!platform) {
@@ -36,15 +30,7 @@ export const load = async ({
 };
 
 export const actions = {
-	setRole: async ({
-		request,
-		platform,
-		locals
-	}: {
-		request: Request;
-		platform?: App.Platform;
-		locals: App.Locals;
-	}) => {
+	setRole: async ({ request, platform, locals }: { request: Request; platform?: App.Platform; locals: App.Locals }) => {
 		requireAdmin(locals);
 
 		if (!platform) {

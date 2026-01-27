@@ -5,9 +5,10 @@
 
 import { eq, and, lt, sql } from 'drizzle-orm';
 import type { DrizzleClient } from '$lib/server/db/client';
-import { urls, rateLimits, type Url, type NewUrl } from '$lib/server/db/schemas';
-import { generateShortCode, isValidShortCode } from '$lib/utils/hashids';
+import { urls, rateLimits } from '$lib/server/db/schemas';
+import { generateShortCode } from '$lib/utils/hashids';
 import type { IdGeneratorAdapter } from './id-generator';
+import type { Url } from '$lib/server/db/schemas';
 
 export interface DatabaseAdapter {
 	createShortUrl(
@@ -101,11 +102,7 @@ export class DrizzleAdapter implements DatabaseAdapter {
 			shortCode = generateShortCode(id, this.salt, 5);
 
 			// Check if short code exists
-			const codeExists = await this.db
-				.select()
-				.from(urls)
-				.where(eq(urls.shortCode, shortCode))
-				.limit(1);
+			const codeExists = await this.db.select().from(urls).where(eq(urls.shortCode, shortCode)).limit(1);
 
 			if (codeExists.length === 0) break;
 			attempts++;
@@ -175,18 +172,14 @@ export class DrizzleAdapter implements DatabaseAdapter {
 
 	async deleteExpiredUrls(): Promise<number> {
 		const now = new Date();
-		const result = await this.db
-			.delete(urls)
-			.where(and(sql`${urls.expiresAt} IS NOT NULL`, lt(urls.expiresAt, now)));
+		const result = await this.db.delete(urls).where(and(sql`${urls.expiresAt} IS NOT NULL`, lt(urls.expiresAt, now)));
 
 		// D1 returns changes in result, SQLite in result.changes
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		return (result as any).changes ?? (result as any).rowsAffected ?? 0;
 	}
 
-	async checkRateLimit(
-		ipHash: string,
-		limit: number
-	): Promise<{ allowed: boolean; remaining: number }> {
+	async checkRateLimit(ipHash: string, limit: number): Promise<{ allowed: boolean; remaining: number }> {
 		const now = Math.floor(Date.now() / 1000);
 		const windowStart = Math.floor(now / 60) * 60;
 

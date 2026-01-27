@@ -9,11 +9,7 @@ import Hashids from 'hashids';
  * Create Hashids instance with custom configuration
  */
 export function createHashids(salt: string, minLength: number = 5): Hashids {
-	return new Hashids(
-		salt,
-		minLength,
-		'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
-	);
+	return new Hashids(salt, minLength, 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789');
 }
 
 /**

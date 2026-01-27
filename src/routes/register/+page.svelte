@@ -21,8 +21,7 @@
 
 	const errorMessages: Record<string, string> = {
 		form_identifier_exists: 'An account with this email already exists',
-		form_password_pwned:
-			'This password has been compromised in a data breach. Please choose a different one.',
+		form_password_pwned: 'This password has been compromised in a data breach. Please choose a different one.',
 		form_param_format_invalid: 'Invalid email format',
 		form_password_length_too_short: 'Password must be at least 8 characters',
 		form_code_incorrect: 'Incorrect verification code. Please try again.'
@@ -205,9 +204,7 @@
 		<div class="rounded-2xl bg-gray-800 p-8 shadow-2xl">
 			{#if !clerkLoaded}
 				<div class="flex flex-col items-center space-y-4">
-					<div
-						class="h-8 w-8 animate-spin rounded-full border-t-2 border-b-2 border-indigo-500"
-					></div>
+					<div class="h-8 w-8 animate-spin rounded-full border-t-2 border-b-2 border-indigo-500"></div>
 					<p class="text-sm text-gray-400">Loading authentication...</p>
 				</div>
 			{:else if step === 'form'}

@@ -27,17 +27,14 @@ export const load: PageServerLoad = async ({ platform }) => {
     `;
 
 	try {
-		const response = await fetch(
-			`https://api.cloudflare.com/client/v4/accounts/${accountId}/analytics_engine/sql`,
-			{
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-					Authorization: `Bearer ${apiToken}`
-				},
-				body: sql + ' FORMAT JSON'
-			}
-		);
+		const response = await fetch(`https://api.cloudflare.com/client/v4/accounts/${accountId}/analytics_engine/sql`, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+				Authorization: `Bearer ${apiToken}`
+			},
+			body: sql + ' FORMAT JSON'
+		});
 
 		if (!response.ok) {
 			const text = await response.text();

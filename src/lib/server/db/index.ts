@@ -22,7 +22,5 @@ export async function getDb(platform?: App.Platform) {
 		return drizzle(platform.env.DB, { schema });
 	}
 
-	throw new Error(
-		'Database binding not found. Ensure D1 is configured and passed via platform.env'
-	);
+	throw new Error('Database binding not found. Ensure D1 is configured and passed via platform.env');
 }

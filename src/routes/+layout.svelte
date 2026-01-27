@@ -11,9 +11,16 @@
 		clerkFrontendApi: string;
 	}
 
-	let { children, data }: { children: any; data: LayoutData } = $props();
+	let {
+		children,
+		data
+	}: {
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		children: any;
+		data: LayoutData;
+	} = $props();
 	let isMobileMenuOpen = $state(false);
-	let clerkLoaded = $state(false);
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	let user = $state<any>(null);
 
 	function toggleMobileMenu() {
@@ -64,10 +71,10 @@
 			await window.Clerk.load({
 				publishableKey: data.clerkPublishableKey
 			});
-			clerkLoaded = true;
 			console.log('Clerk loaded successfully');
 
 			// Listen for user changes
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			window.Clerk.addListener((resources: any) => {
 				user = resources.user;
 				console.log('Clerk user updated:', user);
@@ -89,7 +96,6 @@
 
 	$effect(() => {
 		// Check if user is admin
-		const isAdmin = user?.publicMetadata?.role === 'admin';
 	});
 </script>
 
@@ -120,8 +126,7 @@
 						<div class="ml-10 flex items-baseline space-x-4">
 							<a
 								href={resolve('/', {})}
-								class="rounded-md px-3 py-2 text-sm font-medium transition-colors {page.url
-									.pathname === '/'
+								class="rounded-md px-3 py-2 text-sm font-medium transition-colors {page.url.pathname === '/'
 									? 'bg-gray-900 text-white'
 									: 'text-gray-300 hover:bg-gray-700 hover:text-white'}"
 							>
@@ -139,8 +144,7 @@
 							</a>
 							<a
 								href={resolve('/about', {})}
-								class="rounded-md px-3 py-2 text-sm font-medium transition-colors {page.url
-									.pathname === '/about'
+								class="rounded-md px-3 py-2 text-sm font-medium transition-colors {page.url.pathname === '/about'
 									? 'bg-gray-900 text-white'
 									: 'text-gray-300 hover:bg-gray-700 hover:text-white'}"
 							>
@@ -213,11 +217,7 @@
 								stroke="currentColor"
 								aria-hidden="true"
 							>
-								<path
-									stroke-linecap="round"
-									stroke-linejoin="round"
-									d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
-								/>
+								<path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
 							</svg>
 						{:else}
 							<svg
@@ -242,8 +242,7 @@
 				<div class="space-y-1 px-2 pt-2 pb-3 sm:px-3">
 					<a
 						href={resolve('/', {})}
-						class="block rounded-md px-3 py-2 text-base font-medium transition-colors {page.url
-							.pathname === '/'
+						class="block rounded-md px-3 py-2 text-base font-medium transition-colors {page.url.pathname === '/'
 							? 'bg-gray-900 text-white'
 							: 'text-gray-300 hover:bg-gray-700 hover:text-white'}"
 						onclick={toggleMobileMenu}
@@ -263,8 +262,7 @@
 					</a>
 					<a
 						href={resolve('/about', {})}
-						class="block rounded-md px-3 py-2 text-base font-medium transition-colors {page.url
-							.pathname === '/about'
+						class="block rounded-md px-3 py-2 text-base font-medium transition-colors {page.url.pathname === '/about'
 							? 'bg-gray-900 text-white'
 							: 'text-gray-300 hover:bg-gray-700 hover:text-white'}"
 						onclick={toggleMobileMenu}

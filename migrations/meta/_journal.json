@@ -5,22 +5,8 @@
     {
       "idx": 0,
       "version": "6",
-      "when": 1767647270324,
-      "tag": "0000_lucky_rhino",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "6",
-      "when": 1769349401979,
-      "tag": "0001_new_mister_sinister",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "6",
-      "when": 1769434523005,
-      "tag": "0002_early_king_cobra",
+      "when": 1769496600490,
+      "tag": "0000_rare_plazm",
       "breakpoints": true
     }
   ]

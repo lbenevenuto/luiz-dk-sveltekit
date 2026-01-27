@@ -4,26 +4,16 @@
  */
 
 import { createD1Client, createSQLiteClient } from '$lib/server/db/client';
-import {
-	DurableObjectIdGenerator,
-	RedisIdGenerator,
-	type IdGeneratorAdapter
-} from './id-generator';
+import { DurableObjectIdGenerator, RedisIdGenerator, type IdGeneratorAdapter } from './id-generator';
 import { KVAdapter, RedisAdapter, type CacheAdapter } from './cache';
-import {
-	type AnalyticsAdapter,
-	CloudflareAnalyticsAdapter,
-	ConsoleAnalyticsAdapter
-} from './analytics';
+import { type AnalyticsAdapter, CloudflareAnalyticsAdapter, ConsoleAnalyticsAdapter } from './analytics';
 import { dev } from '$app/environment';
 import Redis from 'ioredis';
 
 /**
  * Get ID generator adapter
  */
-export function getIdGeneratorAdapter(
-	platform: Readonly<App.Platform> | undefined
-): IdGeneratorAdapter {
+export function getIdGeneratorAdapter(platform: Readonly<App.Platform> | undefined): IdGeneratorAdapter {
 	if (dev) {
 		// Local: Use Redis
 		const redisUrl = 'redis://localhost:6379';
@@ -80,9 +70,7 @@ export function getCacheAdapter(platform: Readonly<App.Platform> | undefined): C
 /**
  * Get analytics adapter
  */
-export function getAnalyticsAdapter(
-	platform: Readonly<App.Platform> | undefined
-): AnalyticsAdapter {
+export function getAnalyticsAdapter(platform: Readonly<App.Platform> | undefined): AnalyticsAdapter {
 	if (dev) {
 		// Local: Use console
 		return new ConsoleAnalyticsAdapter();

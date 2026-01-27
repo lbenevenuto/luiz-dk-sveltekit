@@ -23,8 +23,7 @@
 		form_identifier_not_found: 'No account found with this email',
 		form_param_format_invalid: 'Invalid email format',
 		form_code_incorrect: 'Incorrect reset code. Please try again.',
-		form_password_pwned:
-			'This password has been compromised in a data breach. Please choose a different one.',
+		form_password_pwned: 'This password has been compromised in a data breach. Please choose a different one.',
 		form_password_length_too_short: 'Password must be at least 8 characters'
 	};
 
@@ -86,6 +85,7 @@
 
 			// Find the reset_password_email_code factor to get the email_address_id
 			const resetFactor = signIn.supportedFirstFactors?.find(
+				// eslint-disable-next-line @typescript-eslint/no-explicit-any
 				(factor: any) => factor.strategy === 'reset_password_email_code'
 			);
 
@@ -183,6 +183,7 @@
 		try {
 			// Find the reset_password_email_code factor to get the email_address_id
 			const resetFactor = signInAttempt.supportedFirstFactors?.find(
+				// eslint-disable-next-line @typescript-eslint/no-explicit-any
 				(factor: any) => factor.strategy === 'reset_password_email_code'
 			);
 
@@ -240,9 +241,7 @@
 			{#if !clerkLoaded}
 				<!-- Loading state -->
 				<div class="flex flex-col items-center space-y-4">
-					<div
-						class="h-8 w-8 animate-spin rounded-full border-t-2 border-b-2 border-indigo-500"
-					></div>
+					<div class="h-8 w-8 animate-spin rounded-full border-t-2 border-b-2 border-indigo-500"></div>
 					<p class="text-sm text-gray-400">Loading...</p>
 				</div>
 			{:else if step === 'email'}
@@ -258,12 +257,7 @@
 						autocomplete="email"
 					/>
 
-					<SubmitButton
-						{loading}
-						text="Send Reset Code"
-						loadingText="Sending..."
-						disabled={!email}
-					/>
+					<SubmitButton {loading} text="Send Reset Code" loadingText="Sending..." disabled={!email} />
 				</form>
 			{:else if step === 'code'}
 				<!-- Step 2: Verification code -->
@@ -347,9 +341,7 @@
 		{#if step === 'email'}
 			<p class="mt-4 text-center text-sm text-gray-400">
 				Remember your password?
-				<a href={resolve('/login', {})} class="text-indigo-400 hover:text-indigo-300">
-					Back to login
-				</a>
+				<a href={resolve('/login', {})} class="text-indigo-400 hover:text-indigo-300"> Back to login </a>
 			</p>
 		{/if}
 	</div>

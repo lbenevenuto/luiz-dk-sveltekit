@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { PageData } from './$types';
 	import Chart from '$lib/components/Chart.svelte';
+	import { resolve } from '$app/paths';
 
 	export let data: PageData;
 
@@ -58,9 +59,7 @@
 	<div class="mb-8 items-center justify-between">
 		<div>
 			<h1 class="text-3xl font-bold text-gray-900 dark:text-white">Analytics Dashboard</h1>
-			<p class="mt-2 text-gray-600 dark:text-gray-400">
-				Overview of redirection activity for the last 7 days.
-			</p>
+			<p class="mt-2 text-gray-600 dark:text-gray-400">Overview of redirection activity for the last 7 days.</p>
 		</div>
 	</div>
 
@@ -77,23 +76,15 @@
 	{#if !data.error && data.charts}
 		<div class="mb-8 grid grid-cols-1 gap-6 lg:grid-cols-2">
 			<!-- Daily Clicks -->
-			<div
-				class="rounded-lg border border-gray-200 bg-white p-6 shadow dark:border-gray-700 dark:bg-gray-800"
-			>
+			<div class="rounded-lg border border-gray-200 bg-white p-6 shadow dark:border-gray-700 dark:bg-gray-800">
 				<h3 class="mb-4 text-lg font-medium text-gray-900 dark:text-white">Daily Clicks</h3>
 				<div class="h-80 w-full">
-					<Chart
-						type="line"
-						data={dailyData}
-						options={{ responsive: true, maintainAspectRatio: false }}
-					/>
+					<Chart type="line" data={dailyData} options={{ responsive: true, maintainAspectRatio: false }} />
 				</div>
 			</div>
 
 			<!-- Top Countries -->
-			<div
-				class="rounded-lg border border-gray-200 bg-white p-6 shadow dark:border-gray-700 dark:bg-gray-800"
-			>
+			<div class="rounded-lg border border-gray-200 bg-white p-6 shadow dark:border-gray-700 dark:bg-gray-800">
 				<h3 class="mb-4 text-lg font-medium text-gray-900 dark:text-white">Top Countries</h3>
 				<div class="h-80 w-full">
 					<Chart
@@ -105,26 +96,18 @@
 			</div>
 
 			<!-- Browser Distribution -->
-			<div
-				class="rounded-lg border border-gray-200 bg-white p-6 shadow dark:border-gray-700 dark:bg-gray-800"
-			>
+			<div class="rounded-lg border border-gray-200 bg-white p-6 shadow dark:border-gray-700 dark:bg-gray-800">
 				<h3 class="mb-4 text-lg font-medium text-gray-900 dark:text-white">Browsers</h3>
 				<div class="flex h-64 justify-center">
-					<Chart
-						type="doughnut"
-						data={browserData}
-						options={{ responsive: true, maintainAspectRatio: false }}
-					/>
+					<Chart type="doughnut" data={browserData} options={{ responsive: true, maintainAspectRatio: false }} />
 				</div>
 			</div>
 
 			<!-- Referrers List (Text based as it can be long) -->
-			<div
-				class="rounded-lg border border-gray-200 bg-white p-6 shadow dark:border-gray-700 dark:bg-gray-800"
-			>
+			<div class="rounded-lg border border-gray-200 bg-white p-6 shadow dark:border-gray-700 dark:bg-gray-800">
 				<h3 class="mb-4 text-lg font-medium text-gray-900 dark:text-white">Top Referrers</h3>
 				<ul class="divide-y divide-gray-200 dark:divide-gray-700">
-					{#each data.charts.referrers as referrer}
+					{#each data.charts.referrers as referrer (referrer.label)}
 						<li class="flex justify-between py-3">
 							<span class="text-gray-700 dark:text-gray-300">{referrer.label}</span>
 							<span class="font-medium text-gray-900 dark:text-white">{referrer.value}</span>
@@ -177,25 +160,22 @@
 							</tr>
 						</thead>
 						<tbody class="divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-gray-800">
-							{#each data.analytics as row}
+							{#each data.analytics as row (row.id)}
 								<tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50">
 									<td class="px-6 py-4 text-sm whitespace-nowrap text-gray-500 dark:text-gray-400">
 										{new Date(row.timestamp).toLocaleString()}
 									</td>
-									<td
-										class="px-6 py-4 text-sm font-medium whitespace-nowrap text-blue-600 dark:text-blue-400"
-									>
-										<a href="/s/{row.shortCode}" target="_blank" class="hover:underline"
-											>{row.shortCode}</a
+									<td class="px-6 py-4 text-sm font-medium whitespace-nowrap text-blue-600 dark:text-blue-400">
+										<a
+											href={resolve('/s/[shortCode]', { shortCode: row.shortCode })}
+											target="_blank"
+											class="hover:underline">{row.shortCode}</a
 										>
 									</td>
 									<td class="px-6 py-4 text-sm whitespace-nowrap text-gray-900 dark:text-white">
 										{row.country || 'Unknown'}
 									</td>
-									<td
-										class="max-w-xs truncate px-6 py-4 text-sm text-gray-500 dark:text-gray-400"
-										title={row.referrer}
-									>
+									<td class="max-w-xs truncate px-6 py-4 text-sm text-gray-500 dark:text-gray-400" title={row.referrer}>
 										{row.referrer || '-'}
 									</td>
 									<td
@@ -211,13 +191,9 @@
 				</div>
 			</div>
 		{:else if !data.error}
-			<div
-				class="rounded-lg border-2 border-dashed border-gray-300 p-12 text-center dark:border-gray-700"
-			>
+			<div class="rounded-lg border-2 border-dashed border-gray-300 p-12 text-center dark:border-gray-700">
 				<h3 class="mt-2 text-sm font-medium text-gray-900 dark:text-white">No analytics data</h3>
-				<p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
-					No redirects have been recorded in the last 7 days.
-				</p>
+				<p class="mt-1 text-sm text-gray-500 dark:text-gray-400">No redirects have been recorded in the last 7 days.</p>
 			</div>
 		{/if}
 	</div>

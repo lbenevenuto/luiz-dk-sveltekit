@@ -2,13 +2,7 @@ import { json } from '@sveltejs/kit';
 import { Webhook } from 'svix';
 import { getClerkClient } from '$lib/server/clerk';
 
-export const POST = async ({
-	request,
-	platform
-}: {
-	request: Request;
-	platform?: App.Platform;
-}) => {
+export const POST = async ({ request, platform }: { request: Request; platform?: App.Platform }) => {
 	const webhookSecret = platform?.env.CLERK_WEBHOOK_SECRET;
 
 	if (!webhookSecret) {
@@ -30,6 +24,7 @@ export const POST = async ({
 	// Verify using Svix (Clerk uses Svix for webhooks)
 	const wh = new Webhook(webhookSecret);
 
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	let evt: any;
 	try {
 		evt = wh.verify(body, {

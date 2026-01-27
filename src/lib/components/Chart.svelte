@@ -1,11 +1,6 @@
 <script lang="ts">
 	import { onMount, onDestroy } from 'svelte';
-	import {
-		Chart,
-		type ChartConfiguration,
-		type ChartType,
-		type DefaultDataPoint
-	} from 'chart.js/auto';
+	import { Chart, type ChartConfiguration, type ChartType } from 'chart.js/auto';
 
 	interface Props {
 		type: ChartType;

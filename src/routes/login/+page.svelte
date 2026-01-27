@@ -27,8 +27,7 @@
 		form_param_format_invalid: 'Invalid email format',
 		session_exists: 'You are already logged in',
 		form_code_incorrect: 'Incorrect verification code. Please try again.',
-		form_password_pwned:
-			'This password has been compromised in a data breach. Please choose a different one.'
+		form_password_pwned: 'This password has been compromised in a data breach. Please choose a different one.'
 	};
 
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -113,8 +112,11 @@
 				console.log('Supported second factors:', supportedSecondFactors);
 
 				// Prefer email_code over phone_code over totp
+				// eslint-disable-next-line @typescript-eslint/no-explicit-any
 				const emailFactor = supportedSecondFactors.find((f: any) => f.strategy === 'email_code');
+				// eslint-disable-next-line @typescript-eslint/no-explicit-any
 				const phoneFactor = supportedSecondFactors.find((f: any) => f.strategy === 'phone_code');
+				// eslint-disable-next-line @typescript-eslint/no-explicit-any
 				const totpFactor = supportedSecondFactors.find((f: any) => f.strategy === 'totp');
 
 				if (emailFactor) {
@@ -238,9 +240,7 @@
 		<div class="rounded-2xl bg-gray-800 p-8 shadow-2xl">
 			{#if !clerkLoaded}
 				<div class="flex flex-col items-center space-y-4">
-					<div
-						class="h-8 w-8 animate-spin rounded-full border-t-2 border-b-2 border-indigo-500"
-					></div>
+					<div class="h-8 w-8 animate-spin rounded-full border-t-2 border-b-2 border-indigo-500"></div>
 					<p class="text-sm text-gray-400">Loading authentication...</p>
 				</div>
 			{:else if step === 'credentials'}
@@ -276,10 +276,7 @@
 					<SubmitButton {loading} text="Sign In" loadingText="Signing in..." />
 
 					<div class="text-center">
-						<a
-							href={resolve('/forgot-password', {})}
-							class="text-sm text-indigo-400 hover:text-indigo-300"
-						>
+						<a href={resolve('/forgot-password', {})} class="text-sm text-indigo-400 hover:text-indigo-300">
 							Forgot password?
 						</a>
 					</div>

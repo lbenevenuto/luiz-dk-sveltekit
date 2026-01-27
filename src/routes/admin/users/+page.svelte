@@ -32,30 +32,15 @@
 			<table class="w-full">
 				<thead class="bg-gray-700">
 					<tr>
-						<th
-							class="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-300 uppercase"
-							>Name</th
-						>
-						<th
-							class="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-300 uppercase"
-							>Email</th
-						>
-						<th
-							class="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-300 uppercase"
-							>Role</th
-						>
-						<th
-							class="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-300 uppercase"
-							>Joined</th
-						>
-						<th
-							class="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-300 uppercase"
-							>Actions</th
-						>
+						<th class="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-300 uppercase">Name</th>
+						<th class="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-300 uppercase">Email</th>
+						<th class="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-300 uppercase">Role</th>
+						<th class="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-300 uppercase">Joined</th>
+						<th class="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-300 uppercase">Actions</th>
 					</tr>
 				</thead>
 				<tbody class="divide-y divide-gray-700">
-					{#each data.users as user}
+					{#each data.users as user (user.id)}
 						<tr class="hover:bg-gray-750 transition-colors">
 							<td class="px-6 py-4 whitespace-nowrap">
 								<div class="text-sm text-white">
@@ -68,8 +53,7 @@
 							</td>
 							<td class="px-6 py-4 whitespace-nowrap">
 								<span
-									class="inline-flex rounded-full px-3 py-1 text-xs font-semibold {user.role ===
-									'admin'
+									class="inline-flex rounded-full px-3 py-1 text-xs font-semibold {user.role === 'admin'
 										? 'bg-indigo-900/50 text-indigo-300'
 										: 'bg-gray-700 text-gray-300'}"
 								>
@@ -87,10 +71,7 @@
 										<form method="POST" action="?/setRole" use:enhance>
 											<input type="hidden" name="userId" value={user.id} />
 											<input type="hidden" name="role" value="admin" />
-											<button
-												type="submit"
-												class="text-indigo-400 transition-colors hover:text-indigo-300"
-											>
+											<button type="submit" class="text-indigo-400 transition-colors hover:text-indigo-300">
 												Make Admin
 											</button>
 										</form>
@@ -98,10 +79,7 @@
 										<form method="POST" action="?/setRole" use:enhance>
 											<input type="hidden" name="userId" value={user.id} />
 											<input type="hidden" name="role" value="user" />
-											<button
-												type="submit"
-												class="text-gray-400 transition-colors hover:text-gray-300"
-											>
+											<button type="submit" class="text-gray-400 transition-colors hover:text-gray-300">
 												Remove Admin
 											</button>
 										</form>

@@ -12,10 +12,7 @@ export const POST: RequestHandler = async ({ platform, request, locals }) => {
 
 	// Check rate limit for anonymous users
 	if (!auth.userId) {
-		const ip =
-			request.headers.get('CF-Connecting-IP') ||
-			request.headers.get('X-Forwarded-For') ||
-			'unknown';
+		const ip = request.headers.get('CF-Connecting-IP') || request.headers.get('X-Forwarded-For') || 'unknown';
 
 		const rateLimitResult = await checkAnonymousRateLimit(ip, platform);
 

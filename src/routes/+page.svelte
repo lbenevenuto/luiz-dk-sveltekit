@@ -4,21 +4,16 @@
 
 <svelte:head>
 	<title>luiz.dk - Personal Cloud Services</title>
-	<meta
-		name="description"
-		content="A collection of tools and experiments built with modern web technologies."
-	/>
+	<meta name="description" content="A collection of tools and experiments built with modern web technologies." />
 </svelte:head>
 
 <div class="py-12 sm:py-24">
 	<div class="mx-auto max-w-7xl px-6 lg:px-8">
 		<div class="mx-auto max-w-2xl text-center">
-			<h1 class="text-4xl font-bold tracking-tight text-white sm:text-6xl">
-				Personal Cloud Services
-			</h1>
+			<h1 class="text-4xl font-bold tracking-tight text-white sm:text-6xl">Personal Cloud Services</h1>
 			<p class="mt-6 text-lg leading-8 text-gray-300">
-				A collection of tools, experiments, and utilities built with modern web technologies.
-				Powered by SvelteKit, Bun, and Cloudflare.
+				A collection of tools, experiments, and utilities built with modern web technologies. Powered by SvelteKit, Bun,
+				and Cloudflare.
 			</p>
 			<div class="mt-10 flex items-center justify-center gap-x-6">
 				<a
@@ -41,8 +36,8 @@
 					</dt>
 					<dd class="mt-4 flex flex-auto flex-col text-base leading-7 text-gray-300">
 						<p class="flex-auto">
-							Fast, secure URL shortening with custom aliases and sequential Hashids. Built for
-							performance and longevity.
+							Fast, secure URL shortening with custom aliases and sequential Hashids. Built for performance and
+							longevity.
 						</p>
 						<p class="mt-6">
 							<a
@@ -64,9 +59,7 @@
 						Coming Soon
 					</dt>
 					<dd class="mt-4 flex flex-auto flex-col text-base leading-7 text-gray-300">
-						<p class="flex-auto">
-							More tools are currently in development. Stay tuned for updates.
-						</p>
+						<p class="flex-auto">More tools are currently in development. Stay tuned for updates.</p>
 					</dd>
 				</div>
 
@@ -78,9 +71,7 @@
 						Labs
 					</dt>
 					<dd class="mt-4 flex flex-auto flex-col text-base leading-7 text-gray-300">
-						<p class="flex-auto">
-							Experimental projects and proof-of-concepts testing new frameworks.
-						</p>
+						<p class="flex-auto">Experimental projects and proof-of-concepts testing new frameworks.</p>
 					</dd>
 				</div>
 			</dl>
