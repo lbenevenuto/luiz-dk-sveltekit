@@ -16,10 +16,10 @@ const PUBLIC_ROUTES = [
 	'/login',
 	'/register',
 	'/forgot-password',
-	'/403', // Access denied page
+	'/403',
 	'/shortener',
-	'/api/v1/shorten', // Allow anonymous URL shortening with rate limits
-	'/api/webhooks/clerk' // Clerk webhook endpoint
+	'/api/v1/shorten',
+	'/api/webhooks/clerk'
 ];
 
 /**
@@ -98,9 +98,18 @@ export const firstStep: Handle = async ({ event, resolve }) => {
 	if (requestState.headers) {
 		const locationHeader = requestState.headers.get('location');
 		if (locationHeader) {
-			console.log('locationHeader inside --->', locationHeader);
-			return redirect(307, locationHeader);
+			return new Response(null, {
+				status: 307,
+				headers: requestState.headers
+			});
 		}
+	}
+
+	if (requestState.status === 'handshake') {
+		return new Response(null, {
+			status: 401,
+			headers: requestState.headers
+		});
 	}
 
 	// Protect admin routes

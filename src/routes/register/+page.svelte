@@ -9,6 +9,7 @@
 	type Step = 'form' | 'verify';
 
 	let step = $state<Step>('form');
+	let username = $state('');
 	let email = $state('');
 	let password = $state('');
 	let confirmPassword = $state('');
@@ -21,6 +22,8 @@
 
 	const errorMessages: Record<string, string> = {
 		form_identifier_exists: 'An account with this email already exists',
+		form_username_exists: 'This username is already taken',
+		form_username_invalid: 'Username must be between 4 and 64 characters',
 		form_password_pwned: 'This password has been compromised in a data breach. Please choose a different one.',
 		form_param_format_invalid: 'Invalid email format',
 		form_password_length_too_short: 'Password must be at least 8 characters',
@@ -59,8 +62,13 @@
 		error = '';
 
 		// Client-side validation
-		if (!email || !password || !confirmPassword) {
+		if (!username || !email || !password || !confirmPassword) {
 			error = 'Please fill in all fields';
+			return;
+		}
+
+		if (username.length < 3) {
+			error = 'Username must be at least 3 characters';
 			return;
 		}
 
@@ -90,10 +98,14 @@
 		loading = true;
 
 		try {
-			const result = await window.Clerk.client.signUp.create({
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			const params: any = {
+				username,
 				emailAddress: email,
 				password
-			});
+			};
+
+			const result = await window.Clerk.client.signUp.create(params);
 
 			signUpAttempt = result;
 
@@ -179,7 +191,7 @@
 
 	// Clear error when user types
 	$effect(() => {
-		if (email || password || confirmPassword || verificationCode) {
+		if (username || email || password || confirmPassword || verificationCode) {
 			error = '';
 		}
 	});
@@ -216,6 +228,16 @@
 							{error}
 						</div>
 					{/if}
+
+					<FormInput
+						type="text"
+						label="Username"
+						bind:value={username}
+						placeholder="johndoe"
+						required
+						disabled={loading}
+						autocomplete="username"
+					/>
 
 					<FormInput
 						type="email"
