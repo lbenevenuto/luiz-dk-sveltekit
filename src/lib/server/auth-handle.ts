@@ -65,5 +65,14 @@ export const authHandle: Handle = async ({ event, resolve }) => {
 		}
 	}
 
-	return resolve(event);
+	const response = await resolve(event);
+
+	// Forward any observability or session maintenance headers from Clerk
+	if (requestState.headers) {
+		requestState.headers.forEach((value, key) => {
+			response.headers.append(key, value);
+		});
+	}
+
+	return response;
 };
