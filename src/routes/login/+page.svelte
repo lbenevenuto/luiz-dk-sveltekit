@@ -49,6 +49,7 @@
 
 					// Redirect if already logged in
 					if (window.Clerk.user) {
+						// eslint-disable-next-line @typescript-eslint/no-explicit-any
 						goto(resolve(redirectUrl as any));
 					}
 				}
@@ -102,6 +103,7 @@
 			if (result.status === 'complete') {
 				// No 2FA - sign in complete
 				await window.Clerk.setActive({ session: result.createdSessionId });
+				// eslint-disable-next-line @typescript-eslint/no-explicit-any
 				goto(resolve(redirectUrl as any));
 			} else if (result.status === 'needs_second_factor') {
 				// 2FA required - show second factor UI
@@ -181,6 +183,7 @@
 
 			if (result.status === 'complete') {
 				await window.Clerk.setActive({ session: result.createdSessionId });
+				// eslint-disable-next-line @typescript-eslint/no-explicit-any
 				goto(resolve(redirectUrl as any));
 			} else {
 				error = 'Verification failed. Please try again.';
