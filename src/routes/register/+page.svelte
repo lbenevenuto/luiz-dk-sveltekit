@@ -47,7 +47,7 @@
 
 					// Redirect if already logged in
 					if (window.Clerk.user) {
-						goto(resolve('/', {}));
+						goto(resolve('/'));
 					}
 				}
 			}, 100);
@@ -151,7 +151,7 @@
 
 			if (result.status === 'complete') {
 				await window.Clerk?.setActive({ session: result.createdSessionId });
-				goto(resolve('/', {}));
+				goto(resolve('/'));
 			} else {
 				error = 'Verification failed. Please try again.';
 			}
@@ -317,7 +317,7 @@
 
 		<p class="mt-4 text-center text-sm text-gray-400">
 			Already have an account?
-			<a href={resolve('/login', {})} class="text-indigo-400 hover:text-indigo-300">Sign in</a>
+			<a href={resolve('/login')} class="text-indigo-400 hover:text-indigo-300">Sign in</a>
 		</p>
 	</div>
 </div>

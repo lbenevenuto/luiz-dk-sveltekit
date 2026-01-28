@@ -51,7 +51,7 @@
 
 					// Redirect if already logged in
 					if (window.Clerk.user) {
-						goto(resolve('/', {}));
+						goto(resolve('/'));
 					}
 				}
 			}, 100);
@@ -164,7 +164,7 @@
 
 				// Redirect after 2 seconds
 				setTimeout(() => {
-					goto(resolve('/', {}));
+					goto(resolve('/'));
 				}, 2000);
 			} else {
 				error = 'Password reset incomplete. Please try again.';
@@ -341,7 +341,7 @@
 		{#if step === 'email'}
 			<p class="mt-4 text-center text-sm text-gray-400">
 				Remember your password?
-				<a href={resolve('/login', {})} class="text-indigo-400 hover:text-indigo-300"> Back to login </a>
+				<a href={resolve('/login')} class="text-indigo-400 hover:text-indigo-300"> Back to login </a>
 			</p>
 		{/if}
 	</div>

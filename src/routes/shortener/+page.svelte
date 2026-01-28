@@ -162,7 +162,7 @@
 				</h3>
 				<div class="mb-2 flex flex-col gap-2 sm:flex-row">
 					<a
-						href={resolve(result.shortUrl, {})}
+						href={result.shortUrl}
 						target="_blank"
 						rel="noopener"
 						class="flex-1 rounded-lg border-2 border-green-200 bg-white p-3 text-center font-semibold break-all text-indigo-600 hover:underline sm:text-left dark:border-green-800 dark:bg-slate-900 dark:text-indigo-400"
@@ -178,7 +178,7 @@
 				</div>
 				<p class="text-sm text-slate-500 dark:text-slate-400">
 					Original: <a
-						href={resolve(result.originalUrl, {})}
+						href={result.originalUrl}
 						target="_blank"
 						rel="noopener"
 						class="break-all text-indigo-500 hover:underline"

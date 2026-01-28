@@ -108,13 +108,13 @@
 		<div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 			<div class="flex h-16 items-center justify-between">
 				<div class="flex items-center">
-					<a href={resolve('/', {})} class="flex-shrink-0">
+					<a href={resolve('/')} class="flex-shrink-0">
 						<span class="text-xl font-bold text-indigo-500">🔗 luiz.dk</span>
 					</a>
 					<div class="hidden md:block">
 						<div class="ml-10 flex items-baseline space-x-4">
 							<a
-								href={resolve('/', {})}
+								href={resolve('/')}
 								class="rounded-md px-3 py-2 text-sm font-medium transition-colors {page.url.pathname === '/'
 									? 'bg-gray-900 text-white'
 									: 'text-gray-300 hover:bg-gray-700 hover:text-white'}"
@@ -122,7 +122,7 @@
 								Home
 							</a>
 							<a
-								href={resolve('/shortener', {})}
+								href={resolve('/shortener')}
 								class="rounded-md px-3 py-2 text-sm font-medium transition-colors {page.url.pathname.startsWith(
 									'/shortener'
 								)
@@ -132,7 +132,7 @@
 								Shortener
 							</a>
 							<a
-								href={resolve('/about', {})}
+								href={resolve('/about')}
 								class="rounded-md px-3 py-2 text-sm font-medium transition-colors {page.url.pathname === '/about'
 									? 'bg-gray-900 text-white'
 									: 'text-gray-300 hover:bg-gray-700 hover:text-white'}"
@@ -141,7 +141,7 @@
 							</a>
 							{#if user && user.publicMetadata?.role === 'admin'}
 								<a
-									href={resolve('/admin/analytics', {})}
+									href={resolve('/admin/analytics')}
 									class="rounded-md px-3 py-2 text-sm font-medium transition-colors {page.url.pathname.startsWith(
 										'/admin'
 									)
@@ -173,13 +173,13 @@
 					{:else}
 						<!-- Sign in/up buttons - always show -->
 						<a
-							href={resolve('/login', {})}
+							href={resolve('/login')}
 							class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 transition-colors hover:text-white"
 						>
 							Sign In
 						</a>
 						<a
-							href={resolve('/register', {})}
+							href={resolve('/register')}
 							class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-medium text-white transition-colors hover:bg-indigo-700"
 						>
 							Sign Up
@@ -230,7 +230,7 @@
 			<div class="md:hidden" id="mobile-menu">
 				<div class="space-y-1 px-2 pt-2 pb-3 sm:px-3">
 					<a
-						href={resolve('/', {})}
+						href={resolve('/')}
 						class="block rounded-md px-3 py-2 text-base font-medium transition-colors {page.url.pathname === '/'
 							? 'bg-gray-900 text-white'
 							: 'text-gray-300 hover:bg-gray-700 hover:text-white'}"
@@ -239,7 +239,7 @@
 						Home
 					</a>
 					<a
-						href={resolve('/shortener', {})}
+						href={resolve('/shortener')}
 						class="block rounded-md px-3 py-2 text-base font-medium transition-colors {page.url.pathname.startsWith(
 							'/shortener'
 						)
@@ -250,7 +250,7 @@
 						Shortener
 					</a>
 					<a
-						href={resolve('/about', {})}
+						href={resolve('/about')}
 						class="block rounded-md px-3 py-2 text-base font-medium transition-colors {page.url.pathname === '/about'
 							? 'bg-gray-900 text-white'
 							: 'text-gray-300 hover:bg-gray-700 hover:text-white'}"
@@ -260,7 +260,7 @@
 					</a>
 					{#if user && user.publicMetadata?.role === 'admin'}
 						<a
-							href={resolve('/admin/analytics', {})}
+							href={resolve('/admin/analytics')}
 							class="block rounded-md px-3 py-2 text-base font-medium transition-colors {page.url.pathname.startsWith(
 								'/admin'
 							)
@@ -288,14 +288,14 @@
 					{:else}
 						<div class="mt-4 space-y-1 border-t border-gray-700 pt-4">
 							<a
-								href={resolve('/login', {})}
+								href={resolve('/login')}
 								class="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white"
 								onclick={toggleMobileMenu}
 							>
 								Sign In
 							</a>
 							<a
-								href={resolve('/register', {})}
+								href={resolve('/register')}
 								class="block rounded-md bg-indigo-600 px-3 py-2 text-base font-medium text-white hover:bg-indigo-700"
 								onclick={toggleMobileMenu}
 							>

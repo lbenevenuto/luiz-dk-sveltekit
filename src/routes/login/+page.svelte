@@ -49,7 +49,7 @@
 
 					// Redirect if already logged in
 					if (window.Clerk.user) {
-						goto(resolve(redirectUrl, {}));
+						goto(resolve(redirectUrl as any));
 					}
 				}
 			}, 100);
@@ -102,7 +102,7 @@
 			if (result.status === 'complete') {
 				// No 2FA - sign in complete
 				await window.Clerk.setActive({ session: result.createdSessionId });
-				goto(resolve(redirectUrl, {}));
+				goto(resolve(redirectUrl as any));
 			} else if (result.status === 'needs_second_factor') {
 				// 2FA required - show second factor UI
 				signInAttempt = result;
@@ -181,7 +181,7 @@
 
 			if (result.status === 'complete') {
 				await window.Clerk.setActive({ session: result.createdSessionId });
-				goto(resolve(redirectUrl, {}));
+				goto(resolve(redirectUrl as any));
 			} else {
 				error = 'Verification failed. Please try again.';
 			}
@@ -276,7 +276,7 @@
 					<SubmitButton {loading} text="Sign In" loadingText="Signing in..." />
 
 					<div class="text-center">
-						<a href={resolve('/forgot-password', {})} class="text-sm text-indigo-400 hover:text-indigo-300">
+						<a href={resolve('/forgot-password')} class="text-sm text-indigo-400 hover:text-indigo-300">
 							Forgot password?
 						</a>
 					</div>
@@ -328,7 +328,7 @@
 
 		<p class="mt-4 text-center text-sm text-gray-400">
 			Don't have an account?
-			<a href={resolve('/register', {})} class="text-indigo-400 hover:text-indigo-300">Sign up</a>
+			<a href={resolve('/register')} class="text-indigo-400 hover:text-indigo-300">Sign up</a>
 		</p>
 	</div>
 </div>
