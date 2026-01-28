@@ -5,6 +5,7 @@
 	import { resolve } from '$app/paths';
 	import { onMount } from 'svelte';
 	import { browser } from '$app/environment';
+	import { dark } from '@clerk/themes';
 
 	interface LayoutData {
 		clerkPublishableKey: string;
@@ -61,7 +62,10 @@
 			}
 
 			await window.Clerk.load({
-				publishableKey: data.clerkPublishableKey
+				publishableKey: data.clerkPublishableKey,
+				appearance: {
+					baseTheme: dark
+				}
 			});
 
 			// Listen for user changes
@@ -160,9 +164,9 @@
 					{#if user}
 						<!-- User menu -->
 						<div class="flex items-center space-x-3">
-							<span class="text-sm text-gray-300">
+							<a href={resolve('/profile')} class="text-sm text-gray-300 transition-colors hover:text-white">
 								{user.firstName || user.username || user.emailAddresses?.[0]?.emailAddress}
-							</span>
+							</a>
 							<button
 								onclick={handleSignOut}
 								class="rounded-md bg-gray-700 px-3 py-2 text-sm font-medium text-white transition-colors hover:bg-gray-600"
@@ -275,9 +279,13 @@
 					<!-- Mobile auth -->
 					{#if user}
 						<div class="mt-4 border-t border-gray-700 pt-4">
-							<div class="px-3 py-2 text-sm text-gray-400">
+							<a
+								href={resolve('/profile')}
+								class="block px-3 py-2 text-sm text-gray-400 hover:text-white"
+								onclick={toggleMobileMenu}
+							>
 								{user.firstName || user.username || user.emailAddresses?.[0]?.emailAddress}
-							</div>
+							</a>
 							<button
 								onclick={handleSignOut}
 								class="block w-full rounded-md px-3 py-2 text-left text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white"

@@ -63,7 +63,8 @@ declare global {
 	// Clerk client-side types
 	interface Window {
 		Clerk?: {
-			load: (options: { publishableKey: string }) => Promise<void>;
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			load: (options: { publishableKey: string; appearance?: any }) => Promise<void>;
 			user: User | null;
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			session: any;
@@ -74,6 +75,9 @@ declare global {
 			openSignUp: () => void;
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			setActive: (options: { session: string }) => Promise<any>;
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			mountUserProfile: (node: HTMLElement, props?: any) => void;
+			unmountUserProfile: (node: HTMLElement) => void;
 			client: {
 				signIn: {
 					// eslint-disable-next-line @typescript-eslint/no-explicit-any
