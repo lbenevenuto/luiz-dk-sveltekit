@@ -30,13 +30,17 @@ export function generateShortCode(id: number, salt: string, minLength: number = 
  * @param salt - Secret salt for Hashids
  * @returns Original sequential ID or null if invalid
  */
-export function extractIdFromShortCode(shortCode: string, salt: string): number | null {
-	const hashids = createHashids(salt);
-	const decoded = hashids.decode(shortCode);
+export function extractIdFromShortCode(shortCode: string, salt: string, minLength: number = 3): number | null {
+	try {
+		const hashids = createHashids(salt, minLength);
+		const decoded = hashids.decode(shortCode);
 
-	if (decoded.length === 0) {
+		if (decoded.length === 0) {
+			return null;
+		}
+
+		return Number(decoded[0]);
+	} catch {
 		return null;
 	}
-
-	return Number(decoded[0]);
 }
