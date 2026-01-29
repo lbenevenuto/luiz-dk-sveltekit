@@ -6,6 +6,7 @@
 	import { resolve } from '$app/paths';
 	import FormInput from '$lib/components/FormInput.svelte';
 	import SubmitButton from '$lib/components/SubmitButton.svelte';
+	import SocialLoginButtons from '$lib/components/SocialLoginButtons.svelte';
 
 	type Step = 'credentials' | 'second-factor';
 
@@ -20,6 +21,9 @@
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	let signInAttempt = $state<any>(null);
 	let secondFactorStrategy = $state<string>('');
+	const ATTEMPT_LIMIT = 5;
+	const ATTEMPT_WINDOW_MS = 60_000;
+	let attemptTimestamps: number[] = [];
 
 	const errorMessages: Record<string, string> = {
 		form_identifier_not_found: 'No account found with this email',
@@ -74,6 +78,11 @@
 		const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 		if (!emailRegex.test(email)) {
 			error = 'Please enter a valid email address';
+			return;
+		}
+
+		if (browser && isRateLimited()) {
+			error = 'Too many attempts. Please wait 60 seconds and try again.';
 			return;
 		}
 
@@ -153,6 +162,7 @@
 			console.error('Sign in error:', err);
 			error = getErrorMessage(err);
 		} finally {
+			recordAttempt();
 			loading = false;
 		}
 	}
@@ -168,6 +178,11 @@
 
 		if (!window.Clerk || !signInAttempt) {
 			error = 'Authentication service error. Please refresh.';
+			return;
+		}
+
+		if (browser && isRateLimited()) {
+			error = 'Too many attempts. Please wait 60 seconds and try again.';
 			return;
 		}
 
@@ -193,6 +208,7 @@
 			console.error('Second factor error:', err);
 			error = getErrorMessage(err);
 		} finally {
+			recordAttempt();
 			loading = false;
 		}
 	}
@@ -214,6 +230,17 @@
 			error = '';
 		}
 	});
+
+	function isRateLimited(): boolean {
+		const now = Date.now();
+		attemptTimestamps = attemptTimestamps.filter((ts) => now - ts < ATTEMPT_WINDOW_MS);
+		return attemptTimestamps.length >= ATTEMPT_LIMIT;
+	}
+
+	function recordAttempt() {
+		const now = Date.now();
+		attemptTimestamps = [...attemptTimestamps, now].filter((ts) => now - ts < ATTEMPT_WINDOW_MS);
+	}
 </script>
 
 <svelte:head>
@@ -277,6 +304,8 @@
 					/>
 
 					<SubmitButton {loading} text="Sign In" loadingText="Signing in..." />
+
+					<SocialLoginButtons {loading} />
 
 					<div class="text-center">
 						<a href={resolve('/forgot-password')} class="text-sm text-indigo-400 hover:text-indigo-300">

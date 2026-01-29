@@ -1,8 +1,9 @@
 import type { Handle } from '@sveltejs/kit';
 import { redirect } from '@sveltejs/kit';
 import { getClerkClient } from '$lib/server/clerk';
-import { getAuthorizedParties } from '$lib/server/routes';
+import { getAuthorizedParties, isPublicRoute } from '$lib/server/routes';
 import type { UserRole } from '../../app';
+import { logger } from '$lib/server/logger';
 
 export const authHandle: Handle = async ({ event, resolve }) => {
 	const { platform, url } = event;
@@ -17,7 +18,13 @@ export const authHandle: Handle = async ({ event, resolve }) => {
 		role: null
 	};
 
+	// Skip authentication for public routes to avoid unnecessary handshakes
+	if (isPublicRoute(url.pathname)) {
+		return resolve(event);
+	}
+
 	const clerkClient = getClerkClient(platform.env);
+
 	const requestState = await clerkClient.authenticateRequest(event.request, {
 		authorizedParties: getAuthorizedParties(platform.env.BASE_URL)
 	});
@@ -45,6 +52,7 @@ export const authHandle: Handle = async ({ event, resolve }) => {
 	}
 
 	if (requestState.status === 'handshake') {
+		console.log('Clerk handshake required');
 		return new Response(null, {
 			status: 401,
 			headers: requestState.headers
@@ -56,10 +64,12 @@ export const authHandle: Handle = async ({ event, resolve }) => {
 	// but keeping it here for now to maintain behavior parity
 	if (url.pathname.startsWith('/admin')) {
 		if (!event.locals.auth.userId) {
+			logger.warn('auth.admin.redirect_login', { path: url.pathname });
 			return redirect(307, `/login?redirect_url=${encodeURIComponent(url.pathname)}`);
 		}
 
 		if (event.locals.auth.role !== 'admin') {
+			logger.warn('auth.admin.forbidden', { userId: event.locals.auth.userId, path: url.pathname });
 			// Redirect to 403 page with attempted URL
 			return redirect(307, `/403?url=${encodeURIComponent(url.pathname)}`);
 		}

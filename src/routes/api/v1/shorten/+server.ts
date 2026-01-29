@@ -1,12 +1,26 @@
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
-import { createShortUrl } from '$lib/utils';
+import { createShortUrl, normalizeUrl } from '$lib/utils';
 import { checkAnonymousRateLimit } from '$lib/server/rate-limit';
+import { logger } from '$lib/server/logger';
 
 export const POST: RequestHandler = async ({ platform, request, locals }) => {
 	const body = await request.json();
-	const { url: originalUrl } = body as { url: string };
+	const { url: originalUrl, expiresIn } = body as { url: string; expiresIn?: number };
 	const { auth } = locals;
+	const expiresInSeconds = typeof expiresIn === 'number' && expiresIn > 0 ? expiresIn : null;
+	const expiresAt = expiresInSeconds ? Math.floor(Date.now() / 1000) + expiresInSeconds : null;
+	const baseUrl = platform?.env?.BASE_URL || new URL(request.url).origin;
+
+	// Basic URL validation
+	try {
+		const parsed = new URL(originalUrl);
+		if (!['http:', 'https:'].includes(parsed.protocol)) {
+			return json({ error: 'Only http/https URLs are allowed' }, { status: 400 });
+		}
+	} catch {
+		return json({ error: 'Invalid URL' }, { status: 400 });
+	}
 
 	// Check rate limit for anonymous users
 	if (!auth.userId) {
@@ -15,6 +29,7 @@ export const POST: RequestHandler = async ({ platform, request, locals }) => {
 		const rateLimitResult = await checkAnonymousRateLimit(ip, platform);
 
 		if (!rateLimitResult.success) {
+			logger.warn('rate_limit.shortener', { ip });
 			return json(
 				{
 					error: 'Rate limit exceeded. Please sign in for unlimited URL shortening.',
@@ -25,18 +40,22 @@ export const POST: RequestHandler = async ({ platform, request, locals }) => {
 		}
 	}
 
-	// Create short URL with user ID
-	const shortCode = await createShortUrl(
-		originalUrl,
-		null, // expiresAt
-		platform,
-		auth.userId // userId
-	);
+	const normalizedUrl = normalizeUrl(originalUrl);
 
+	// Create short URL with user ID
+	const shortCode = await createShortUrl(normalizedUrl, expiresAt, platform, auth.userId);
+
+	logger.info('shorten.created', {
+		shortCode: shortCode.shortCode,
+		anonymous: !auth.userId,
+		expiresAt: shortCode.expiresAt,
+		url: normalizedUrl
+	});
 	return json({
-		shortUrl: `https://luiz.dk/s/${shortCode.shortCode}`,
-		originalUrl,
+		shortUrl: `${baseUrl}/s/${shortCode.shortCode}`,
+		originalUrl: normalizedUrl,
 		...shortCode,
+		expiresAt: shortCode.expiresAt ? new Date(shortCode.expiresAt * 1000).toISOString() : null,
 		anonymous: !auth.userId
 	});
 };

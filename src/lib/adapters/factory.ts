@@ -4,8 +4,13 @@
  */
 
 import { createD1Client, createSQLiteClient } from '$lib/server/db/client';
-import { DurableObjectIdGenerator, type IdGeneratorAdapter, RedisIdGenerator } from './id-generator';
-import { type CacheAdapter, KVAdapter, RedisAdapter } from './cache';
+import {
+	DurableObjectIdGenerator,
+	InMemoryIdGenerator,
+	type IdGeneratorAdapter,
+	RedisIdGenerator
+} from './id-generator';
+import { InMemoryCacheAdapter, type CacheAdapter, KVAdapter, RedisAdapter } from './cache';
 import { type AnalyticsAdapter, CloudflareAnalyticsAdapter, ConsoleAnalyticsAdapter } from './analytics';
 import { dev } from '$app/environment';
 import Redis from 'ioredis';
@@ -15,10 +20,15 @@ import Redis from 'ioredis';
  */
 export function getIdGeneratorAdapter(platform: Readonly<App.Platform> | undefined): IdGeneratorAdapter {
 	if (dev) {
-		// Local: Use Redis
-		const redisUrl = 'redis://localhost:6379';
-		const redis = new Redis(redisUrl);
-		return new RedisIdGenerator(redis);
+		// Local: Prefer Redis if available, otherwise fall back to in-memory counter
+		try {
+			const redisUrl = process.env.REDIS_URL || 'redis://localhost:6379';
+			const redis = new Redis(redisUrl);
+			return new RedisIdGenerator(redis);
+		} catch (err) {
+			console.warn('Redis unavailable, falling back to in-memory ID generator:', err);
+			return new InMemoryIdGenerator();
+		}
 	}
 
 	if (!platform) {
@@ -54,9 +64,15 @@ export async function getDatabaseAdapter(platform: Readonly<App.Platform> | unde
  */
 export function getCacheAdapter(platform: Readonly<App.Platform> | undefined): CacheAdapter | null {
 	if (dev) {
-		// Local: Use Redis if available
-		const redis = new Redis();
-		return new RedisAdapter(redis);
+		// Local: Use Redis if available, otherwise in-memory
+		try {
+			const redisUrl = process.env.REDIS_URL || 'redis://localhost:6379';
+			const redis = new Redis(redisUrl);
+			return new RedisAdapter(redis);
+		} catch (err) {
+			console.warn('Redis unavailable, using in-memory cache:', err);
+			return new InMemoryCacheAdapter();
+		}
 	}
 
 	if (!platform) {

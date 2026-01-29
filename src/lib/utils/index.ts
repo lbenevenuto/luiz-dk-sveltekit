@@ -1,48 +1,107 @@
 import { getCacheAdapter, getDatabaseAdapter, getIdGeneratorAdapter } from '$lib/adapters/factory';
 import { urls } from '$lib/server/db/schemas';
 import { generateShortCode } from './hashids';
-import { eq } from 'drizzle-orm';
+import { and, eq, isNotNull, isNull, lt } from 'drizzle-orm';
+
+interface CreateShortUrlResult {
+	shortCode: string;
+	isExisting: boolean;
+	// Unix timestamp in seconds when the URL expires, or null for non-expiring links
+	expiresAt: number | null;
+}
+
+export function normalizeUrl(input: string): string {
+	const u = new URL(input.trim());
+	u.hash = '';
+	u.hostname = u.hostname.toLowerCase();
+
+	if (u.pathname !== '/' && u.pathname.endsWith('/')) {
+		u.pathname = u.pathname.slice(0, -1);
+	}
+
+	const base = `${u.protocol}//${u.host}`;
+	if ((u.pathname === '/' || u.pathname === '') && !u.search) {
+		return base;
+	}
+	return `${base}${u.pathname}${u.search}`;
+}
+
+async function purgeExpiredUrls(db: Awaited<ReturnType<typeof getDatabaseAdapter>>) {
+	const now = new Date();
+	await db.delete(urls).where(and(isNotNull(urls.expiresAt), lt(urls.expiresAt, now)));
+}
 
 export const createShortUrl = async (
 	url: string,
 	expiresAt: number | null,
 	platform: Readonly<App.Platform> | undefined,
 	userId: string | null = null
-) => {
+): Promise<CreateShortUrlResult> => {
+	const normalizedUrl = normalizeUrl(url);
+	const cacheKey = expiresAt ? `url:${normalizedUrl}:exp:${expiresAt}` : `url:${normalizedUrl}:permanent`;
+	const hashSalt = platform?.env?.SALT || 'abd';
+
 	// Step 1: Check cache (FASTEST)
-	const cacheKey = `url:${url}`;
 	const cacheAdapter = getCacheAdapter(platform);
-	if (cacheAdapter) {
+	if (cacheAdapter && !expiresAt) {
 		const cachedCode = await cacheAdapter.get(cacheKey);
 		if (cachedCode) {
 			// Cache hit! Return immediately
-			return { shortCode: cachedCode, isExisting: true };
+			return { shortCode: cachedCode, isExisting: true, expiresAt: null };
 		}
 	}
 
 	const db = await getDatabaseAdapter(platform);
+	await purgeExpiredUrls(db);
+	const wantsExpiry = Boolean(expiresAt);
 
-	// Step 2: Cache miss - check database
-	const existing = await db.select().from(urls).where(eq(urls.originalUrl, url)).get();
+	// Step 2: Cache miss - check database for a matching entry (expiring vs non-expiring)
+	const baseWhere = wantsExpiry ? isNotNull(urls.expiresAt) : isNull(urls.expiresAt);
+
+	const findExisting = async (ownerId: string | null) =>
+		db.query.urls.findFirst({
+			where: and(
+				eq(urls.originalUrl, normalizedUrl),
+				baseWhere,
+				ownerId ? eq(urls.userId, ownerId) : isNull(urls.userId)
+			)
+		});
+
+	const existingForUser = await findExisting(userId);
+	const existingGlobal = userId ? await findExisting(null) : existingForUser;
+	const existing = existingForUser || existingGlobal;
 
 	if (existing) {
-		// Found in DB - cache it for next time
-		if (cacheAdapter) {
-			await cacheAdapter.set(cacheKey, existing.shortCode, 604800); // 7 days
+		const nowSeconds = Math.floor(Date.now() / 1000);
+		const existingExpiresAtSeconds =
+			existing.expiresAt instanceof Date
+				? Math.floor(existing.expiresAt.getTime() / 1000)
+				: (existing.expiresAt ?? null);
+		const isExpired = existingExpiresAtSeconds !== null && existingExpiresAtSeconds <= nowSeconds;
+
+		if (!isExpired) {
+			// Found in DB - cache it for next time if it doesn't expire
+			if (cacheAdapter && !existingExpiresAtSeconds) {
+				await cacheAdapter.set(cacheKey, existing.shortCode, 604800); // 7 days
+			}
+			return { shortCode: existing.shortCode, isExisting: true, expiresAt: existingExpiresAtSeconds };
 		}
-		return { shortCode: existing.shortCode, isExisting: true };
+		// Expired entries fall through to generate a new short code
 	}
+
+	const expiresAtDate = expiresAt ? new Date(expiresAt * 1000) : null;
 
 	// Step 3: Not found - generate new
 	const idGeneratorAdapter = getIdGeneratorAdapter(platform);
 	const newCount = await idGeneratorAdapter.getNextId();
-	const shortCode = generateShortCode(newCount, 'abd');
+	const shortCode = generateShortCode(newCount, hashSalt);
 
 	// Insert to DB with user information
 	await db.insert(urls).values({
 		shortCode,
-		originalUrl: url,
-		userId
+		originalUrl: normalizedUrl,
+		userId,
+		expiresAt: expiresAtDate
 	});
 
 	// Cache for future requests (only if non-expiring)
@@ -50,5 +109,5 @@ export const createShortUrl = async (
 		await cacheAdapter.set(cacheKey, shortCode, 604800); // 7 days
 	}
 
-	return { shortCode, isExisting: false };
+	return { shortCode, isExisting: false, expiresAt: expiresAt ?? null };
 };

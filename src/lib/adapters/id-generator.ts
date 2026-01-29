@@ -10,6 +10,15 @@ export interface IdGeneratorAdapter {
 	getNextId(): Promise<number>;
 }
 
+export class InMemoryIdGenerator implements IdGeneratorAdapter {
+	private counter = 0;
+
+	async getNextId(): Promise<number> {
+		this.counter += 1;
+		return this.counter;
+	}
+}
+
 export class DurableObjectIdGenerator implements IdGeneratorAdapter {
 	constructor(private idGeneratorStub: DurableObjectStub<GlobalCounterDurableObject>) {
 		console.log('Constructor called for DurableObjectIdGenerator');

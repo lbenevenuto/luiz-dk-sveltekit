@@ -18,6 +18,9 @@
 	let error = $state('');
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	let signInAttempt = $state<any>(null);
+	const ATTEMPT_LIMIT = 5;
+	const ATTEMPT_WINDOW_MS = 60_000;
+	let attemptTimestamps: number[] = [];
 
 	const errorMessages: Record<string, string> = {
 		form_identifier_not_found: 'No account found with this email',
@@ -40,6 +43,17 @@
 			error = '';
 		}
 	});
+
+	function isRateLimited(): boolean {
+		const now = Date.now();
+		attemptTimestamps = attemptTimestamps.filter((ts) => now - ts < ATTEMPT_WINDOW_MS);
+		return attemptTimestamps.length >= ATTEMPT_LIMIT;
+	}
+
+	function recordAttempt() {
+		const now = Date.now();
+		attemptTimestamps = [...attemptTimestamps, now].filter((ts) => now - ts < ATTEMPT_WINDOW_MS);
+	}
 
 	onMount(async () => {
 		if (browser) {
@@ -67,6 +81,11 @@
 
 		if (!email) {
 			error = 'Please enter your email address';
+			return;
+		}
+
+		if (browser && isRateLimited()) {
+			error = 'Too many attempts. Please wait 60 seconds and try again.';
 			return;
 		}
 
@@ -105,6 +124,7 @@
 		} catch (err) {
 			error = getErrorMessage(err);
 		} finally {
+			recordAttempt();
 			loading = false;
 		}
 	}
@@ -142,6 +162,11 @@
 			return;
 		}
 
+		if (browser && isRateLimited()) {
+			error = 'Too many attempts. Please wait 60 seconds and try again.';
+			return;
+		}
+
 		loading = true;
 
 		try {
@@ -172,6 +197,7 @@
 		} catch (err) {
 			error = getErrorMessage(err);
 		} finally {
+			recordAttempt();
 			loading = false;
 		}
 	}

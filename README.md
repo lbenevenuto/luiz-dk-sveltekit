@@ -1,38 +1,57 @@
-# sv
+# luiz.dk
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+Personal URL shortener and playground for serverless tooling. Built with SvelteKit, Bun, and Cloudflare Pages, with Drizzle ORM on SQLite/D1.
 
-## Creating a project
+## Features
 
-If you're seeing this, you've probably already done this step. Congrats!
+- Short URLs with optional expiry and normalized URLs
+- Clerk auth with admin area
+- D1 + KV + Durable Object counter
+- Analytics via Cloudflare Analytics Engine
+- Sentry error tracking (optional)
 
-```sh
-# create a new project in the current directory
-npx sv create
+## Requirements
 
-# create a new project in my-app
-npx sv create my-app
-```
+- Bun (see `package.json` "packageManager")
+- Node (see `.node-version`) for Wrangler tooling
 
-## Developing
+## Environment
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+See `.env.example` for the full list of variables. Copy it to `.env` for local dev. For Cloudflare Pages preview, use `.dev.vars.example`.
 
-```sh
-npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
-
-## Building
-
-To create a production version of your app:
+## Local development
 
 ```sh
-npm run build
+bun install
+cp .env.example .env
+bun run db:migrate
+bun run dev
 ```
 
-You can preview the production build with `npm run preview`.
+Local data lives in `./data/local.db`.
 
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+## Cloudflare preview (Pages)
+
+```sh
+bun run build
+cp .dev.vars.example .dev.vars
+bun run preview
+```
+
+## Database and migrations
+
+- Generate migrations: `bun run db:generate`
+- Apply locally: `bun run db:migrate`
+- Apply to production D1: `bun run db:migrate:prod` (requires Cloudflare env vars)
+
+## Scripts
+
+- Lint: `bun run lint`
+- Typecheck: `bun run check`
+- Test: `bun run test`
+- Deploy: `bun run deploy`
+
+## Docs
+
+- `docs/README.md`
+- `CONTRIBUTING.md`

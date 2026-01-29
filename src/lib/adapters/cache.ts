@@ -12,6 +12,33 @@ export interface CacheAdapter {
 }
 
 /**
+ * In-memory Cache Adapter (Local Development Fallback)
+ */
+export class InMemoryCacheAdapter implements CacheAdapter {
+	private store = new Map<string, { value: string; expiresAt: number | null }>();
+
+	async get(key: string): Promise<string | null> {
+		const entry = this.store.get(key);
+		if (!entry) return null;
+
+		if (entry.expiresAt && entry.expiresAt <= Date.now()) {
+			this.store.delete(key);
+			return null;
+		}
+		return entry.value;
+	}
+
+	async set(key: string, value: string, ttl: number = 86400): Promise<void> {
+		const expiresAt = ttl ? Date.now() + ttl * 1000 : null;
+		this.store.set(key, { value, expiresAt });
+	}
+
+	async delete(key: string): Promise<void> {
+		this.store.delete(key);
+	}
+}
+
+/**
  * KV Cache Adapter (Cloudflare Production)
  */
 export class KVAdapter implements CacheAdapter {

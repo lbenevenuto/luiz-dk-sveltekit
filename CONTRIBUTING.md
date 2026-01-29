@@ -9,7 +9,7 @@
    ```
 
 2. **Environment Variables**:
-   Copy `.env.example` to `.env` (if available) or ensure you have the required Cloudflare bindings setup in `.dev.vars` for local development.
+   Copy `.env.example` to `.env` for Vite dev, and `.dev.vars.example` to `.dev.vars` if you want to use `wrangler pages dev`.
 
 3. **Run Development Server**:
    ```bash

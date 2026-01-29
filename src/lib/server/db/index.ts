@@ -12,7 +12,7 @@ export async function getDb(platform?: App.Platform) {
 		if (!db) {
 			const { default: Database } = await import('better-sqlite3');
 			const { drizzle: drizzleSqlite } = await import('drizzle-orm/better-sqlite3');
-			const sqlite = new Database('sqlite.db');
+			const sqlite = new Database('./data/local.db', { fileMustExist: false });
 			db = drizzleSqlite(sqlite, { schema });
 		}
 		return db;

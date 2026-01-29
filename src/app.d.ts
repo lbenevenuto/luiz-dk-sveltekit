@@ -68,6 +68,20 @@ declare global {
 			user: User | null;
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			session: any;
+			client: {
+				signIn: {
+					// eslint-disable-next-line @typescript-eslint/no-explicit-any
+					create: (params: any) => Promise<any>;
+					// eslint-disable-next-line @typescript-eslint/no-explicit-any
+					authenticateWithRedirect: (params: any) => Promise<void>;
+				};
+				signUp: {
+					// eslint-disable-next-line @typescript-eslint/no-explicit-any
+					create: (options: any) => Promise<any>;
+					// eslint-disable-next-line @typescript-eslint/no-explicit-any
+					authenticateWithRedirect: (params: any) => Promise<void>;
+				};
+			};
 			signOut: () => Promise<void>;
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			addListener: (callback: (resources: any) => void) => () => void;
@@ -78,16 +92,8 @@ declare global {
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			mountUserProfile: (node: HTMLElement, props?: any) => void;
 			unmountUserProfile: (node: HTMLElement) => void;
-			client: {
-				signIn: {
-					// eslint-disable-next-line @typescript-eslint/no-explicit-any
-					create: (options: { identifier: string; password?: string }) => Promise<any>;
-				};
-				signUp: {
-					// eslint-disable-next-line @typescript-eslint/no-explicit-any
-					create: (options: { emailAddress: string; password: string }) => Promise<any>;
-				};
-			};
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			handleRedirectCallback: (params?: any, callback?: (url: string) => void | Promise<void>) => Promise<void>;
 		};
 	}
 }

@@ -6,6 +6,7 @@
 	import { onMount } from 'svelte';
 	import { browser } from '$app/environment';
 	import { dark } from '@clerk/themes';
+	import { isPublicRoute } from '$lib/routes/public';
 
 	interface LayoutData {
 		clerkPublishableKey: string;
@@ -24,6 +25,14 @@
 	let isMobileMenuOpen = $state(false);
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	let user = $state<any>(null);
+	const RAW_NAV_LINKS = [
+		{ path: '/', label: 'Home' },
+		{ path: '/shortener', label: 'Shortener' },
+		{ path: '/about', label: 'About' }
+	] as const;
+	const NAV_LINKS = RAW_NAV_LINKS.filter((link): link is (typeof RAW_NAV_LINKS)[number] =>
+		isPublicRoute(link.path)
+	).map((link) => ({ ...link, href: resolve(link.path) }));
 
 	function toggleMobileMenu() {
 		isMobileMenuOpen = !isMobileMenuOpen;
@@ -90,19 +99,29 @@
 	$effect(() => {
 		// Check if user is admin
 	});
+
+	function linkClasses(href: string, mobile = false) {
+		const active = page.url.pathname === href || page.url.pathname.startsWith(`${href}/`);
+		const base = mobile
+			? 'block rounded-md px-3 py-2 text-base font-medium transition-colors'
+			: 'rounded-md px-3 py-2 text-sm font-medium transition-colors';
+		const activeClass = active ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white';
+		return `${base} ${activeClass}`;
+	}
 </script>
 
 <svelte:head>
 	<link rel="icon" href={favicon} />
-	{#if data.clerkFrontendApi && data.clerkPublishableKey}
-		<script
-			async
-			crossorigin="anonymous"
-			data-clerk-publishable-key={data.clerkPublishableKey}
-			src="https://{data.clerkFrontendApi}/npm/@clerk/clerk-js@latest/dist/clerk.browser.js"
-			type="text/javascript"
-		></script>
-	{/if}
+
+	<!-- Rest of your HTML file -->
+
+	<script
+		async
+		crossorigin="anonymous"
+		data-clerk-publishable-key={data.clerkPublishableKey}
+		src={`https://${data.clerkFrontendApi}/npm/@clerk/clerk-js@5/dist/clerk.browser.js`}
+		type="text/javascript"
+	></script>
 </svelte:head>
 
 <div
@@ -117,32 +136,11 @@
 					</a>
 					<div class="hidden md:block">
 						<div class="ml-10 flex items-baseline space-x-4">
-							<a
-								href={resolve('/')}
-								class="rounded-md px-3 py-2 text-sm font-medium transition-colors {page.url.pathname === '/'
-									? 'bg-gray-900 text-white'
-									: 'text-gray-300 hover:bg-gray-700 hover:text-white'}"
-							>
-								Home
-							</a>
-							<a
-								href={resolve('/shortener')}
-								class="rounded-md px-3 py-2 text-sm font-medium transition-colors {page.url.pathname.startsWith(
-									'/shortener'
-								)
-									? 'bg-gray-900 text-white'
-									: 'text-gray-300 hover:bg-gray-700 hover:text-white'}"
-							>
-								Shortener
-							</a>
-							<a
-								href={resolve('/about')}
-								class="rounded-md px-3 py-2 text-sm font-medium transition-colors {page.url.pathname === '/about'
-									? 'bg-gray-900 text-white'
-									: 'text-gray-300 hover:bg-gray-700 hover:text-white'}"
-							>
-								About
-							</a>
+							{#each NAV_LINKS as link (link.href)}
+								<a href={link.href} class={linkClasses(link.href)}>
+									{link.label}
+								</a>
+							{/each}
 							{#if user && user.publicMetadata?.role === 'admin'}
 								<a
 									href={resolve('/admin/analytics')}
@@ -165,7 +163,7 @@
 						<!-- User menu -->
 						<div class="flex items-center space-x-3">
 							<a href={resolve('/profile')} class="text-sm text-gray-300 transition-colors hover:text-white">
-								{user.firstName || user.username || user.emailAddresses?.[0]?.emailAddress}
+								{user.firstName || user.emailAddresses?.[0]?.emailAddress}
 							</a>
 							<button
 								onclick={handleSignOut}
@@ -233,35 +231,11 @@
 		{#if isMobileMenuOpen}
 			<div class="md:hidden" id="mobile-menu">
 				<div class="space-y-1 px-2 pt-2 pb-3 sm:px-3">
-					<a
-						href={resolve('/')}
-						class="block rounded-md px-3 py-2 text-base font-medium transition-colors {page.url.pathname === '/'
-							? 'bg-gray-900 text-white'
-							: 'text-gray-300 hover:bg-gray-700 hover:text-white'}"
-						onclick={toggleMobileMenu}
-					>
-						Home
-					</a>
-					<a
-						href={resolve('/shortener')}
-						class="block rounded-md px-3 py-2 text-base font-medium transition-colors {page.url.pathname.startsWith(
-							'/shortener'
-						)
-							? 'bg-gray-900 text-white'
-							: 'text-gray-300 hover:bg-gray-700 hover:text-white'}"
-						onclick={toggleMobileMenu}
-					>
-						Shortener
-					</a>
-					<a
-						href={resolve('/about')}
-						class="block rounded-md px-3 py-2 text-base font-medium transition-colors {page.url.pathname === '/about'
-							? 'bg-gray-900 text-white'
-							: 'text-gray-300 hover:bg-gray-700 hover:text-white'}"
-						onclick={toggleMobileMenu}
-					>
-						About
-					</a>
+					{#each NAV_LINKS as link (link.href)}
+						<a href={link.href} class={linkClasses(link.href, true)} onclick={toggleMobileMenu}>
+							{link.label}
+						</a>
+					{/each}
 					{#if user && user.publicMetadata?.role === 'admin'}
 						<a
 							href={resolve('/admin/analytics')}
@@ -284,7 +258,7 @@
 								class="block px-3 py-2 text-sm text-gray-400 hover:text-white"
 								onclick={toggleMobileMenu}
 							>
-								{user.firstName || user.username || user.emailAddresses?.[0]?.emailAddress}
+								{user.firstName || user.emailAddresses?.[0]?.emailAddress}
 							</a>
 							<button
 								onclick={handleSignOut}
