@@ -1,6 +1,15 @@
 import { json } from '@sveltejs/kit';
 import { Webhook } from 'svix';
 import { getClerkClient } from '$lib/server/clerk';
+import { z } from 'zod/v4';
+
+const webhookEventSchema = z.object({
+	type: z.string(),
+	data: z.object({
+		id: z.string(),
+		public_metadata: z.record(z.string(), z.unknown()).optional()
+	})
+});
 
 export const POST = async ({ request, platform }: { request: Request; platform?: App.Platform }) => {
 	const webhookSecret = platform?.env.CLERK_WEBHOOK_SECRET;
@@ -24,10 +33,9 @@ export const POST = async ({ request, platform }: { request: Request; platform?:
 	// Verify using Svix (Clerk uses Svix for webhooks)
 	const wh = new Webhook(webhookSecret);
 
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	let evt: any;
+	let rawEvt: unknown;
 	try {
-		evt = wh.verify(body, {
+		rawEvt = wh.verify(body, {
 			'svix-id': svix_id,
 			'svix-timestamp': svix_timestamp,
 			'svix-signature': svix_signature
@@ -37,8 +45,14 @@ export const POST = async ({ request, platform }: { request: Request; platform?:
 		return json({ error: 'Invalid signature' }, { status: 400 });
 	}
 
-	// Handle different event types
-	const { type, data } = evt;
+	// Validate event structure
+	const parsed = webhookEventSchema.safeParse(rawEvt);
+	if (!parsed.success) {
+		console.error('Invalid webhook event structure:', parsed.error);
+		return json({ error: 'Invalid event structure' }, { status: 400 });
+	}
+
+	const { type, data } = parsed.data;
 
 	console.log(`Clerk webhook received: ${type}`);
 
@@ -56,13 +70,10 @@ export const POST = async ({ request, platform }: { request: Request; platform?:
 				break;
 
 			case 'user.deleted':
-				// Optionally: Clean up user's URLs or anonymize them
-				// For now, we'll keep the URLs but they'll reference a deleted user
 				console.log(`User ${data.id} deleted`);
 				break;
 
 			case 'user.updated':
-				// User metadata updated
 				console.log(`User ${data.id} updated`);
 				break;
 

@@ -132,7 +132,7 @@
 			</div>
 
 			<button
-				on:click={shortenUrl}
+				onclick={shortenUrl}
 				disabled={loading}
 				class="w-full transform rounded-lg bg-gradient-to-r from-indigo-500 to-purple-600 py-4 font-bold text-white shadow-lg shadow-indigo-500/30 transition-all hover:-translate-y-0.5 hover:from-indigo-600 hover:to-purple-700 disabled:transform-none disabled:cursor-not-allowed disabled:opacity-50"
 			>
@@ -169,7 +169,7 @@
 					</a>
 					<button
 						class="rounded-lg bg-indigo-500 px-6 py-3 font-medium whitespace-nowrap text-white shadow-md transition-colors hover:bg-indigo-600"
-						on:click={copyToClipboard}
+						onclick={copyToClipboard}
 					>
 						📋 Copy
 					</button>

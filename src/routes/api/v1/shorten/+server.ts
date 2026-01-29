@@ -3,19 +3,37 @@ import type { RequestHandler } from './$types';
 import { createShortUrl, normalizeUrl } from '$lib/utils';
 import { checkAnonymousRateLimit } from '$lib/server/rate-limit';
 import { logger } from '$lib/server/logger';
+import { z } from 'zod/v4';
+
+const shortenRequestSchema = z.object({
+	url: z.url(),
+	expiresIn: z.number().positive().max(31536000).optional() // max 1 year in seconds
+});
 
 export const POST: RequestHandler = async ({ platform, request, locals }) => {
-	const body = await request.json();
-	const { url: originalUrl, expiresIn } = body as { url: string; expiresIn?: number };
+	// Parse JSON body safely
+	let body: unknown;
+	try {
+		body = await request.json();
+	} catch {
+		return json({ error: 'Invalid JSON body' }, { status: 400 });
+	}
+
+	// Validate with Zod
+	const parsed = shortenRequestSchema.safeParse(body);
+	if (!parsed.success) {
+		return json({ error: 'Validation failed', details: z.prettifyError(parsed.error) }, { status: 400 });
+	}
+
+	const { url: originalUrl, expiresIn } = parsed.data;
 	const { auth } = locals;
-	const expiresInSeconds = typeof expiresIn === 'number' && expiresIn > 0 ? expiresIn : null;
-	const expiresAt = expiresInSeconds ? Math.floor(Date.now() / 1000) + expiresInSeconds : null;
+	const expiresAt = expiresIn ? Math.floor(Date.now() / 1000) + expiresIn : null;
 	const baseUrl = platform?.env?.BASE_URL || new URL(request.url).origin;
 
-	// Basic URL validation
+	// Protocol validation (Zod's url() allows any valid URL scheme)
 	try {
-		const parsed = new URL(originalUrl);
-		if (!['http:', 'https:'].includes(parsed.protocol)) {
+		const parsedUrl = new URL(originalUrl);
+		if (!['http:', 'https:'].includes(parsedUrl.protocol)) {
 			return json({ error: 'Only http/https URLs are allowed' }, { status: 400 });
 		}
 	} catch {

@@ -178,7 +178,9 @@ describe('POST /api/v1/shorten', () => {
 		const json = await response.json();
 
 		expect(response.status).toBe(400);
-		expect(json).toEqual({ error: 'Invalid URL' });
+		const body = json as { error: string; details: string };
+		expect(body.error).toBe('Validation failed');
+		expect(body.details).toBeDefined();
 		expect(createShortUrl).not.toHaveBeenCalled();
 	});
 
