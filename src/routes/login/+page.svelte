@@ -9,6 +9,7 @@
 	import SocialLoginButtons from '$lib/components/SocialLoginButtons.svelte';
 	import { waitForClerk } from '$lib/client/clerk';
 	import { normalizeRedirectPath, withBase } from '$lib/client/redirect';
+	import SEO from '$lib/components/SEO.svelte';
 
 	type Step = 'credentials' | 'second-factor';
 
@@ -233,10 +234,7 @@
 	}
 </script>
 
-<svelte:head>
-	<title>Login - luiz.dk</title>
-	<meta name="description" content="Sign in to your luiz.dk account" />
-</svelte:head>
+<SEO title="Login" description="Sign in to your luiz.dk account" noindex />
 
 <div class="flex min-h-full items-center justify-center py-12">
 	<div class="w-full max-w-md">

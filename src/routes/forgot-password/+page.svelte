@@ -6,6 +6,7 @@
 	import FormInput from '$lib/components/FormInput.svelte';
 	import SubmitButton from '$lib/components/SubmitButton.svelte';
 	import { waitForClerk } from '$lib/client/clerk';
+	import SEO from '$lib/components/SEO.svelte';
 
 	type Step = 'email' | 'code' | 'password' | 'success';
 
@@ -223,10 +224,7 @@
 	}
 </script>
 
-<svelte:head>
-	<title>Reset Password - luiz.dk</title>
-	<meta name="description" content="Reset your password for luiz.dk" />
-</svelte:head>
+<SEO title="Reset Password" description="Reset your password for luiz.dk" noindex />
 
 <div class="flex min-h-full items-center justify-center py-12">
 	<div class="w-full max-w-md">

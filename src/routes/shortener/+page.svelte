@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { toast } from '$lib/stores/toast.svelte';
+	import SEO from '$lib/components/SEO.svelte';
 
 	let url = '';
 
@@ -92,10 +93,7 @@
 	}
 </script>
 
-<svelte:head>
-	<title>URL Shortener - luiz.dk</title>
-	<meta name="description" content="Fast URL shortener with Hashids, Drizzle ORM, and Cloudflare" />
-</svelte:head>
+<SEO title="URL Shortener" description="Fast URL shortener with Hashids, Drizzle ORM, and Cloudflare" />
 
 <div class="flex min-h-full flex-col justify-center">
 	<div class="mx-auto my-auto w-full max-w-3xl rounded-2xl bg-white p-6 shadow-2xl md:p-8 dark:bg-slate-800">

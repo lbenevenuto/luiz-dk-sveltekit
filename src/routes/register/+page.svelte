@@ -7,6 +7,7 @@
 	import SubmitButton from '$lib/components/SubmitButton.svelte';
 	import SocialLoginButtons from '$lib/components/SocialLoginButtons.svelte';
 	import { waitForClerk } from '$lib/client/clerk';
+	import SEO from '$lib/components/SEO.svelte';
 
 	type Step = 'form' | 'verify';
 
@@ -187,10 +188,7 @@
 	});
 </script>
 
-<svelte:head>
-	<title>Register - luiz.dk</title>
-	<meta name="description" content="Create your luiz.dk account" />
-</svelte:head>
+<SEO title="Register" description="Create your luiz.dk account" noindex />
 
 <div class="flex min-h-full items-center justify-center py-12">
 	<div class="w-full max-w-md">

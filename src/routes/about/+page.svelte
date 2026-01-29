@@ -1,6 +1,11 @@
-<svelte:head>
-	<title>About - URL Shortener</title>
-</svelte:head>
+<script>
+	import SEO from '$lib/components/SEO.svelte';
+</script>
+
+<SEO
+	title="About"
+	description="A personal playground for exploring modern web development, serverless architecture, and distributed systems."
+/>
 
 <div class="mx-auto max-w-2xl py-12 text-center md:py-20">
 	<h1 class="mb-4 text-3xl font-bold text-white md:text-4xl">About luiz.dk</h1>

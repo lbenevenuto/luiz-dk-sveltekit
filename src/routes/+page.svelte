@@ -1,11 +1,12 @@
 <script>
 	import { resolve } from '$app/paths';
+	import SEO from '$lib/components/SEO.svelte';
 </script>
 
-<svelte:head>
-	<title>luiz.dk - Personal Cloud Services</title>
-	<meta name="description" content="A collection of tools and experiments built with modern web technologies." />
-</svelte:head>
+<SEO
+	title="Home"
+	description="A collection of tools and experiments built with modern web technologies. Powered by SvelteKit, Bun, and Cloudflare."
+/>
 
 <div class="py-12 sm:py-24">
 	<div class="mx-auto max-w-7xl px-6 lg:px-8">

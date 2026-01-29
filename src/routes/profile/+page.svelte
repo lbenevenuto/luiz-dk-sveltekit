@@ -1,5 +1,6 @@
 <script lang="ts">
 	import UserProfile from '$lib/components/UserProfile.svelte';
+	import SEO from '$lib/components/SEO.svelte';
 	import { resolve } from '$app/paths';
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
@@ -29,9 +30,7 @@
 	});
 </script>
 
-<svelte:head>
-	<title>Your Profile - luiz.dk</title>
-</svelte:head>
+<SEO title="Your Profile" description="Manage your luiz.dk account settings and profile" noindex />
 
 <div class="py-10">
 	<div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">

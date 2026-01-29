@@ -1,14 +1,12 @@
 <script lang="ts">
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import { resolve } from '$app/paths';
+	import SEO from '$lib/components/SEO.svelte';
 
-	// Get the attempted URL from query params
-	$: attemptedUrl = $page.url.searchParams.get('url') || '/admin';
+	const attemptedUrl = $derived(page.url.searchParams.get('url') || '/admin');
 </script>
 
-<svelte:head>
-	<title>Access Denied - luiz.dk</title>
-</svelte:head>
+<SEO title="Access Denied" description="You don't have permission to access this page" noindex />
 
 <div class="flex min-h-full items-center justify-center px-4">
 	<div class="w-full max-w-md text-center">
