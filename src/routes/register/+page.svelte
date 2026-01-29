@@ -19,6 +19,7 @@
 	let clerkLoaded = $state(false);
 	let clerkError = $state('');
 	let error = $state('');
+	let successMessage = $state('');
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	let signUpAttempt = $state<any>(null);
 
@@ -162,11 +163,10 @@
 			await waitForClerk();
 			await signUpAttempt.prepareEmailAddressVerification({ strategy: 'email_code' });
 			error = '';
-			// Show success message temporarily
-			error = 'Verification code sent! Check your email.';
+			successMessage = 'Verification code sent! Check your email.';
 			setTimeout(() => {
-				if (error === 'Verification code sent! Check your email.') {
-					error = '';
+				if (successMessage === 'Verification code sent! Check your email.') {
+					successMessage = '';
 				}
 			}, 3000);
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -178,10 +178,11 @@
 		}
 	}
 
-	// Clear error when user types
+	// Clear messages when user types
 	$effect(() => {
 		if (email || password || confirmPassword || verificationCode) {
 			error = '';
+			successMessage = '';
 		}
 	});
 </script>
@@ -258,11 +259,16 @@
 			{:else}
 				<!-- Verification Step -->
 				<form onsubmit={handleVerifyEmail} class="space-y-6">
+					{#if successMessage}
+						<div
+							class="rounded-lg border-2 border-green-200 bg-green-50 p-4 text-green-600 dark:border-green-900 dark:bg-green-900/20 dark:text-green-400"
+						>
+							{successMessage}
+						</div>
+					{/if}
 					{#if error}
 						<div
-							class="rounded-lg border-2 p-4 {error.startsWith('Verification code sent')
-								? 'border-green-200 bg-green-50 text-green-600 dark:border-green-900 dark:bg-green-900/20 dark:text-green-400'
-								: 'border-red-200 bg-red-50 text-red-600 dark:border-red-900 dark:bg-red-900/20 dark:text-red-400'}"
+							class="rounded-lg border-2 border-red-200 bg-red-50 p-4 text-red-600 dark:border-red-900 dark:bg-red-900/20 dark:text-red-400"
 						>
 							{error}
 						</div>

@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { toast } from '$lib/stores/toast.svelte';
+
 	let url = '';
 
 	let expiresIn = '';
@@ -85,7 +87,7 @@
 	function copyToClipboard() {
 		if (result?.shortUrl) {
 			navigator.clipboard.writeText(result.shortUrl);
-			alert('Copied to clipboard!');
+			toast.success('Copied to clipboard!');
 		}
 	}
 </script>
