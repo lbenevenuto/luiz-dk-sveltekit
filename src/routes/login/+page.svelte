@@ -8,7 +8,7 @@
 	import SubmitButton from '$lib/components/SubmitButton.svelte';
 	import SocialLoginButtons from '$lib/components/SocialLoginButtons.svelte';
 	import { waitForClerk } from '$lib/client/clerk';
-	import { normalizeRedirectPath } from '$lib/client/redirect';
+	import { normalizeRedirectPath, withBase } from '$lib/client/redirect';
 
 	type Step = 'credentials' | 'second-factor';
 
@@ -45,7 +45,7 @@
 	}
 
 	function goToRedirect(path: string) {
-		return goto(resolve(path as any) as unknown as Parameters<typeof goto>[0]);
+		return goto(withBase(path));
 	}
 
 	onMount(async () => {

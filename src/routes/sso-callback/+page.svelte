@@ -1,9 +1,8 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { browser } from '$app/environment';
-	import { resolve } from '$app/paths';
 	import { waitForClerk } from '$lib/client/clerk';
-	import { normalizeRedirectPath } from '$lib/client/redirect';
+	import { normalizeRedirectPath, withBase } from '$lib/client/redirect';
 
 	let error = $state('');
 	let redirectTo = $state('/');
@@ -21,24 +20,24 @@
 			const sessionId = clerk.session?.id;
 			if (sessionId) {
 				await clerk.setActive({ session: sessionId });
-				window.location.href = resolve(redirectTo as any);
+				window.location.href = withBase(redirectTo);
 				return;
 			}
 
 			if (clerk.user) {
-				window.location.href = resolve(redirectTo as any);
+				window.location.href = withBase(redirectTo);
 				return;
 			}
 
 			error = 'Authentication failed. No session was created.';
 			setTimeout(() => {
-				window.location.href = resolve('/login');
+				window.location.href = withBase('/login');
 			}, 3000);
 		} catch (err) {
 			console.error('OAuth callback error:', err);
 			error = `Error: ${err instanceof Error ? err.message : String(err)}`;
 			setTimeout(() => {
-				window.location.href = resolve('/login');
+				window.location.href = withBase('/login');
 			}, 3000);
 		}
 	});

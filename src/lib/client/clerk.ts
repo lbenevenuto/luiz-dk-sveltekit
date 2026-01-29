@@ -20,14 +20,7 @@ export function waitForClerk(timeoutMs = DEFAULT_TIMEOUT_MS): Promise<NonNullabl
 
 	if (!clerkReadyPromise) {
 		clerkReadyPromise = new Promise((resolve, reject) => {
-			let intervalId: ReturnType<typeof setInterval>;
-			const timeoutId = setTimeout(() => {
-				clearInterval(intervalId);
-				clerkReadyPromise = null;
-				reject(new Error('Clerk failed to load'));
-			}, timeoutMs);
-
-			intervalId = setInterval(() => {
+			const intervalId = setInterval(() => {
 				const clerk = getClerkClient();
 				if (clerk) {
 					clearInterval(intervalId);
@@ -35,6 +28,12 @@ export function waitForClerk(timeoutMs = DEFAULT_TIMEOUT_MS): Promise<NonNullabl
 					resolve(clerk);
 				}
 			}, 50);
+
+			const timeoutId = setTimeout(() => {
+				clearInterval(intervalId);
+				clerkReadyPromise = null;
+				reject(new Error('Clerk failed to load'));
+			}, timeoutMs);
 		});
 	}
 

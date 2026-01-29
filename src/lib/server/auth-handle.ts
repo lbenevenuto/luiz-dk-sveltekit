@@ -18,11 +18,6 @@ export const authHandle: Handle = async ({ event, resolve }) => {
 		role: null
 	};
 
-	// Skip authentication for public routes to avoid unnecessary handshakes
-	if (isPublicRoute(url.pathname)) {
-		return resolve(event);
-	}
-
 	const clerkClient = getClerkClient(platform.env);
 
 	const requestState = await clerkClient.authenticateRequest(event.request, {
@@ -39,6 +34,11 @@ export const authHandle: Handle = async ({ event, resolve }) => {
 			user,
 			role
 		};
+	}
+
+	// Skip authentication for public routes to avoid unnecessary handshakes
+	if (isPublicRoute(url.pathname)) {
+		return resolve(event);
 	}
 
 	if (requestState.headers) {
