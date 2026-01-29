@@ -5,6 +5,7 @@
 	import { resolve } from '$app/paths';
 	import FormInput from '$lib/components/FormInput.svelte';
 	import SubmitButton from '$lib/components/SubmitButton.svelte';
+	import { waitForClerk } from '$lib/client/clerk';
 
 	type Step = 'email' | 'code' | 'password' | 'success';
 
@@ -15,6 +16,7 @@
 	let confirmPassword = $state('');
 	let loading = $state(false);
 	let clerkLoaded = $state(false);
+	let clerkError = $state('');
 	let error = $state('');
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	let signInAttempt = $state<any>(null);
@@ -31,9 +33,9 @@
 	};
 
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	function getErrorMessage(clerkError: any): string {
-		const errorCode = clerkError?.errors?.[0]?.code;
-		const errorMessage = clerkError?.errors?.[0]?.message;
+	function getErrorMessage(clerkErr: any): string {
+		const errorCode = clerkErr?.errors?.[0]?.code;
+		const errorMessage = clerkErr?.errors?.[0]?.message;
 		return errorMessages[errorCode] || errorMessage || 'An error occurred. Please try again.';
 	}
 
@@ -57,21 +59,18 @@
 
 	onMount(async () => {
 		if (browser) {
-			// Wait for Clerk to load
-			const checkClerk = setInterval(() => {
-				if (window.Clerk) {
-					clearInterval(checkClerk);
-					clerkLoaded = true;
+			try {
+				const clerk = await waitForClerk();
+				clerkLoaded = true;
+				clerkError = '';
 
-					// Redirect if already logged in
-					if (window.Clerk.user) {
-						goto(resolve('/'));
-					}
+				if (clerk.user) {
+					goto(resolve('/'));
 				}
-			}, 100);
-
-			// Timeout after 10 seconds
-			setTimeout(() => clearInterval(checkClerk), 10000);
+			} catch (err) {
+				console.error('Clerk failed to load:', err);
+				clerkError = 'Authentication service is not ready. Please refresh the page.';
+			}
 		}
 	});
 
@@ -89,16 +88,12 @@
 			return;
 		}
 
-		if (!window.Clerk) {
-			error = 'Authentication service not ready. Please refresh.';
-			return;
-		}
-
 		loading = true;
 
 		try {
+			const clerk = await waitForClerk();
 			// Create a sign-in attempt to initiate password reset
-			const signIn = await window.Clerk.client.signIn.create({
+			const signIn = await clerk.client.signIn.create({
 				identifier: email
 			});
 
@@ -170,11 +165,7 @@
 		loading = true;
 
 		try {
-			if (!window.Clerk) {
-				error = 'Authentication service not ready. Please refresh.';
-				return;
-			}
-
+			const clerk = await waitForClerk();
 			// Attempt to reset password with code and new password
 			const result = await signInAttempt.attemptFirstFactor({
 				strategy: 'reset_password_email_code',
@@ -184,7 +175,7 @@
 
 			if (result.status === 'complete') {
 				// Automatically sign in the user with new password
-				await window.Clerk.setActive({ session: result.createdSessionId });
+				await clerk.setActive({ session: result.createdSessionId });
 				step = 'success';
 
 				// Redirect after 2 seconds
@@ -207,6 +198,7 @@
 		loading = true;
 
 		try {
+			await waitForClerk();
 			// Find the reset_password_email_code factor to get the email_address_id
 			const resetFactor = signInAttempt.supportedFirstFactors?.find(
 				// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -269,6 +261,9 @@
 				<div class="flex flex-col items-center space-y-4">
 					<div class="h-8 w-8 animate-spin rounded-full border-t-2 border-b-2 border-indigo-500"></div>
 					<p class="text-sm text-gray-400">Loading...</p>
+					{#if clerkError}
+						<p class="text-sm text-red-400">{clerkError}</p>
+					{/if}
 				</div>
 			{:else if step === 'email'}
 				<!-- Step 1: Email input -->

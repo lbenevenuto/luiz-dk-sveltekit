@@ -6,6 +6,7 @@
 	import FormInput from '$lib/components/FormInput.svelte';
 	import SubmitButton from '$lib/components/SubmitButton.svelte';
 	import SocialLoginButtons from '$lib/components/SocialLoginButtons.svelte';
+	import { waitForClerk } from '$lib/client/clerk';
 
 	type Step = 'form' | 'verify';
 
@@ -16,6 +17,7 @@
 	let verificationCode = $state('');
 	let loading = $state(false);
 	let clerkLoaded = $state(false);
+	let clerkError = $state('');
 	let error = $state('');
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	let signUpAttempt = $state<any>(null);
@@ -29,29 +31,26 @@
 	};
 
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	function getErrorMessage(clerkError: any): string {
-		const errorCode = clerkError?.errors?.[0]?.code;
-		const errorMessage = clerkError?.errors?.[0]?.message;
+	function getErrorMessage(clerkErr: any): string {
+		const errorCode = clerkErr?.errors?.[0]?.code;
+		const errorMessage = clerkErr?.errors?.[0]?.message;
 		return errorMessages[errorCode] || errorMessage || 'An error occurred. Please try again.';
 	}
 
 	onMount(async () => {
 		if (browser) {
-			// Wait for Clerk to load
-			const checkClerk = setInterval(() => {
-				if (window.Clerk) {
-					clearInterval(checkClerk);
-					clerkLoaded = true;
+			try {
+				const clerk = await waitForClerk();
+				clerkLoaded = true;
+				clerkError = '';
 
-					// Redirect if already logged in
-					if (window.Clerk.user) {
-						goto(resolve('/'));
-					}
+				if (clerk.user) {
+					goto(resolve('/'));
 				}
-			}, 100);
-
-			// Timeout after 10 seconds
-			setTimeout(() => clearInterval(checkClerk), 10000);
+			} catch (err) {
+				console.error('Clerk failed to load:', err);
+				clerkError = 'Authentication service is not ready. Please refresh the page.';
+			}
 		}
 	});
 
@@ -83,21 +82,17 @@
 			return;
 		}
 
-		if (!window.Clerk) {
-			error = 'Authentication service is not ready. Please refresh the page.';
-			return;
-		}
-
 		loading = true;
 
 		try {
+			const clerk = await waitForClerk();
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			const params: any = {
 				emailAddress: email,
 				password
 			};
 
-			const result = await window.Clerk.client.signUp.create(params);
+			const result = await clerk.client.signUp.create(params);
 
 			signUpAttempt = result;
 
@@ -142,7 +137,8 @@
 			});
 
 			if (result.status === 'complete') {
-				await window.Clerk?.setActive({ session: result.createdSessionId });
+				const clerk = await waitForClerk();
+				await clerk.setActive({ session: result.createdSessionId });
 				goto(resolve('/'));
 			} else {
 				error = 'Verification failed. Please try again.';
@@ -163,6 +159,7 @@
 		error = '';
 
 		try {
+			await waitForClerk();
 			await signUpAttempt.prepareEmailAddressVerification({ strategy: 'email_code' });
 			error = '';
 			// Show success message temporarily
@@ -210,6 +207,9 @@
 				<div class="flex flex-col items-center space-y-4">
 					<div class="h-8 w-8 animate-spin rounded-full border-t-2 border-b-2 border-indigo-500"></div>
 					<p class="text-sm text-gray-400">Loading authentication...</p>
+					{#if clerkError}
+						<p class="text-sm text-red-400">{clerkError}</p>
+					{/if}
 				</div>
 			{:else if step === 'form'}
 				<form onsubmit={handleSignUp} class="space-y-6">

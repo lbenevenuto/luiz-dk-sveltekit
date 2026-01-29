@@ -1,35 +1,35 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
+	import { waitForClerk } from '$lib/client/clerk';
+	import { normalizeRedirectPath } from '$lib/client/redirect';
 
 	interface Props {
 		loading?: boolean;
+		redirectTo?: string;
 	}
 
-	let { loading = false }: Props = $props();
+	let { loading = false, redirectTo = '/' }: Props = $props();
 
 	async function signInWith(strategy: 'oauth_google' | 'oauth_github') {
-		if (!browser || !window.Clerk) return;
+		if (!browser) return;
 
 		try {
-			console.log('Starting OAuth flow for:', strategy);
+			const clerk = await waitForClerk();
+			const safeRedirect = normalizeRedirectPath(redirectTo);
+			const callbackUrl = `${window.location.origin}/sso-callback?redirect_url=${encodeURIComponent(safeRedirect)}`;
 
 			// Use snake_case redirect_url as required by Clerk API
-			const signUp = await window.Clerk.client.signUp.create({
+			const signUp = await clerk.client.signUp.create({
 				strategy,
-				redirect_url: `${window.location.origin}/sso-callback`
+				redirect_url: callbackUrl
 			});
-
-			console.log('SignUp response:', signUp);
 
 			// Get the external OAuth redirect URL
 			const externalAccount = signUp.verifications?.externalAccount;
 			const redirectUrl = externalAccount?.externalVerificationRedirectURL;
 
 			if (redirectUrl) {
-				console.log('Manually redirecting to OAuth provider:', redirectUrl);
 				window.location.href = redirectUrl.toString();
-			} else {
-				console.error('No OAuth redirect URL found in signUp response');
 			}
 		} catch (err) {
 			console.error('OAuth error:', err);
@@ -37,18 +37,17 @@
 
 			// Try signIn for existing users
 			if (errorCode === 'external_account_exists' || errorCode === 'identifier_already_signed_up') {
-				console.log('User exists, trying signIn...');
 				try {
-					const signIn = await window.Clerk.client.signIn.create({
+					const clerk = await waitForClerk();
+					const safeRedirect = normalizeRedirectPath(redirectTo);
+					const callbackUrl = `${window.location.origin}/sso-callback?redirect_url=${encodeURIComponent(safeRedirect)}`;
+					const signIn = await clerk.client.signIn.create({
 						strategy,
-						redirect_url: `${window.location.origin}/sso-callback`
+						redirect_url: callbackUrl
 					});
-
-					console.log('SignIn response:', signIn);
 
 					const redirectUrl = signIn.firstFactorVerification?.externalVerificationRedirectURL;
 					if (redirectUrl) {
-						console.log('Redirecting existing user to:', redirectUrl);
 						window.location.href = redirectUrl.toString();
 					}
 				} catch (signInErr) {

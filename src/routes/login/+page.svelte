@@ -7,6 +7,8 @@
 	import FormInput from '$lib/components/FormInput.svelte';
 	import SubmitButton from '$lib/components/SubmitButton.svelte';
 	import SocialLoginButtons from '$lib/components/SocialLoginButtons.svelte';
+	import { waitForClerk } from '$lib/client/clerk';
+	import { normalizeRedirectPath } from '$lib/client/redirect';
 
 	type Step = 'credentials' | 'second-factor';
 
@@ -16,6 +18,7 @@
 	let secondFactorCode = $state('');
 	let loading = $state(false);
 	let clerkLoaded = $state(false);
+	let clerkError = $state('');
 	let error = $state('');
 	let redirectUrl = $state('/');
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -35,32 +38,32 @@
 	};
 
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	function getErrorMessage(clerkError: any): string {
-		const errorCode = clerkError?.errors?.[0]?.code;
-		const errorMessage = clerkError?.errors?.[0]?.message;
+	function getErrorMessage(clerkErr: any): string {
+		const errorCode = clerkErr?.errors?.[0]?.code;
+		const errorMessage = clerkErr?.errors?.[0]?.message;
 		return errorMessages[errorCode] || errorMessage || 'An error occurred. Please try again.';
+	}
+
+	function goToRedirect(path: string) {
+		return goto(resolve(path as any) as unknown as Parameters<typeof goto>[0]);
 	}
 
 	onMount(async () => {
 		if (browser) {
-			redirectUrl = page.url.searchParams.get('redirect_url') || '/';
+			redirectUrl = normalizeRedirectPath(page.url.searchParams.get('redirect_url'));
 
-			// Wait for Clerk to load
-			const checkClerk = setInterval(() => {
-				if (window.Clerk) {
-					clearInterval(checkClerk);
-					clerkLoaded = true;
+			try {
+				const clerk = await waitForClerk();
+				clerkLoaded = true;
+				clerkError = '';
 
-					// Redirect if already logged in
-					if (window.Clerk.user) {
-						// eslint-disable-next-line @typescript-eslint/no-explicit-any
-						goto(resolve(redirectUrl as any));
-					}
+				if (clerk.user) {
+					goToRedirect(redirectUrl);
 				}
-			}, 100);
-
-			// Timeout after 10 seconds
-			setTimeout(() => clearInterval(checkClerk), 10000);
+			} catch (err) {
+				console.error('Clerk failed to load:', err);
+				clerkError = 'Authentication service is not ready. Please refresh the page.';
+			}
 		}
 	});
 
@@ -86,20 +89,14 @@
 			return;
 		}
 
-		if (!window.Clerk) {
-			error = 'Authentication service is not ready. Please refresh the page.';
-			return;
-		}
-
 		loading = true;
 
 		try {
+			const clerk = await waitForClerk();
 			// Step 1: Create sign-in attempt with identifier
-			const signIn = await window.Clerk.client.signIn.create({
+			const signIn = await clerk.client.signIn.create({
 				identifier: email
 			});
-
-			console.log('SignIn created:', signIn.status, signIn);
 
 			// Step 2: Attempt first factor (password)
 			const result = await signIn.attemptFirstFactor({
@@ -107,20 +104,16 @@
 				password
 			});
 
-			console.log('First factor result:', result.status, result);
-
 			if (result.status === 'complete') {
 				// No 2FA - sign in complete
-				await window.Clerk.setActive({ session: result.createdSessionId });
-				// eslint-disable-next-line @typescript-eslint/no-explicit-any
-				goto(resolve(redirectUrl as any));
+				await clerk.setActive({ session: result.createdSessionId });
+				goToRedirect(redirectUrl);
 			} else if (result.status === 'needs_second_factor') {
 				// 2FA required - show second factor UI
 				signInAttempt = result;
 
 				// Determine which second factor to use
 				const supportedSecondFactors = result.supportedSecondFactors || [];
-				console.log('Supported second factors:', supportedSecondFactors);
 
 				// Prefer email_code over phone_code over totp
 				// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -154,7 +147,6 @@
 
 				step = 'second-factor';
 			} else {
-				console.log('Sign in incomplete, status:', result.status);
 				error = 'Sign in failed. Please try again.';
 			}
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -176,7 +168,7 @@
 			return;
 		}
 
-		if (!window.Clerk || !signInAttempt) {
+		if (!signInAttempt) {
 			error = 'Authentication service error. Please refresh.';
 			return;
 		}
@@ -189,17 +181,15 @@
 		loading = true;
 
 		try {
+			const clerk = await waitForClerk();
 			const result = await signInAttempt.attemptSecondFactor({
 				strategy: secondFactorStrategy,
 				code: secondFactorCode
 			});
 
-			console.log('Second factor result:', result.status, result);
-
 			if (result.status === 'complete') {
-				await window.Clerk.setActive({ session: result.createdSessionId });
-				// eslint-disable-next-line @typescript-eslint/no-explicit-any
-				goto(resolve(redirectUrl as any));
+				await clerk.setActive({ session: result.createdSessionId });
+				goToRedirect(redirectUrl);
 			} else {
 				error = 'Verification failed. Please try again.';
 			}
@@ -272,6 +262,9 @@
 				<div class="flex flex-col items-center space-y-4">
 					<div class="h-8 w-8 animate-spin rounded-full border-t-2 border-b-2 border-indigo-500"></div>
 					<p class="text-sm text-gray-400">Loading authentication...</p>
+					{#if clerkError}
+						<p class="text-sm text-red-400">{clerkError}</p>
+					{/if}
 				</div>
 			{:else if step === 'credentials'}
 				<form onsubmit={handleCredentialsSubmit} class="space-y-6">
@@ -305,7 +298,7 @@
 
 					<SubmitButton {loading} text="Sign In" loadingText="Signing in..." />
 
-					<SocialLoginButtons {loading} />
+					<SocialLoginButtons {loading} redirectTo={redirectUrl} />
 
 					<div class="text-center">
 						<a href={resolve('/forgot-password')} class="text-sm text-indigo-400 hover:text-indigo-300">
