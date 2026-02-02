@@ -31,14 +31,14 @@ jobs:
       - name: Typecheck
         run: bun run check
         env:
-          PUBLIC_SENTRY_DSN: "https://examplePublicKey@o0.ingest.sentry.io/0"
-          SALT: "dummy-salt"
-          BASE_URL: "http://localhost:5173"
+          PUBLIC_SENTRY_DSN: 'https://examplePublicKey@o0.ingest.sentry.io/0'
+          SALT: 'dummy-salt'
+          BASE_URL: 'http://localhost:5173'
       - name: Test
         run: bun run test
       - name: Build
         run: bun run build
         env:
-          PUBLIC_SENTRY_DSN: "https://examplePublicKey@o0.ingest.sentry.io/0"
-          SALT: "dummy-salt"
-          BASE_URL: "http://localhost:5173"
+          PUBLIC_SENTRY_DSN: 'https://examplePublicKey@o0.ingest.sentry.io/0'
+          SALT: 'dummy-salt'
+          BASE_URL: 'http://localhost:5173'
