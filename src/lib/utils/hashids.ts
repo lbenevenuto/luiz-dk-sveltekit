@@ -1,15 +1,29 @@
 /**
  * Hashids
  * Generates short codes like "1X9kP" from sequential IDs
+ *
+ * Uses a cache to avoid recreating Hashids instances on every call,
+ * since construction involves alphabet shuffling.
  */
 
 import Hashids from 'hashids';
 
+const ALPHABET = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+
+/** Cache of Hashids instances keyed by `${salt}:${minLength}` */
+const instanceCache = new Map<string, Hashids>();
+
 /**
- * Create Hashids instance with custom configuration
+ * Create or retrieve a cached Hashids instance with custom configuration
  */
 export function createHashids(salt: string, minLength: number = 5): Hashids {
-	return new Hashids(salt, minLength, 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789');
+	const cacheKey = `${salt}:${minLength}`;
+	let instance = instanceCache.get(cacheKey);
+	if (!instance) {
+		instance = new Hashids(salt, minLength, ALPHABET);
+		instanceCache.set(cacheKey, instance);
+	}
+	return instance;
 }
 
 /**
