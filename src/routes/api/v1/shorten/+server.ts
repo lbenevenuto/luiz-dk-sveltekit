@@ -3,6 +3,7 @@ import type { RequestHandler } from './$types';
 import { createShortUrl, normalizeUrl } from '$lib/utils';
 import { checkAnonymousRateLimit } from '$lib/server/rate-limit';
 import { logger } from '$lib/server/logger';
+import { isValidHttpUrl } from '$lib/utils/validation';
 import { z } from 'zod/v4';
 
 const shortenRequestSchema = z.object({
@@ -30,14 +31,9 @@ export const POST: RequestHandler = async ({ platform, request, locals }) => {
 	const expiresAt = expiresIn ? Math.floor(Date.now() / 1000) + expiresIn : null;
 	const baseUrl = platform?.env?.BASE_URL || new URL(request.url).origin;
 
-	// Protocol validation (Zod's url() allows any valid URL scheme)
-	try {
-		const parsedUrl = new URL(originalUrl);
-		if (!['http:', 'https:'].includes(parsedUrl.protocol)) {
-			return json({ error: 'Only http/https URLs are allowed' }, { status: 400 });
-		}
-	} catch {
-		return json({ error: 'Invalid URL' }, { status: 400 });
+	// Protocol validation using utility function
+	if (!isValidHttpUrl(originalUrl)) {
+		return json({ error: 'Only http/https URLs are allowed' }, { status: 400 });
 	}
 
 	// Check rate limit for anonymous users
