@@ -189,7 +189,9 @@ export const load: PageServerLoad = async ({ platform, url }) => {
 					id: filterUser.id,
 					firstName: filterUser.firstName,
 					lastName: filterUser.lastName,
-					emailAddresses: filterUser.emailAddresses
+					emailAddresses: filterUser.emailAddresses.map((email) => ({
+						emailAddress: email.emailAddress
+					}))
 				}
 			: null
 	};
