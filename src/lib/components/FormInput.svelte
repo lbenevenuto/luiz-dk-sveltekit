@@ -34,7 +34,7 @@
 	</label>
 	<!-- eslint-disable @typescript-eslint/no-explicit-any -->
 	<input
-		{id}
+		id={inputId}
 		{type}
 		bind:value
 		{placeholder}

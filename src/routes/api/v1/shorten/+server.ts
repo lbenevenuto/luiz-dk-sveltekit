@@ -3,6 +3,7 @@ import type { RequestHandler } from './$types';
 import { createShortUrl, normalizeUrl, ShortCodeConflictError } from '$lib/utils';
 import { checkAnonymousRateLimit } from '$lib/server/rate-limit';
 import { logger } from '$lib/server/logger';
+import { isValidHttpUrl } from '$lib/utils/validation';
 import { z } from 'zod/v4';
 
 const CUSTOM_CODE_REGEX = /^[a-zA-Z0-9_-]+$/;
@@ -38,14 +39,13 @@ export const POST: RequestHandler = async ({ platform, request, locals }) => {
 		return json({ error: 'Authentication required for custom short codes' }, { status: 401 });
 	}
 
-	// Protocol validation (Zod's url() allows any valid URL scheme)
-	try {
-		const parsedUrl = new URL(originalUrl);
-		if (!['http:', 'https:'].includes(parsedUrl.protocol)) {
-			return json({ error: 'Only http/https URLs are allowed' }, { status: 400 });
-		}
-	} catch {
-		return json({ error: 'Invalid URL' }, { status: 400 });
+	// Custom codes require authentication
+	if (customCode && !auth.userId) {
+		return json({ error: 'Authentication required for custom short codes' }, { status: 401 });
+	}
+
+	if (!isValidHttpUrl(originalUrl)) {
+		return json({ error: 'Only http/https URLs are allowed' }, { status: 400 });
 	}
 
 	// Check rate limit for anonymous users
