@@ -142,6 +142,9 @@
 									{link.label}
 								</a>
 							{/each}
+							{#if user}
+								<a href={resolve('/dashboard')} class={linkClasses('/dashboard')}> Dashboard </a>
+							{/if}
 							{#if user && user.publicMetadata?.role === 'admin'}
 								<a
 									href={resolve('/admin/analytics')}
@@ -237,6 +240,11 @@
 							{link.label}
 						</a>
 					{/each}
+					{#if user}
+						<a href={resolve('/dashboard')} class={linkClasses('/dashboard', true)} onclick={toggleMobileMenu}>
+							Dashboard
+						</a>
+					{/if}
 					{#if user && user.publicMetadata?.role === 'admin'}
 						<a
 							href={resolve('/admin/analytics')}

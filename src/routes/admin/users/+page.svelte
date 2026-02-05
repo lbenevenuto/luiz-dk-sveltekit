@@ -84,6 +84,12 @@
 											</button>
 										</form>
 									{/if}
+									<a
+										href="/admin/analytics?userId={user.id}"
+										class="text-blue-400 transition-colors hover:text-blue-300"
+									>
+										View Stats
+									</a>
 								</div>
 							</td>
 						</tr>
