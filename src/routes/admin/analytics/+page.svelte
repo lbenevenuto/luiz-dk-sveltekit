@@ -6,7 +6,7 @@
 </script>
 
 <div class="container mx-auto max-w-7xl px-4 py-8">
-	<div class="mb-8 items-center justify-between">
+	<div class="mb-8 flex items-center justify-between">
 		<div>
 			<h1 class="text-3xl font-bold text-gray-900 dark:text-white">Analytics Dashboard</h1>
 			{#if data.filterUser}
