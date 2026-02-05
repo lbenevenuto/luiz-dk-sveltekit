@@ -3,7 +3,7 @@
 	import SEO from '$lib/components/SEO.svelte';
 
 	let url = '';
-
+	let customCode = '';
 	let expiresIn = '';
 	let result: {
 		shortUrl: string;
@@ -29,12 +29,17 @@
 			const body: {
 				url: string;
 				expiresIn?: number;
+				customCode?: string;
 			} = {
 				url
 			};
 
 			if (expiresIn) {
 				body.expiresIn = parseInt(expiresIn) * 3600;
+			}
+
+			if (customCode.trim()) {
+				body.customCode = customCode.trim();
 			}
 
 			// Get Clerk session token if user is logged in
@@ -72,7 +77,7 @@
 			if (response.ok) {
 				result = data;
 				url = '';
-
+				customCode = '';
 				expiresIn = '';
 			} else {
 				error = data?.error || 'Failed to create short URL';
@@ -115,6 +120,25 @@
 					required
 					class="w-full rounded-lg border-2 border-slate-200 bg-transparent px-4 py-3 text-slate-900 transition-all placeholder:text-slate-400 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 focus:outline-none dark:border-slate-700 dark:text-white"
 				/>
+			</div>
+
+			<div class="flex flex-col space-y-2">
+				<label for="customCode" class="font-medium text-slate-700 dark:text-slate-200">
+					Custom short code (optional)
+				</label>
+				<input
+					id="customCode"
+					type="text"
+					bind:value={customCode}
+					placeholder="my-link"
+					minlength={3}
+					maxlength={50}
+					pattern="^[a-zA-Z0-9_-]+$"
+					class="w-full rounded-lg border-2 border-slate-200 bg-transparent px-4 py-3 text-slate-900 transition-all placeholder:text-slate-400 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 focus:outline-none dark:border-slate-700 dark:text-white"
+				/>
+				<p class="text-xs text-slate-400 dark:text-slate-500">
+					Letters, numbers, hyphens, underscores. 3-50 characters. Requires sign-in.
+				</p>
 			</div>
 
 			<div class="flex flex-col space-y-2">

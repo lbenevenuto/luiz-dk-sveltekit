@@ -15,7 +15,7 @@ vi.mock('$lib/server/rate-limit', () => ({
 	checkAnonymousRateLimit: vi.fn()
 }));
 
-import { createShortUrl } from '$lib/utils';
+import { createShortUrl, ShortCodeConflictError } from '$lib/utils';
 import { checkAnonymousRateLimit } from '$lib/server/rate-limit';
 
 describe('POST /api/v1/shorten', () => {
@@ -91,7 +91,7 @@ describe('POST /api/v1/shorten', () => {
 			anonymous: true
 		});
 		expect(checkAnonymousRateLimit).toHaveBeenCalled();
-		expect(createShortUrl).toHaveBeenCalledWith('https://example.com', null, mockPlatform, null);
+		expect(createShortUrl).toHaveBeenCalledWith('https://example.com', null, mockPlatform, null, null);
 	});
 
 	it('should create short URL for authenticated user without rate limit check', async () => {
@@ -105,7 +105,7 @@ describe('POST /api/v1/shorten', () => {
 
 		expect(response.status).toBe(200);
 		expect(checkAnonymousRateLimit).not.toHaveBeenCalled();
-		expect(createShortUrl).toHaveBeenCalledWith('https://example.com', null, mockPlatform, 'user_123');
+		expect(createShortUrl).toHaveBeenCalledWith('https://example.com', null, mockPlatform, 'user_123', null);
 		expect(json).toMatchObject({
 			shortUrl: 'https://luiz.dk/s/xyz',
 			anonymous: false,
@@ -147,7 +147,7 @@ describe('POST /api/v1/shorten', () => {
 		const response = await POST(eventWithExpiry as any);
 		const json = (await response.json()) as { expiresAt?: string; shortCode?: string; anonymous?: boolean };
 
-		expect(createShortUrl).toHaveBeenCalledWith('https://example.com', expectedExpiresAt, mockPlatform, null);
+		expect(createShortUrl).toHaveBeenCalledWith('https://example.com', expectedExpiresAt, mockPlatform, null, null);
 		expect(json.expiresAt).toBe(new Date(expectedExpiresAt * 1000).toISOString());
 		expect(json).toMatchObject({
 			shortCode: 'exp',
@@ -206,6 +206,136 @@ describe('POST /api/v1/shorten', () => {
 
 		expect(response.status).toBe(400);
 		expect(json).toEqual({ error: 'Only http/https URLs are allowed' });
+		expect(createShortUrl).not.toHaveBeenCalled();
+	});
+
+	it('should reject custom code from anonymous user', async () => {
+		const event: Partial<RequestEvent> = {
+			platform: mockPlatform,
+			locals: mockLocals,
+			request: new Request('http://localhost/api/v1/shorten', {
+				method: 'POST',
+				body: JSON.stringify({ url: 'https://example.com', customCode: 'my-link' }),
+				headers: {
+					'CF-Connecting-IP': '127.0.0.1'
+				}
+			})
+		};
+
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		const response = await POST(event as any);
+		const json = await response.json();
+
+		expect(response.status).toBe(401);
+		expect(json).toEqual({ error: 'Authentication required for custom short codes' });
+		expect(createShortUrl).not.toHaveBeenCalled();
+	});
+
+	it('should create short URL with custom code for authenticated user', async () => {
+		mockLocals.auth.userId = 'user_123';
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		(createShortUrl as any).mockResolvedValue({
+			shortCode: 'my-link',
+			originalUrl: 'https://example.com',
+			isExisting: false,
+			expiresAt: null
+		});
+
+		const event: Partial<RequestEvent> = {
+			platform: mockPlatform,
+			locals: mockLocals,
+			request: new Request('http://localhost/api/v1/shorten', {
+				method: 'POST',
+				body: JSON.stringify({ url: 'https://example.com', customCode: 'my-link' }),
+				headers: {
+					'CF-Connecting-IP': '127.0.0.1'
+				}
+			})
+		};
+
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		const response = await POST(event as any);
+		const json = await response.json();
+
+		expect(response.status).toBe(200);
+		expect(json).toMatchObject({
+			shortUrl: 'https://luiz.dk/s/my-link',
+			shortCode: 'my-link',
+			anonymous: false
+		});
+		expect(createShortUrl).toHaveBeenCalledWith('https://example.com', null, mockPlatform, 'user_123', 'my-link');
+	});
+
+	it('should return 409 when custom code is already taken', async () => {
+		mockLocals.auth.userId = 'user_123';
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		(createShortUrl as any).mockRejectedValue(new ShortCodeConflictError('my-link'));
+
+		const event: Partial<RequestEvent> = {
+			platform: mockPlatform,
+			locals: mockLocals,
+			request: new Request('http://localhost/api/v1/shorten', {
+				method: 'POST',
+				body: JSON.stringify({ url: 'https://example.com', customCode: 'my-link' }),
+				headers: {
+					'CF-Connecting-IP': '127.0.0.1'
+				}
+			})
+		};
+
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		const response = await POST(event as any);
+		const json = await response.json();
+
+		expect(response.status).toBe(409);
+		expect(json).toEqual({ error: 'Custom code "my-link" is already taken' });
+	});
+
+	it('should reject custom codes that are too short', async () => {
+		mockLocals.auth.userId = 'user_123';
+
+		const event: Partial<RequestEvent> = {
+			platform: mockPlatform,
+			locals: mockLocals,
+			request: new Request('http://localhost/api/v1/shorten', {
+				method: 'POST',
+				body: JSON.stringify({ url: 'https://example.com', customCode: 'ab' }),
+				headers: {
+					'CF-Connecting-IP': '127.0.0.1'
+				}
+			})
+		};
+
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		const response = await POST(event as any);
+		const json = (await response.json()) as { error: string };
+
+		expect(response.status).toBe(400);
+		expect(json.error).toBe('Validation failed');
+		expect(createShortUrl).not.toHaveBeenCalled();
+	});
+
+	it('should reject custom codes with invalid characters', async () => {
+		mockLocals.auth.userId = 'user_123';
+
+		const event: Partial<RequestEvent> = {
+			platform: mockPlatform,
+			locals: mockLocals,
+			request: new Request('http://localhost/api/v1/shorten', {
+				method: 'POST',
+				body: JSON.stringify({ url: 'https://example.com', customCode: 'my link!' }),
+				headers: {
+					'CF-Connecting-IP': '127.0.0.1'
+				}
+			})
+		};
+
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		const response = await POST(event as any);
+		const json = (await response.json()) as { error: string };
+
+		expect(response.status).toBe(400);
+		expect(json.error).toBe('Validation failed');
 		expect(createShortUrl).not.toHaveBeenCalled();
 	});
 });

@@ -1,13 +1,16 @@
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
-import { createShortUrl, normalizeUrl } from '$lib/utils';
+import { createShortUrl, normalizeUrl, ShortCodeConflictError } from '$lib/utils';
 import { checkAnonymousRateLimit } from '$lib/server/rate-limit';
 import { logger } from '$lib/server/logger';
 import { z } from 'zod/v4';
 
+const CUSTOM_CODE_REGEX = /^[a-zA-Z0-9_-]+$/;
+
 const shortenRequestSchema = z.object({
 	url: z.url(),
-	expiresIn: z.number().positive().max(31536000).optional() // max 1 year in seconds
+	expiresIn: z.number().positive().max(31536000).optional(), // max 1 year in seconds
+	customCode: z.string().min(3).max(50).regex(CUSTOM_CODE_REGEX).optional()
 });
 
 export const POST: RequestHandler = async ({ platform, request, locals }) => {
@@ -25,10 +28,15 @@ export const POST: RequestHandler = async ({ platform, request, locals }) => {
 		return json({ error: 'Validation failed', details: z.prettifyError(parsed.error) }, { status: 400 });
 	}
 
-	const { url: originalUrl, expiresIn } = parsed.data;
+	const { url: originalUrl, expiresIn, customCode } = parsed.data;
 	const { auth } = locals;
 	const expiresAt = expiresIn ? Math.floor(Date.now() / 1000) + expiresIn : null;
 	const baseUrl = platform?.env?.BASE_URL || new URL(request.url).origin;
+
+	// Custom codes require authentication
+	if (customCode && !auth.userId) {
+		return json({ error: 'Authentication required for custom short codes' }, { status: 401 });
+	}
 
 	// Protocol validation (Zod's url() allows any valid URL scheme)
 	try {
@@ -61,7 +69,15 @@ export const POST: RequestHandler = async ({ platform, request, locals }) => {
 	const normalizedUrl = normalizeUrl(originalUrl);
 
 	// Create short URL with user ID
-	const shortCode = await createShortUrl(normalizedUrl, expiresAt, platform, auth.userId);
+	let shortCode;
+	try {
+		shortCode = await createShortUrl(normalizedUrl, expiresAt, platform, auth.userId, customCode ?? null);
+	} catch (err) {
+		if (err instanceof ShortCodeConflictError) {
+			return json({ error: `Custom code "${customCode}" is already taken` }, { status: 409 });
+		}
+		throw err;
+	}
 
 	logger.info('shorten.created', {
 		shortCode: shortCode.shortCode,

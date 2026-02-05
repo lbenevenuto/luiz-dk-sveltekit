@@ -26,6 +26,16 @@ export function normalizeUrl(input: string): string {
 	return `${base}${u.pathname}${u.search}`;
 }
 
+export class ShortCodeConflictError extends Error {
+	public readonly shortCode: string;
+
+	constructor(shortCode: string) {
+		super(`Short code "${shortCode}" is already taken`);
+		this.name = 'ShortCodeConflictError';
+		this.shortCode = shortCode;
+	}
+}
+
 async function purgeExpiredUrls(db: Awaited<ReturnType<typeof getDatabaseAdapter>>) {
 	const now = new Date();
 	await db.delete(urls).where(and(isNotNull(urls.expiresAt), lt(urls.expiresAt, now)));
@@ -35,9 +45,36 @@ export const createShortUrl = async (
 	url: string,
 	expiresAt: number | null,
 	platform: Readonly<App.Platform> | undefined,
-	userId: string | null = null
+	userId: string | null = null,
+	customCode: string | null = null
 ): Promise<CreateShortUrlResult> => {
 	const normalizedUrl = normalizeUrl(url);
+	const db = await getDatabaseAdapter(platform);
+	await purgeExpiredUrls(db);
+
+	const expiresAtDate = expiresAt ? new Date(expiresAt * 1000) : null;
+
+	// Custom code path: skip deduplication, check uniqueness, insert directly
+	if (customCode) {
+		const existing = await db.query.urls.findFirst({
+			where: eq(urls.shortCode, customCode)
+		});
+
+		if (existing) {
+			throw new ShortCodeConflictError(customCode);
+		}
+
+		await db.insert(urls).values({
+			shortCode: customCode,
+			originalUrl: normalizedUrl,
+			userId,
+			expiresAt: expiresAtDate
+		});
+
+		return { shortCode: customCode, isExisting: false, expiresAt: expiresAt ?? null };
+	}
+
+	// Auto-generated code path
 	const cacheKey = expiresAt ? `url:${normalizedUrl}:exp:${expiresAt}` : `url:${normalizedUrl}:permanent`;
 	const hashSalt = platform?.env?.SALT || 'abd';
 
@@ -51,8 +88,6 @@ export const createShortUrl = async (
 		}
 	}
 
-	const db = await getDatabaseAdapter(platform);
-	await purgeExpiredUrls(db);
 	const wantsExpiry = Boolean(expiresAt);
 
 	// Step 2: Cache miss - check database for a matching entry (expiring vs non-expiring)
@@ -88,8 +123,6 @@ export const createShortUrl = async (
 		}
 		// Expired entries fall through to generate a new short code
 	}
-
-	const expiresAtDate = expiresAt ? new Date(expiresAt * 1000) : null;
 
 	// Step 3: Not found - generate new
 	const idGeneratorAdapter = getIdGeneratorAdapter(platform);
