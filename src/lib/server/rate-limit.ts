@@ -1,3 +1,5 @@
+import { sanitizeIdentifier } from '$lib/utils/validation';
+
 interface RateLimitResult {
 	success: boolean;
 	remaining?: number;
@@ -25,7 +27,9 @@ export async function checkAnonymousRateLimit(
 	const windowSeconds = parseInt(platform.env.RATE_LIMIT_WINDOW_SECONDS || '3600');
 
 	try {
-		const key = `ratelimit:anon:${identifier}`;
+		// Normalize identifier to prevent cache key injection
+		const normalizedId = sanitizeIdentifier(identifier);
+		const key = `ratelimit:anon:${normalizedId}`;
 		const now = Date.now();
 		const windowStart = now - windowSeconds * 1000;
 
