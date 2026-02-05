@@ -188,7 +188,8 @@ export const load: PageServerLoad = async ({ platform, url }) => {
 			? {
 					id: filterUser.id,
 					firstName: filterUser.firstName,
-					lastName: filterUser.lastName
+					lastName: filterUser.lastName,
+					emailAddresses: filterUser.emailAddresses
 				}
 			: null
 	};

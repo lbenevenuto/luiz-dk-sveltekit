@@ -44,8 +44,13 @@
 						<tr class="hover:bg-gray-750 transition-colors">
 							<td class="px-6 py-4 whitespace-nowrap">
 								<div class="text-sm text-white">
-									{user.firstName || ''}
-									{user.lastName || ''}
+									{#if user.firstName || user.lastName}
+										{user.firstName || ''} {user.lastName || ''}
+									{:else}
+										<span class="text-gray-400 italic">
+											{user.email || 'No Name'}
+										</span>
+									{/if}
 								</div>
 							</td>
 							<td class="px-6 py-4 whitespace-nowrap">

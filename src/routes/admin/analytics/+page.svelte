@@ -12,10 +12,12 @@
 			{#if data.filterUser}
 				<div class="mt-2 flex items-center space-x-2">
 					<p class="text-gray-600 dark:text-gray-400">
-						Viewing stats for <span class="font-semibold text-white">
+						{#if data.filterUser.firstName || data.filterUser.lastName}
 							{data.filterUser.firstName}
 							{data.filterUser.lastName}
-						</span>
+						{:else}
+							{data.filterUser.emailAddresses?.[0]?.emailAddress || 'Unknown User'}
+						{/if}
 					</p>
 					<a
 						href="?days={data.days}"
