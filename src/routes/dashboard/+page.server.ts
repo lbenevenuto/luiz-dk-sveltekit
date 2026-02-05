@@ -1,9 +1,9 @@
 import type { PageServerLoad } from './$types';
-import { getClerkClient } from '$lib/server/clerk';
 import { urls } from '$lib/server/db/schemas';
 import { eq } from 'drizzle-orm';
+import { redirect } from '@sveltejs/kit';
 
-async function getAnalytics(platform: App.Platform | undefined, days: number, userShortCodes?: string[]) {
+async function getAnalytics(platform: App.Platform | undefined, days: number, userShortCodes: string[]) {
 	if (!platform?.env.CLOUDFLARE_ACCOUNT_ID || !platform?.env.CLOUDFLARE_API_TOKEN_ANALYTICS) {
 		return {
 			analytics: [],
@@ -16,14 +16,10 @@ async function getAnalytics(platform: App.Platform | undefined, days: number, us
 	const apiToken = platform.env.CLOUDFLARE_API_TOKEN_ANALYTICS;
 
 	let whereClause = `timestamp > NOW() - INTERVAL '${days}' DAY`;
-	if (userShortCodes && userShortCodes.length > 0) {
-		// Filter by the specific short codes belonging to the user
-		// Note: Cloudflare Analytics Engine SQL has limits on query size/complexity.
-		// If a user has thousands of URLs, this might hit limits.
+	if (userShortCodes.length > 0) {
 		const codesList = userShortCodes.map((c) => `'${c}'`).join(',');
 		whereClause += ` AND blob1 IN (${codesList})`;
-	} else if (userShortCodes && userShortCodes.length === 0) {
-		// User has no URLs, return empty result immediately
+	} else {
 		return {
 			analytics: [],
 			charts: undefined
@@ -95,17 +91,12 @@ async function getAnalytics(platform: App.Platform | undefined, days: number, us
 		}
 
 		analytics.forEach((row) => {
-			// Daily Clicks
 			const date = row.timestamp.split('T')[0];
-			if (dailyClicks.has(date)) {
-				dailyClicks.set(date, (dailyClicks.get(date) || 0) + 1);
-			}
+			if (dailyClicks.has(date)) dailyClicks.set(date, (dailyClicks.get(date) || 0) + 1);
 
-			// Country Stats
 			const country = row.country || 'Unknown';
 			countryStats.set(country, (countryStats.get(country) || 0) + 1);
 
-			// Browser Stats
 			const ua = row.userAgent || 'Unknown';
 			let browser = 'Other';
 			if (ua.includes('Chrome')) browser = 'Chrome';
@@ -115,14 +106,11 @@ async function getAnalytics(platform: App.Platform | undefined, days: number, us
 			else if (ua.includes('bot')) browser = 'Bot';
 			browserStats.set(browser, (browserStats.get(browser) || 0) + 1);
 
-			// Referrer Stats
 			let referrer = row.referrer || 'Direct';
 			try {
-				if (referrer !== 'Direct') {
-					referrer = new URL(referrer).hostname;
-				}
+				if (referrer !== 'Direct') referrer = new URL(referrer).hostname;
 			} catch {
-				// Keep original if parsing fails
+				// Ignore invalid URLs
 			}
 			referrerStats.set(referrer, (referrerStats.get(referrer) || 0) + 1);
 		});
@@ -153,46 +141,31 @@ async function getAnalytics(platform: App.Platform | undefined, days: number, us
 	}
 }
 
-export const load: PageServerLoad = async ({ platform, url }) => {
+export const load: PageServerLoad = async ({ platform, url, locals }) => {
+	if (!locals.auth.userId) {
+		throw redirect(302, '/login');
+	}
+
 	const daysParam = url.searchParams.get('days');
 	let days = daysParam ? parseInt(daysParam) : 7;
 	if (isNaN(days) || ![7, 30, 90].includes(days)) {
 		days = 7;
 	}
 
-	const userId = url.searchParams.get('userId');
-	let filterUser = null;
-	let userShortCodes: string[] | undefined = undefined;
-
-	if (userId && platform) {
-		try {
-			const clerkClient = getClerkClient(platform.env);
-			filterUser = await clerkClient.users.getUser(userId);
-
-			// Fetch user's shortcodes
-			const { getDb } = await import('$lib/server/db');
-			const db = await getDb(platform);
-			const userUrls = await db.select().from(urls).where(eq(urls.userId, userId));
-			userShortCodes = userUrls.map((u) => u.shortCode);
-		} catch (error) {
-			console.error('Failed to fetch user or urls for filter:', error);
-		}
+	let userShortCodes: string[] = [];
+	try {
+		const { getDb } = await import('$lib/server/db');
+		const db = await getDb(platform);
+		const userUrls = await db.select().from(urls).where(eq(urls.userId, locals.auth.userId));
+		userShortCodes = userUrls.map((u) => u.shortCode);
+	} catch (error) {
+		console.error('Failed to fetch user urls:', error);
 	}
 
 	return {
 		streamed: {
 			analytics: getAnalytics(platform, days, userShortCodes)
 		},
-		days,
-		filterUser: filterUser
-			? {
-					id: filterUser.id,
-					firstName: filterUser.firstName,
-					lastName: filterUser.lastName,
-					emailAddresses: filterUser.emailAddresses.map((email) => ({
-						emailAddress: email.emailAddress
-					}))
-				}
-			: null
+		days
 	};
 };

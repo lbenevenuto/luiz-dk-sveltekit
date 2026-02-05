@@ -142,9 +142,12 @@
 									{link.label}
 								</a>
 							{/each}
+							{#if user}
+								<a href={resolve('/dashboard')} class={linkClasses('/dashboard')}> Dashboard </a>
+							{/if}
 							{#if user && user.publicMetadata?.role === 'admin'}
 								<a
-									href={resolve('/admin/analytics')}
+									href={resolve('/admin')}
 									class="rounded-md px-3 py-2 text-sm font-medium transition-colors {page.url.pathname.startsWith(
 										'/admin'
 									)
@@ -237,9 +240,14 @@
 							{link.label}
 						</a>
 					{/each}
+					{#if user}
+						<a href={resolve('/dashboard')} class={linkClasses('/dashboard', true)} onclick={toggleMobileMenu}>
+							Dashboard
+						</a>
+					{/if}
 					{#if user && user.publicMetadata?.role === 'admin'}
 						<a
-							href={resolve('/admin/analytics')}
+							href={resolve('/admin')}
 							class="block rounded-md px-3 py-2 text-base font-medium transition-colors {page.url.pathname.startsWith(
 								'/admin'
 							)
