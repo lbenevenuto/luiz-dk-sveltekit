@@ -12,16 +12,18 @@
 			{#if data.filterUser}
 				<div class="mt-2 flex items-center space-x-2">
 					<p class="text-gray-600 dark:text-gray-400">
-						{#if data.filterUser.firstName || data.filterUser.lastName}
-							{data.filterUser.firstName}
-							{data.filterUser.lastName}
-						{:else}
-							{data.filterUser.emailAddresses?.[0]?.emailAddress || 'Unknown User'}
-						{/if}
+						Viewing stats for
+						<span class="font-semibold text-gray-900 dark:text-white">
+							{#if data.filterUser.firstName || data.filterUser.lastName}
+								{data.filterUser.firstName} {data.filterUser.lastName}
+							{:else}
+								{data.filterUser.emailAddresses?.[0]?.emailAddress || 'Unknown User'}
+							{/if}
+						</span>
 					</p>
 					<a
 						href="?days={data.days}"
-						class="rounded-full bg-gray-700 px-2 py-1 text-xs text-gray-300 hover:bg-gray-600 hover:text-white"
+						class="ml-2 inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-800 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
 					>
 						Clear Filter
 					</a>
