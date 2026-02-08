@@ -4,6 +4,7 @@ import { getDb } from '$lib/server/db';
 import { eq } from 'drizzle-orm';
 import { urls } from '$lib/server/db/schemas';
 import { logger } from '$lib/server/logger';
+import { sanitizeUrlForLog } from '$lib/utils/validation';
 
 export const GET: RequestHandler = async ({ platform, params, request }) => {
 	const { shortCode } = params;
@@ -42,7 +43,7 @@ export const GET: RequestHandler = async ({ platform, params, request }) => {
 			logger.error('redirect.analytics_error', { shortCode, error: err instanceof Error ? err.message : String(err) });
 		}
 
-		logger.info('redirect.found', { shortCode, target: res.originalUrl });
+		logger.info('redirect.found', { shortCode, target: sanitizeUrlForLog(res.originalUrl) });
 		throw redirect(302, res.originalUrl);
 	}
 

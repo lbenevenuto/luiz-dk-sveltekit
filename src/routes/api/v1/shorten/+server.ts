@@ -3,7 +3,7 @@ import type { RequestHandler } from './$types';
 import { createShortUrl, normalizeUrl, ShortCodeConflictError } from '$lib/utils';
 import { checkAnonymousRateLimit } from '$lib/server/rate-limit';
 import { logger } from '$lib/server/logger';
-import { isValidHttpUrl } from '$lib/utils/validation';
+import { getClientIdentifierForRateLimit, isValidHttpUrl, sanitizeUrlForLog } from '$lib/utils/validation';
 import { z } from 'zod/v4';
 
 const CUSTOM_CODE_REGEX = /^[a-zA-Z0-9_-]+$/;
@@ -45,7 +45,8 @@ export const POST: RequestHandler = async ({ platform, request, locals }) => {
 
 	// Check rate limit for anonymous users
 	if (!auth.userId) {
-		const ip = request.headers.get('CF-Connecting-IP') || request.headers.get('X-Forwarded-For') || 'unknown';
+		const trustForwardedFor = platform?.env?.TRUST_X_FORWARDED_FOR === 'true';
+		const ip = getClientIdentifierForRateLimit(request.headers, { trustForwardedFor });
 
 		const rateLimitResult = await checkAnonymousRateLimit(ip, platform);
 
@@ -78,7 +79,7 @@ export const POST: RequestHandler = async ({ platform, request, locals }) => {
 		shortCode: shortCode.shortCode,
 		anonymous: !auth.userId,
 		expiresAt: shortCode.expiresAt,
-		url: normalizedUrl
+		url: sanitizeUrlForLog(normalizedUrl)
 	});
 	return json({
 		shortUrl: `${baseUrl}/s/${shortCode.shortCode}`,

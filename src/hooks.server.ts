@@ -6,6 +6,8 @@ import { authHandle } from '$lib/server/auth-handle';
 import { logger } from '$lib/server/logger';
 
 let envValidated = false;
+let sentryInitialized = false;
+
 function validateEnv(env?: App.Platform['env']) {
 	if (envValidated || !env) return;
 
@@ -43,12 +45,79 @@ const myErrorHandler: HandleServerError = ({ error, event }) => {
 
 export const handleError = Sentry.handleErrorWithSentry(myErrorHandler);
 
+function normalizeHost(input?: string): string | undefined {
+	if (!input) return undefined;
+	const trimmed = input.trim();
+	if (!trimmed) return undefined;
+
+	try {
+		const normalized = trimmed.includes('://') ? new URL(trimmed) : new URL(`https://${trimmed}`);
+		return normalized.hostname || undefined;
+	} catch {
+		return undefined;
+	}
+}
+
+export function resolveSentryDsn(env?: App.Platform['env']): string | undefined {
+	return env?.SENTRY_DSN || process.env.SENTRY_DSN || undefined;
+}
+
+function getSentryHostFromDsn(dsn?: string): string | undefined {
+	if (!dsn) return undefined;
+
+	try {
+		return new URL(dsn).hostname;
+	} catch {
+		return undefined;
+	}
+}
+
+export function buildCspDirectives(input: { clerkFrontendApi?: string; sentryDsn?: string }): string[] {
+	const clerkHost = normalizeHost(input.clerkFrontendApi) || '*.clerk.accounts.dev';
+	const sentryHost = getSentryHostFromDsn(input.sentryDsn);
+
+	const clerkSource = `https://${clerkHost}`;
+	const connectSources = ["'self'", clerkSource];
+	if (sentryHost) {
+		connectSources.push(`https://${sentryHost}`);
+	}
+
+	return [
+		"default-src 'self'",
+		`script-src 'self' ${clerkSource} https://challenges.cloudflare.com 'unsafe-inline'`,
+		"style-src 'self' 'unsafe-inline'",
+		"img-src 'self' data: https://img.clerk.com https://*.clerk.com",
+		`connect-src ${connectSources.join(' ')}`,
+		"font-src 'self'",
+		`frame-src ${clerkSource} https://challenges.cloudflare.com`,
+		"object-src 'none'",
+		"base-uri 'self'",
+		"form-action 'self'",
+		"frame-ancestors 'none'"
+	];
+}
+
 export const initialHook: Handle = async ({ event, resolve }) => {
 	if (!envValidated) {
 		validateEnv(event.platform?.env);
 	}
 	return resolve(event);
 };
+
+export const sentryInitHandle: Handle = async ({ event, resolve }) => {
+	if (!sentryInitialized) {
+		const dsn = resolveSentryDsn(event.platform?.env);
+		if (dsn) {
+			Sentry.init({
+				dsn,
+				sendDefaultPii: true
+			});
+		}
+		sentryInitialized = true;
+	}
+	return resolve(event);
+};
+
 export const securityHeadersHandle: Handle = async ({ event, resolve }) => {
 	const response = await resolve(event);
 
@@ -59,29 +128,10 @@ export const securityHeadersHandle: Handle = async ({ event, resolve }) => {
 	response.headers.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
 	response.headers.set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
 
-	// CSP: allow Clerk external script, inline styles (Tailwind), and Sentry
-	const clerkDomain = event.platform?.env?.CLERK_FRONTEND_API || '*.clerk.accounts.dev';
-	const sentryDsn = event.platform?.env?.SENTRY_DSN || '';
-	let sentryHost = '';
-	try {
-		if (sentryDsn) sentryHost = new URL(sentryDsn).hostname;
-	} catch {
-		// ignore invalid DSN
-	}
-
-	const cspDirectives = [
-		"default-src 'self'",
-		`script-src 'self' https://${clerkDomain} https://challenges.cloudflare.com 'unsafe-inline'`,
-		"style-src 'self' 'unsafe-inline'",
-		`img-src 'self' data: https://img.clerk.com https://*.clerk.com`,
-		`connect-src 'self' https://${clerkDomain} https://clerk.${clerkDomain}${sentryHost ? ` https://${sentryHost}` : ''}`,
-		"font-src 'self'",
-		`frame-src https://${clerkDomain} https://challenges.cloudflare.com`,
-		"object-src 'none'",
-		"base-uri 'self'",
-		"form-action 'self'",
-		"frame-ancestors 'none'"
-	];
+	const cspDirectives = buildCspDirectives({
+		clerkFrontendApi: event.platform?.env?.CLERK_FRONTEND_API,
+		sentryDsn: resolveSentryDsn(event.platform?.env)
+	});
 
 	response.headers.set('Content-Security-Policy', cspDirectives.join('; '));
 
@@ -90,10 +140,7 @@ export const securityHeadersHandle: Handle = async ({ event, resolve }) => {
 
 export const handle: Handle = sequence(
 	initialHook,
-	Sentry.initCloudflareSentryHandle({
-		dsn: process.env.SENTRY_DSN,
-		sendDefaultPii: true
-	}),
+	sentryInitHandle,
 	Sentry.sentryHandle(),
 	authHandle,
 	securityHeadersHandle

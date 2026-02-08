@@ -15,8 +15,17 @@ vi.mock('$lib/server/rate-limit', () => ({
 	checkAnonymousRateLimit: vi.fn()
 }));
 
+vi.mock('$lib/server/logger', () => ({
+	logger: {
+		info: vi.fn(),
+		warn: vi.fn(),
+		error: vi.fn()
+	}
+}));
+
 import { createShortUrl, ShortCodeConflictError } from '$lib/utils';
 import { checkAnonymousRateLimit } from '$lib/server/rate-limit';
+import { logger } from '$lib/server/logger';
 
 describe('POST /api/v1/shorten', () => {
 	let mockEvent: Partial<RequestEvent>;
@@ -92,6 +101,10 @@ describe('POST /api/v1/shorten', () => {
 		});
 		expect(checkAnonymousRateLimit).toHaveBeenCalled();
 		expect(createShortUrl).toHaveBeenCalledWith('https://example.com', null, mockPlatform, null, null);
+		expect(logger.info).toHaveBeenCalledWith(
+			'shorten.created',
+			expect.objectContaining({ url: 'https://example.com' })
+		);
 	});
 
 	it('should create short URL for authenticated user without rate limit check', async () => {
@@ -337,5 +350,81 @@ describe('POST /api/v1/shorten', () => {
 		expect(response.status).toBe(400);
 		expect(json.error).toBe('Validation failed');
 		expect(createShortUrl).not.toHaveBeenCalled();
+	});
+
+	it('should sanitize URL in logs by removing query and hash', async () => {
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		(checkAnonymousRateLimit as any).mockResolvedValue({ success: true });
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		(createShortUrl as any).mockResolvedValue({ shortCode: 'abc', originalUrl: 'https://example.com/path' });
+
+		const event: Partial<RequestEvent> = {
+			platform: mockPlatform,
+			locals: mockLocals,
+			request: new Request('http://localhost/api/v1/shorten', {
+				method: 'POST',
+				body: JSON.stringify({ url: 'https://example.com/path/?token=secret#frag' }),
+				headers: {
+					'CF-Connecting-IP': '127.0.0.1'
+				}
+			})
+		};
+
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		const response = await POST(event as any);
+
+		expect(response.status).toBe(200);
+		expect(logger.info).toHaveBeenCalledWith(
+			'shorten.created',
+			expect.objectContaining({ url: 'https://example.com/path' })
+		);
+	});
+
+	it('should trust X-Forwarded-For only when explicitly enabled', async () => {
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		(checkAnonymousRateLimit as any).mockResolvedValue({ success: true });
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		(createShortUrl as any).mockResolvedValue({ shortCode: 'abc', originalUrl: 'https://example.com' });
+
+		const trustedPlatform = {
+			env: {
+				...mockPlatform.env,
+				TRUST_X_FORWARDED_FOR: 'true'
+			}
+		} as App.Platform;
+
+		const trustedEvent: Partial<RequestEvent> = {
+			platform: trustedPlatform,
+			locals: mockLocals,
+			request: new Request('http://localhost/api/v1/shorten', {
+				method: 'POST',
+				body: JSON.stringify({ url: 'https://example.com' }),
+				headers: {
+					'X-Forwarded-For': '203.0.113.7, 198.51.100.2'
+				}
+			})
+		};
+
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		await POST(trustedEvent as any);
+
+		expect(checkAnonymousRateLimit).toHaveBeenCalledWith('203.0.113.7', trustedPlatform);
+
+		const untrustedEvent: Partial<RequestEvent> = {
+			platform: mockPlatform,
+			locals: mockLocals,
+			request: new Request('http://localhost/api/v1/shorten', {
+				method: 'POST',
+				body: JSON.stringify({ url: 'https://example.com' }),
+				headers: {
+					'X-Forwarded-For': '203.0.113.8, 198.51.100.3'
+				}
+			})
+		};
+
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		await POST(untrustedEvent as any);
+
+		expect(checkAnonymousRateLimit).toHaveBeenCalledWith('unknown', mockPlatform);
 	});
 });

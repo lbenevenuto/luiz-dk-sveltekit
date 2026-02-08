@@ -39,6 +39,7 @@ declare global {
 				// Rate limiting
 				RATE_LIMIT_MAX_REQUESTS?: string;
 				RATE_LIMIT_WINDOW_SECONDS?: string;
+				TRUST_X_FORWARDED_FOR?: string;
 
 				// Clerk
 				CLERK_PUBLISHABLE_KEY: string;
