@@ -1,7 +1,7 @@
 import { getCacheAdapter, getDatabaseAdapter, getIdGeneratorAdapter } from '$lib/adapters/factory';
 import { urls } from '$lib/server/db/schemas';
 import { generateShortCode } from './hashids';
-import { and, eq, isNotNull, isNull, lt } from 'drizzle-orm';
+import { and, eq, isNotNull, isNull } from 'drizzle-orm';
 
 interface CreateShortUrlResult {
 	shortCode: string;
@@ -36,11 +36,6 @@ export class ShortCodeConflictError extends Error {
 	}
 }
 
-async function purgeExpiredUrls(db: Awaited<ReturnType<typeof getDatabaseAdapter>>) {
-	const now = new Date();
-	await db.delete(urls).where(and(isNotNull(urls.expiresAt), lt(urls.expiresAt, now)));
-}
-
 export const createShortUrl = async (
 	url: string,
 	expiresAt: number | null,
@@ -50,7 +45,6 @@ export const createShortUrl = async (
 ): Promise<CreateShortUrlResult> => {
 	const normalizedUrl = normalizeUrl(url);
 	const db = await getDatabaseAdapter(platform);
-	await purgeExpiredUrls(db);
 
 	const expiresAtDate = expiresAt ? new Date(expiresAt * 1000) : null;
 

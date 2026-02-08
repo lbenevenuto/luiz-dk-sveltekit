@@ -46,6 +46,7 @@ declare global {
 				CLERK_WEBHOOK_SECRET?: string;
 				CLERK_FRONTEND_API: string;
 				SENTRY_DSN?: string;
+				ENABLE_TEST_ENDPOINT?: string;
 			};
 			ctx: ExecutionContext;
 			caches: CacheStorage;

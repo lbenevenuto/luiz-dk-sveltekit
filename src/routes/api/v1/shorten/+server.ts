@@ -39,11 +39,6 @@ export const POST: RequestHandler = async ({ platform, request, locals }) => {
 		return json({ error: 'Authentication required for custom short codes' }, { status: 401 });
 	}
 
-	// Custom codes require authentication
-	if (customCode && !auth.userId) {
-		return json({ error: 'Authentication required for custom short codes' }, { status: 401 });
-	}
-
 	if (!isValidHttpUrl(originalUrl)) {
 		return json({ error: 'Only http/https URLs are allowed' }, { status: 400 });
 	}

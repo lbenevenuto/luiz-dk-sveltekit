@@ -25,25 +25,20 @@ function validateEnv(env?: App.Platform['env']) {
 }
 
 const myErrorHandler: HandleServerError = ({ error, event }) => {
-	console.error(
-		JSON.stringify({
-			message: 'An error occurred on the server side',
-			error:
-				error instanceof Error
-					? {
-							message: error.message,
-							stack: error.stack,
-							name: error.name
-						}
-					: error,
-			event: {
-				url: event.url.href,
-				route: event.route.id,
-				params: event.params
-			},
-			timestamp: new Date().toISOString()
-		})
-	);
+	logger.error('server.error', {
+		error:
+			error instanceof Error
+				? {
+						message: error.message,
+						name: error.name
+					}
+				: String(error),
+		event: {
+			path: event.url.pathname,
+			route: event.route.id,
+			method: event.request.method
+		}
+	});
 };
 
 export const handleError = Sentry.handleErrorWithSentry(myErrorHandler);

@@ -34,8 +34,8 @@ jobs:
           PUBLIC_SENTRY_DSN: 'https://examplePublicKey@o0.ingest.sentry.io/0'
           SALT: 'dummy-salt'
           BASE_URL: 'http://localhost:5173'
-      - name: Test
-        run: bun run test
+      - name: Test with coverage thresholds
+        run: bun run test -- --coverage --coverage.thresholds.lines=45 --coverage.thresholds.functions=45 --coverage.thresholds.branches=35 --coverage.thresholds.statements=45
       - name: Build
         run: bun run build
         env:

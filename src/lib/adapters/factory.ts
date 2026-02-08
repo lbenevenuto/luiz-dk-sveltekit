@@ -15,20 +15,37 @@ import { type AnalyticsAdapter, CloudflareAnalyticsAdapter, ConsoleAnalyticsAdap
 import { dev } from '$app/environment';
 import Redis from 'ioredis';
 
+let devIdGeneratorAdapter: IdGeneratorAdapter | null = null;
+let devCacheAdapter: CacheAdapter | null = null;
+let devDatabaseAdapterPromise: ReturnType<typeof createSQLiteClient> | null = null;
+let devRedisClient: Redis | null = null;
+
+function getOrCreateDevRedis(): Redis {
+	if (!devRedisClient) {
+		const redisUrl = process.env.REDIS_URL || 'redis://localhost:6379';
+		devRedisClient = new Redis(redisUrl);
+	}
+
+	return devRedisClient;
+}
+
 /**
  * Get ID generator adapter
  */
 export function getIdGeneratorAdapter(platform: Readonly<App.Platform> | undefined): IdGeneratorAdapter {
 	if (dev) {
-		// Local: Prefer Redis if available, otherwise fall back to in-memory counter
+		if (devIdGeneratorAdapter) {
+			return devIdGeneratorAdapter;
+		}
+
 		try {
-			const redisUrl = process.env.REDIS_URL || 'redis://localhost:6379';
-			const redis = new Redis(redisUrl);
-			return new RedisIdGenerator(redis);
+			devIdGeneratorAdapter = new RedisIdGenerator(getOrCreateDevRedis());
 		} catch (err) {
 			console.warn('Redis unavailable, falling back to in-memory ID generator:', err);
-			return new InMemoryIdGenerator();
+			devIdGeneratorAdapter = new InMemoryIdGenerator();
 		}
+
+		return devIdGeneratorAdapter;
 	}
 
 	if (!platform) {
@@ -46,9 +63,12 @@ export function getIdGeneratorAdapter(platform: Readonly<App.Platform> | undefin
  */
 export async function getDatabaseAdapter(platform: Readonly<App.Platform> | undefined) {
 	if (dev) {
-		// Local: Use SQLite with Drizzle
-		const sqlitePath = './data/local.db';
-		return createSQLiteClient(sqlitePath);
+		if (!devDatabaseAdapterPromise) {
+			const sqlitePath = './data/local.db';
+			devDatabaseAdapterPromise = createSQLiteClient(sqlitePath);
+		}
+
+		return devDatabaseAdapterPromise;
 	}
 
 	if (!platform) {
@@ -64,15 +84,18 @@ export async function getDatabaseAdapter(platform: Readonly<App.Platform> | unde
  */
 export function getCacheAdapter(platform: Readonly<App.Platform> | undefined): CacheAdapter | null {
 	if (dev) {
-		// Local: Use Redis if available, otherwise in-memory
+		if (devCacheAdapter) {
+			return devCacheAdapter;
+		}
+
 		try {
-			const redisUrl = process.env.REDIS_URL || 'redis://localhost:6379';
-			const redis = new Redis(redisUrl);
-			return new RedisAdapter(redis);
+			devCacheAdapter = new RedisAdapter(getOrCreateDevRedis());
 		} catch (err) {
 			console.warn('Redis unavailable, using in-memory cache:', err);
-			return new InMemoryCacheAdapter();
+			devCacheAdapter = new InMemoryCacheAdapter();
 		}
+
+		return devCacheAdapter;
 	}
 
 	if (!platform) {

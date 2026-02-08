@@ -18,6 +18,8 @@ export const authHandle: Handle = async ({ event, resolve }) => {
 		role: null
 	};
 
+	const publicRoute = isPublicRoute(url.pathname);
+
 	const clerkClient = getClerkClient(platform.env);
 
 	const requestState = await clerkClient.authenticateRequest(event.request, {
@@ -36,9 +38,16 @@ export const authHandle: Handle = async ({ event, resolve }) => {
 		};
 	}
 
-	// Skip authentication for public routes to avoid unnecessary handshakes
-	if (isPublicRoute(url.pathname)) {
-		return resolve(event);
+	if (publicRoute) {
+		const response = await resolve(event);
+
+		if (requestState.headers) {
+			requestState.headers.forEach((value, key) => {
+				response.headers.append(key, value);
+			});
+		}
+
+		return response;
 	}
 
 	if (requestState.headers) {
@@ -52,7 +61,7 @@ export const authHandle: Handle = async ({ event, resolve }) => {
 	}
 
 	if (requestState.status === 'handshake') {
-		console.log('Clerk handshake required');
+		logger.info('auth.handshake_required', { path: url.pathname });
 		return new Response(null, {
 			status: 401,
 			headers: requestState.headers

@@ -11,8 +11,6 @@ import type { BetterSQLite3Database } from 'drizzle-orm/better-sqlite3';
  * Create Drizzle client for Cloudflare D1
  */
 export async function createD1Client(d1: D1Database) {
-	console.log('Creating D1 client');
-
 	const { drizzle: drizzleD1 } = await import('drizzle-orm/d1');
 	return drizzleD1(d1, { schema });
 }
@@ -21,11 +19,9 @@ export async function createD1Client(d1: D1Database) {
  * Create Drizzle client for SQLite (local development)
  */
 export async function createSQLiteClient(dbPath: string = './data/local.db') {
-	console.log('Creating SQLite client for path:', dbPath);
-
 	const { default: Database } = await import('better-sqlite3');
 	const { drizzle: drizzleSQLite } = await import('drizzle-orm/better-sqlite3');
-	const sqlite = new Database(dbPath, { verbose: console.log, fileMustExist: false });
+	const sqlite = new Database(dbPath, { fileMustExist: false });
 	sqlite.pragma('journal_mode = WAL');
 	return drizzleSQLite(sqlite, { schema });
 }
