@@ -6,6 +6,28 @@
 
 	let error = $state('');
 	let redirectTo = $state('/');
+	const SESSION_WAIT_TIMEOUT_MS = 4000;
+	const SESSION_POLL_INTERVAL_MS = 200;
+
+	function redirectNow(path: string) {
+		window.location.replace(withBase(path));
+	}
+
+	async function waitForSession(
+		clerk: Awaited<ReturnType<typeof waitForClerk>>,
+		timeoutMs: number = SESSION_WAIT_TIMEOUT_MS
+	): Promise<boolean> {
+		const startedAt = Date.now();
+
+		while (Date.now() - startedAt < timeoutMs) {
+			if (clerk.session?.id || clerk.user) {
+				return true;
+			}
+			await new Promise((resolve) => setTimeout(resolve, SESSION_POLL_INTERVAL_MS));
+		}
+
+		return false;
+	}
 
 	onMount(async () => {
 		if (!browser) return;
@@ -17,28 +39,37 @@
 			const clerk = await waitForClerk();
 			await clerk.handleRedirectCallback();
 
-			const sessionId = clerk.session?.id;
-			if (sessionId) {
-				await clerk.setActive({ session: sessionId });
-				window.location.href = withBase(redirectTo);
-				return;
-			}
-
-			if (clerk.user) {
-				window.location.href = withBase(redirectTo);
+			// Session/user can take a moment to hydrate after OAuth callback.
+			const hasSession = await waitForSession(clerk);
+			if (hasSession) {
+				const sessionId = clerk.session?.id;
+				if (sessionId) {
+					await clerk.setActive({ session: sessionId });
+				}
+				redirectNow(redirectTo);
 				return;
 			}
 
 			error = 'Authentication failed. No session was created.';
 			setTimeout(() => {
-				window.location.href = withBase('/login');
+				redirectNow('/login');
 			}, 3000);
 		} catch (err) {
 			console.error('OAuth callback error:', err);
+			// If callback handling throws due to timing/race, check session once before surfacing an error.
+			try {
+				const clerk = await waitForClerk();
+				const hasSession = await waitForSession(clerk);
+				if (hasSession) {
+					redirectNow(redirectTo);
+					return;
+				}
+			} catch {
+				// ignore secondary failure and show original error
+			}
+
 			error = `Error: ${err instanceof Error ? err.message : String(err)}`;
-			setTimeout(() => {
-				window.location.href = withBase('/login');
-			}, 3000);
+			setTimeout(() => redirectNow('/login'), 3000);
 		}
 	});
 </script>
