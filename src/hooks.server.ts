@@ -108,10 +108,18 @@ export const sentryInitHandle: Handle = async ({ event, resolve }) => {
 	if (!sentryInitialized) {
 		const dsn = resolveSentryDsn(event.platform?.env);
 		if (dsn) {
-			Sentry.init({
-				dsn,
-				sendDefaultPii: true
-			});
+			if (dev) {
+				Sentry.init({
+					dsn,
+					sendDefaultPii: true
+				});
+			} else {
+				Sentry.initCloudflareSentryHandle({
+					dsn,
+					tracesSampleRate: 1.0,
+					sendDefaultPii: true
+				});
+			}
 		}
 		sentryInitialized = true;
 	}

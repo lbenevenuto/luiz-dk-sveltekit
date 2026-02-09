@@ -73,7 +73,7 @@ export const createShortUrl = async (
 	const hashSalt = platform?.env?.SALT || 'abd';
 
 	// Step 1: Check cache (FASTEST)
-	const cacheAdapter = getCacheAdapter(platform);
+	const cacheAdapter = await getCacheAdapter(platform);
 	if (cacheAdapter && !expiresAt) {
 		const cachedCode = await cacheAdapter.get(cacheKey);
 		if (cachedCode) {
@@ -119,7 +119,7 @@ export const createShortUrl = async (
 	}
 
 	// Step 3: Not found - generate new
-	const idGeneratorAdapter = getIdGeneratorAdapter(platform);
+	const idGeneratorAdapter = await getIdGeneratorAdapter(platform);
 	const newCount = await idGeneratorAdapter.getNextId();
 	const shortCode = generateShortCode(newCount, hashSalt);
 

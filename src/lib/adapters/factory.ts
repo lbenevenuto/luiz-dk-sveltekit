@@ -13,15 +13,16 @@ import {
 import { InMemoryCacheAdapter, type CacheAdapter, KVAdapter, RedisAdapter } from './cache';
 import { type AnalyticsAdapter, CloudflareAnalyticsAdapter, ConsoleAnalyticsAdapter } from './analytics';
 import { dev } from '$app/environment';
-import Redis from 'ioredis';
+import type Redis from 'ioredis';
 
 let devIdGeneratorAdapter: IdGeneratorAdapter | null = null;
 let devCacheAdapter: CacheAdapter | null = null;
 let devDatabaseAdapterPromise: ReturnType<typeof createSQLiteClient> | null = null;
 let devRedisClient: Redis | null = null;
 
-function getOrCreateDevRedis(): Redis {
+async function getOrCreateDevRedis(): Promise<Redis> {
 	if (!devRedisClient) {
+		const { default: Redis } = await import('ioredis');
 		const redisUrl = process.env.REDIS_URL || 'redis://localhost:6379';
 		devRedisClient = new Redis(redisUrl);
 	}
@@ -32,14 +33,14 @@ function getOrCreateDevRedis(): Redis {
 /**
  * Get ID generator adapter
  */
-export function getIdGeneratorAdapter(platform: Readonly<App.Platform> | undefined): IdGeneratorAdapter {
+export async function getIdGeneratorAdapter(platform: Readonly<App.Platform> | undefined): Promise<IdGeneratorAdapter> {
 	if (dev) {
 		if (devIdGeneratorAdapter) {
 			return devIdGeneratorAdapter;
 		}
 
 		try {
-			devIdGeneratorAdapter = new RedisIdGenerator(getOrCreateDevRedis());
+			devIdGeneratorAdapter = new RedisIdGenerator(await getOrCreateDevRedis());
 		} catch (err) {
 			console.warn('Redis unavailable, falling back to in-memory ID generator:', err);
 			devIdGeneratorAdapter = new InMemoryIdGenerator();
@@ -82,14 +83,14 @@ export async function getDatabaseAdapter(platform: Readonly<App.Platform> | unde
 /**
  * Get cache adapter
  */
-export function getCacheAdapter(platform: Readonly<App.Platform> | undefined): CacheAdapter | null {
+export async function getCacheAdapter(platform: Readonly<App.Platform> | undefined): Promise<CacheAdapter | null> {
 	if (dev) {
 		if (devCacheAdapter) {
 			return devCacheAdapter;
 		}
 
 		try {
-			devCacheAdapter = new RedisAdapter(getOrCreateDevRedis());
+			devCacheAdapter = new RedisAdapter(await getOrCreateDevRedis());
 		} catch (err) {
 			console.warn('Redis unavailable, using in-memory cache:', err);
 			devCacheAdapter = new InMemoryCacheAdapter();
