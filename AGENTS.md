@@ -19,6 +19,7 @@
 - **ALWAYS** read all links provided in prompts before beginning implementation
 - **ALWAYS** run `bun run lint && bun run test` before completing any task
 - **ALWAYS** check Context7 for latest docs when working with external libraries
+- **ALWAYS** check and update `AGENTS.md` after any change to ensure it stays in sync with the codebase
 
 ### Commit Message Format
 
@@ -47,7 +48,7 @@ docs: update API usage examples
 - **Database**: Drizzle ORM on SQLite (local dev) / Cloudflare D1 (production)
 - **Auth**: Clerk (server-side via `@clerk/backend`, client-side via Clerk JS SDK)
 - **Styling**: Tailwind CSS v4 (utility-first, no component-scoped styles)
-- **Validation**: Zod v4 (`zod/v4` import path)
+- **Validation**: Zod v4 (`zod` import path)
 - **Monitoring**: Sentry (`@sentry/sveltekit`)
 - **Cloudflare Bindings**: D1 (DB), KV (CACHE), Analytics Engine (ANALYTICS), Durable Objects (GLOBAL_COUNTER_DO)
 
@@ -92,14 +93,14 @@ Husky runs `lint-staged` on commit: prettier + eslint on `*.{js,ts,svelte,json}`
 - Use `$lib/` alias for all library imports, `$app/` for SvelteKit internals
 - Use `import type` for type-only imports
 - Group order: framework (`@sveltejs/kit`) -> external libs -> `$lib/server` -> `$lib/` -> relative
-- Zod is imported as `import { z } from 'zod/v4'` (not `'zod'`)
+- Zod is imported as `import { z } from 'zod'`
 
 ```typescript
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import { createShortUrl } from '$lib/utils';
 import { logger } from '$lib/server/logger';
-import { z } from 'zod/v4';
+import { z } from 'zod';
 ```
 
 ### TypeScript
