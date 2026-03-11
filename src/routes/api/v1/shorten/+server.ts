@@ -4,7 +4,7 @@ import { createShortUrl, normalizeUrl, ShortCodeConflictError } from '$lib/utils
 import { checkAnonymousRateLimit } from '$lib/server/rate-limit';
 import { logger } from '$lib/server/logger';
 import { getClientIdentifierForRateLimit, isValidHttpUrl, sanitizeUrlForLog } from '$lib/utils/validation';
-import { z } from 'zod/v4';
+import { z } from 'zod';
 
 const CUSTOM_CODE_REGEX = /^[a-zA-Z0-9_-]+$/;
 

@@ -1,7 +1,7 @@
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import { requireAdmin } from '$lib/server/auth';
-import { z } from 'zod/v4';
+import { z } from 'zod';
 
 const resetSchema = z
 	.object({

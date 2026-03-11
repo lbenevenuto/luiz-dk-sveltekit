@@ -1,7 +1,7 @@
 import { json } from '@sveltejs/kit';
 import { Webhook } from 'svix';
 import { getClerkClient } from '$lib/server/clerk';
-import { z } from 'zod/v4';
+import { z } from 'zod';
 
 const webhookEventSchema = z.object({
 	type: z.string(),
