@@ -18,7 +18,7 @@ export default defineConfig({
 	],
 
 	ssr: {
-		noExternal: ['@sentry/sveltekit']
+		noExternal: ['@sentry/sveltekit', 'zod']
 	},
 
 	test: {
