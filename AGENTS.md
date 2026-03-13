@@ -10,7 +10,7 @@
 - **Never skip writing tests** for new features — all new code requires test coverage
 - **Never make code changes unrelated to the assigned task** — scope changes strictly to what was asked
 - **Never use `any` type** — define proper TypeScript types for all values, parameters, and return types
-- **Never disable ESLint rules** with any suppression directive (`eslint-disable`, `eslint-disable-next-line`, `eslint-disable-line`, or block comments) — fix the underlying issue instead
+- **Never disable ESLint rules** with any suppression directive (`eslint-disable`, `eslint-disable-next-line`, `eslint-disable-line`, or block-form `/* eslint-disable */` comments) — fix the underlying issue instead
 - **Never create files** unless absolutely necessary for achieving goals
 - **Never proactively create documentation files** (`*.md`) or README files unless explicitly requested
 - **Never over-engineer solutions** — build only what's explicitly requested
