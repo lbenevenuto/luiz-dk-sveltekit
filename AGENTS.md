@@ -6,7 +6,7 @@
 
 ### Restrictions
 
-- **Never commit or push** without express user instruction
+- **Never commit or push** without explicit user instruction
 - **Never skip writing tests** for new features — all new code requires test coverage
 - **Never make code changes unrelated to the assigned task** — scope changes strictly to what was asked
 - **Never use `any` type** — define proper TypeScript types for all values, parameters, and return types
