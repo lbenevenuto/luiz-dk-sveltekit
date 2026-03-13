@@ -23,7 +23,7 @@
 - **Always assign the PR to its author** when creating pull requests
 - **Always keep PR descriptions super concise** — never add "Generated with Claude Code" or any AI attribution/signature
 - **Always read all links provided in a prompt** before beginning implementation
-- **Always run `bun run lint && bun run test`** before marking any task complete
+- **Always run `bun run lint && bun run check && bun run test`** before marking any task complete
 - **Always use [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/)** for [semantic-release](https://semantic-release.gitbook.io/semantic-release/) — e.g. `feat:`, `fix:`, `chore:`, `refactor:`, `test:`, `docs:`
 - **Always check and update `AGENTS.md`** after any change to ensure it stays in sync with the codebase
 
