@@ -6,11 +6,11 @@
 
 ### Restrictions
 
-- **Never commit or push** without express user instruction
+- **Never commit or push** without explicit user instruction
 - **Never skip writing tests** for new features — all new code requires test coverage
 - **Never make code changes unrelated to the assigned task** — scope changes strictly to what was asked
 - **Never use `any` type** — define proper TypeScript types for all values, parameters, and return types
-- **Never disable ESLint rules** with any suppression directive (`eslint-disable`, `eslint-disable-next-line`, `eslint-disable-line`, or block comments) — fix the underlying issue instead
+- **Never disable ESLint rules** with any suppression directive (`eslint-disable`, `eslint-disable-next-line`, `eslint-disable-line`, or block-form `/* eslint-disable */` comments) — fix the underlying issue instead
 - **Never create files** unless absolutely necessary for achieving goals
 - **Never proactively create documentation files** (`*.md`) or README files unless explicitly requested
 - **Never over-engineer solutions** — build only what's explicitly requested
@@ -23,7 +23,7 @@
 - **Always assign the PR to its author** when creating pull requests
 - **Always keep PR descriptions super concise** — never add "Generated with Claude Code" or any AI attribution/signature
 - **Always read all links provided in a prompt** before beginning implementation
-- **Always run `bun run lint && bun run test`** before marking any task complete
+- **Always run `bun run lint && bun run check && bun run test`** before marking any task complete
 - **Always use [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/)** for [semantic-release](https://semantic-release.gitbook.io/semantic-release/) — e.g. `feat:`, `fix:`, `chore:`, `refactor:`, `test:`, `docs:`
 - **Always check and update `AGENTS.md`** after any change to ensure it stays in sync with the codebase
 
