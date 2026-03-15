@@ -5,11 +5,11 @@ describe('hooks security helpers', () => {
 	const originalSentryDsn = process.env.SENTRY_DSN;
 
 	beforeEach(() => {
-		process.env.SENTRY_DSN = originalSentryDsn;
+		(process.env as unknown as Record<string, string | undefined>).SENTRY_DSN = originalSentryDsn;
 	});
 
 	afterEach(() => {
-		process.env.SENTRY_DSN = originalSentryDsn;
+		(process.env as unknown as Record<string, string | undefined>).SENTRY_DSN = originalSentryDsn;
 	});
 
 	it('builds CSP with valid Clerk domain and no malformed connect host', () => {
@@ -46,17 +46,17 @@ describe('hooks security helpers', () => {
 	});
 
 	it('prefers platform SENTRY_DSN over process env fallback', () => {
-		process.env.SENTRY_DSN = 'https://fallback@fallback.ingest.sentry.io/1';
+		(process.env as unknown as Record<string, string>).SENTRY_DSN = 'https://fallback@fallback.ingest.sentry.io/1';
 
 		const resolved = resolveSentryDsn({
 			SENTRY_DSN: 'https://platform@platform.ingest.sentry.io/2'
-		} as App.Platform['env']);
+		} as unknown as App.Platform['env']);
 
 		expect(resolved).toBe('https://platform@platform.ingest.sentry.io/2');
 	});
 
 	it('falls back to process env when platform env is missing', () => {
-		process.env.SENTRY_DSN = 'https://fallback@fallback.ingest.sentry.io/1';
+		(process.env as unknown as Record<string, string>).SENTRY_DSN = 'https://fallback@fallback.ingest.sentry.io/1';
 		expect(resolveSentryDsn(undefined)).toBe('https://fallback@fallback.ingest.sentry.io/1');
 	});
 });
