@@ -1,11 +1,9 @@
 import type { PageServerLoad } from './$types';
 import { getClerkClient } from '$lib/server/clerk';
-import { urls } from '$lib/server/db/schemas';
-import { eq } from 'drizzle-orm';
 import { fetchAnalytics } from '$lib/server/analytics';
 import { logger } from '$lib/server/logger';
 
-export const load: PageServerLoad = async ({ platform, url }) => {
+export const load: PageServerLoad = async ({ platform, url, locals }) => {
 	const daysParam = url.searchParams.get('days');
 	let days = daysParam ? parseInt(daysParam) : 7;
 	if (isNaN(days) || ![7, 30, 90].includes(days)) {
@@ -22,9 +20,8 @@ export const load: PageServerLoad = async ({ platform, url }) => {
 			filterUser = await clerkClient.users.getUser(userId);
 
 			// Fetch user's shortcodes
-			const { getDb } = await import('$lib/server/db');
-			const db = await getDb(platform);
-			const userUrls = await db.select().from(urls).where(eq(urls.userId, userId));
+			const { getUserUrls } = await import('$lib/server/db/queries/urls');
+			const userUrls = await getUserUrls(locals.db, userId);
 			userShortCodes = userUrls.map((u) => u.shortCode);
 		} catch (error) {
 			logger.error('admin.analytics.user_filter_fetch_error', {
