@@ -67,7 +67,7 @@ export const POST: RequestHandler = async ({ platform, request, locals }) => {
 	// Create short URL with user ID
 	let shortCode;
 	try {
-		shortCode = await createShortUrl(normalizedUrl, expiresAt, platform, auth.userId, customCode ?? null);
+		shortCode = await createShortUrl(normalizedUrl, expiresAt, platform, locals.db, auth.userId, customCode ?? null);
 	} catch (err) {
 		if (err instanceof ShortCodeConflictError) {
 			return json({ error: `Custom code "${customCode}" is already taken` }, { status: 409 });

@@ -1,8 +1,7 @@
 import type { PageServerLoad } from './$types';
-import { urls } from '$lib/server/db/schemas';
-import { eq } from 'drizzle-orm';
 import { redirect } from '@sveltejs/kit';
 import { fetchAnalytics } from '$lib/server/analytics';
+import { getUserUrls } from '$lib/server/db/queries/urls';
 import { logger } from '$lib/server/logger';
 
 export const load: PageServerLoad = async ({ platform, url, locals }) => {
@@ -18,9 +17,7 @@ export const load: PageServerLoad = async ({ platform, url, locals }) => {
 
 	let userShortCodes: string[] = [];
 	try {
-		const { getDb } = await import('$lib/server/db');
-		const db = await getDb(platform);
-		const userUrls = await db.select().from(urls).where(eq(urls.userId, locals.auth.userId));
+		const userUrls = await getUserUrls(locals.db, locals.auth.userId);
 		userShortCodes = userUrls.map((u) => u.shortCode);
 	} catch (error) {
 		logger.error('dashboard.user_urls_fetch_error', {

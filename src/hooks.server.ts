@@ -4,6 +4,7 @@ import { sequence } from '@sveltejs/kit/hooks';
 import * as Sentry from '@sentry/sveltekit';
 import { authHandle } from '$lib/server/auth-handle';
 import { logger } from '$lib/server/logger';
+import { getDb } from '$lib/server/db';
 
 let envValidated = false;
 let sentryInitialized = false;
@@ -104,6 +105,11 @@ export const initialHook: Handle = async ({ event, resolve }) => {
 	return resolve(event);
 };
 
+export const dbHandle: Handle = async ({ event, resolve }) => {
+	event.locals.db = await getDb(event.platform);
+	return resolve(event);
+};
+
 export const sentryInitHandle: Handle = async ({ event, resolve }) => {
 	if (!sentryInitialized) {
 		const dsn = resolveSentryDsn(event.platform?.env);
@@ -150,6 +156,7 @@ export const handle: Handle = sequence(
 	initialHook,
 	sentryInitHandle,
 	Sentry.sentryHandle(),
+	dbHandle,
 	authHandle,
 	securityHeadersHandle
 );

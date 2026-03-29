@@ -1,25 +1,22 @@
-import { drizzle, type DrizzleD1Database } from 'drizzle-orm/d1';
-import * as schema from './schemas';
 import { dev } from '$app/environment';
-import type { BetterSQLite3Database } from 'drizzle-orm/better-sqlite3';
+import { createD1Client, createSQLiteClient } from './client';
+import type { DrizzleClient } from './client';
 
-export let db: DrizzleD1Database<typeof schema> | BetterSQLite3Database<typeof schema>;
+let db: DrizzleClient;
 
-export async function getDb(platform?: App.Platform) {
+export async function getDb(platform?: App.Platform): Promise<DrizzleClient> {
 	if (dev) {
-		// Re-use connection if possible or create new.
-		// For better-sqlite3, creating new every time is fine but singleton is better.
 		if (!db) {
-			const { default: Database } = await import('better-sqlite3');
-			const { drizzle: drizzleSqlite } = await import('drizzle-orm/better-sqlite3');
-			const sqlite = new Database('./data/local.db', { fileMustExist: false });
-			db = drizzleSqlite(sqlite, { schema });
+			db = await createSQLiteClient();
 		}
 		return db;
 	}
 
 	if (platform?.env?.DB) {
-		return drizzle(platform.env.DB, { schema });
+		if (!db) {
+			db = await createD1Client(platform.env.DB);
+		}
+		return db;
 	}
 
 	throw new Error('Database binding not found. Ensure D1 is configured and passed via platform.env');

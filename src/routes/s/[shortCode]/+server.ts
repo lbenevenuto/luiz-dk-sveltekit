@@ -1,21 +1,17 @@
 import { redirect } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
-import { getDb } from '$lib/server/db';
-import { eq } from 'drizzle-orm';
-import { urls } from '$lib/server/db/schemas';
+import { getUrlByShortCode, deleteUrlById } from '$lib/server/db/queries/urls';
 import { logger } from '$lib/server/logger';
 import { sanitizeUrlForLog } from '$lib/utils/validation';
 
-export const GET: RequestHandler = async ({ platform, params, request }) => {
+export const GET: RequestHandler = async ({ platform, params, request, locals }) => {
 	const { shortCode } = params;
 
-	const db = await getDb(platform);
-	const res = await db.query.urls.findFirst({ where: eq(urls.shortCode, shortCode) });
+	const res = await getUrlByShortCode(locals.db, shortCode);
 	if (res) {
-		const expiresAtMs =
-			res.expiresAt instanceof Date ? res.expiresAt.getTime() : res.expiresAt ? res.expiresAt * 1000 : null;
+		const expiresAtMs = res.expiresAt ? res.expiresAt.getTime() : null;
 		if (expiresAtMs && expiresAtMs <= Date.now()) {
-			await db.delete(urls).where(eq(urls.id, res.id));
+			await deleteUrlById(locals.db, res.id);
 			logger.warn('redirect.expired', { shortCode });
 			return new Response('This link has expired.', { status: 410 });
 		}

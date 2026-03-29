@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { POST } from './+server';
 import type { RequestEvent } from '@sveltejs/kit';
+import type { DrizzleClient } from '$lib/server/db/client';
 
 // Mock dependencies
 vi.mock('$lib/utils', async () => {
@@ -44,6 +45,7 @@ describe('POST /api/v1/shorten', () => {
 		} as App.Platform;
 
 		mockLocals = {
+			db: {} as DrizzleClient,
 			auth: {
 				userId: null,
 				sessionId: null,
@@ -66,11 +68,9 @@ describe('POST /api/v1/shorten', () => {
 	});
 
 	it('should return 429 if rate limit exceeded for anonymous user', async () => {
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		(checkAnonymousRateLimit as any).mockResolvedValue({ success: false });
+		vi.mocked(checkAnonymousRateLimit).mockResolvedValue({ success: false });
 
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		const response = await POST(mockEvent as any);
+		const response = await POST(mockEvent as Parameters<typeof POST>[0]);
 		const json = await response.json();
 
 		expect(response.status).toBe(429);
@@ -82,25 +82,21 @@ describe('POST /api/v1/shorten', () => {
 	});
 
 	it('should create short URL for anonymous user if rate limit allows', async () => {
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		(checkAnonymousRateLimit as any).mockResolvedValue({ success: true });
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		(createShortUrl as any).mockResolvedValue({ shortCode: 'abc', originalUrl: 'https://example.com' });
+		vi.mocked(checkAnonymousRateLimit).mockResolvedValue({ success: true });
+		vi.mocked(createShortUrl).mockResolvedValue({ shortCode: 'abc', isExisting: false, expiresAt: null });
 
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		const response = await POST(mockEvent as any);
+		const response = await POST(mockEvent as Parameters<typeof POST>[0]);
 		const json = await response.json();
 
 		expect(response.status).toBe(200); // 200 is default for json() helper if not specified
-		expect(json).toEqual({
+		expect(json).toMatchObject({
 			shortUrl: 'https://luiz.dk/s/abc',
-			originalUrl: 'https://example.com',
 			shortCode: 'abc',
 			expiresAt: null,
 			anonymous: true
 		});
 		expect(checkAnonymousRateLimit).toHaveBeenCalled();
-		expect(createShortUrl).toHaveBeenCalledWith('https://example.com', null, mockPlatform, null, null);
+		expect(createShortUrl).toHaveBeenCalledWith('https://example.com', null, mockPlatform, mockLocals.db, null, null);
 		expect(logger.info).toHaveBeenCalledWith(
 			'shorten.created',
 			expect.objectContaining({ url: 'https://example.com' })
@@ -109,16 +105,21 @@ describe('POST /api/v1/shorten', () => {
 
 	it('should create short URL for authenticated user without rate limit check', async () => {
 		mockLocals.auth.userId = 'user_123';
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		(createShortUrl as any).mockResolvedValue({ shortCode: 'xyz', originalUrl: 'https://example.com' });
+		vi.mocked(createShortUrl).mockResolvedValue({ shortCode: 'xyz', isExisting: false, expiresAt: null });
 
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		const response = await POST(mockEvent as any);
+		const response = await POST(mockEvent as Parameters<typeof POST>[0]);
 		const json = await response.json();
 
 		expect(response.status).toBe(200);
 		expect(checkAnonymousRateLimit).not.toHaveBeenCalled();
-		expect(createShortUrl).toHaveBeenCalledWith('https://example.com', null, mockPlatform, 'user_123', null);
+		expect(createShortUrl).toHaveBeenCalledWith(
+			'https://example.com',
+			null,
+			mockPlatform,
+			mockLocals.db,
+			'user_123',
+			null
+		);
 		expect(json).toMatchObject({
 			shortUrl: 'https://luiz.dk/s/xyz',
 			anonymous: false,
@@ -131,16 +132,14 @@ describe('POST /api/v1/shorten', () => {
 		const now = new Date('2024-01-01T00:00:00Z');
 		vi.setSystemTime(now);
 
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		(checkAnonymousRateLimit as any).mockResolvedValue({ success: true });
+		vi.mocked(checkAnonymousRateLimit).mockResolvedValue({ success: true });
 
 		const expiresInSeconds = 3600;
 		const expectedExpiresAt = Math.floor(now.getTime() / 1000) + expiresInSeconds;
 
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		(createShortUrl as any).mockResolvedValue({
+		vi.mocked(createShortUrl).mockResolvedValue({
 			shortCode: 'exp',
-			originalUrl: 'https://example.com',
+			isExisting: false,
 			expiresAt: expectedExpiresAt
 		});
 
@@ -156,11 +155,17 @@ describe('POST /api/v1/shorten', () => {
 			})
 		};
 
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		const response = await POST(eventWithExpiry as any);
+		const response = await POST(eventWithExpiry as Parameters<typeof POST>[0]);
 		const json = (await response.json()) as { expiresAt?: string; shortCode?: string; anonymous?: boolean };
 
-		expect(createShortUrl).toHaveBeenCalledWith('https://example.com', expectedExpiresAt, mockPlatform, null, null);
+		expect(createShortUrl).toHaveBeenCalledWith(
+			'https://example.com',
+			expectedExpiresAt,
+			mockPlatform,
+			mockLocals.db,
+			null,
+			null
+		);
 		expect(json.expiresAt).toBe(new Date(expectedExpiresAt * 1000).toISOString());
 		expect(json).toMatchObject({
 			shortCode: 'exp',
@@ -171,8 +176,7 @@ describe('POST /api/v1/shorten', () => {
 	});
 
 	it('should reject invalid URLs', async () => {
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		(checkAnonymousRateLimit as any).mockResolvedValue({ success: true });
+		vi.mocked(checkAnonymousRateLimit).mockResolvedValue({ success: true });
 
 		const badEvent: Partial<RequestEvent> = {
 			platform: mockPlatform,
@@ -186,8 +190,7 @@ describe('POST /api/v1/shorten', () => {
 			})
 		};
 
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		const response = await POST(badEvent as any);
+		const response = await POST(badEvent as Parameters<typeof POST>[0]);
 		const json = await response.json();
 
 		expect(response.status).toBe(400);
@@ -198,8 +201,7 @@ describe('POST /api/v1/shorten', () => {
 	});
 
 	it('should reject non-http/https URLs', async () => {
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		(checkAnonymousRateLimit as any).mockResolvedValue({ success: true });
+		vi.mocked(checkAnonymousRateLimit).mockResolvedValue({ success: true });
 
 		const badEvent: Partial<RequestEvent> = {
 			platform: mockPlatform,
@@ -213,8 +215,7 @@ describe('POST /api/v1/shorten', () => {
 			})
 		};
 
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		const response = await POST(badEvent as any);
+		const response = await POST(badEvent as Parameters<typeof POST>[0]);
 		const json = await response.json();
 
 		expect(response.status).toBe(400);
@@ -235,8 +236,7 @@ describe('POST /api/v1/shorten', () => {
 			})
 		};
 
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		const response = await POST(event as any);
+		const response = await POST(event as Parameters<typeof POST>[0]);
 		const json = await response.json();
 
 		expect(response.status).toBe(401);
@@ -246,10 +246,8 @@ describe('POST /api/v1/shorten', () => {
 
 	it('should create short URL with custom code for authenticated user', async () => {
 		mockLocals.auth.userId = 'user_123';
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		(createShortUrl as any).mockResolvedValue({
+		vi.mocked(createShortUrl).mockResolvedValue({
 			shortCode: 'my-link',
-			originalUrl: 'https://example.com',
 			isExisting: false,
 			expiresAt: null
 		});
@@ -266,8 +264,7 @@ describe('POST /api/v1/shorten', () => {
 			})
 		};
 
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		const response = await POST(event as any);
+		const response = await POST(event as Parameters<typeof POST>[0]);
 		const json = await response.json();
 
 		expect(response.status).toBe(200);
@@ -276,13 +273,19 @@ describe('POST /api/v1/shorten', () => {
 			shortCode: 'my-link',
 			anonymous: false
 		});
-		expect(createShortUrl).toHaveBeenCalledWith('https://example.com', null, mockPlatform, 'user_123', 'my-link');
+		expect(createShortUrl).toHaveBeenCalledWith(
+			'https://example.com',
+			null,
+			mockPlatform,
+			mockLocals.db,
+			'user_123',
+			'my-link'
+		);
 	});
 
 	it('should return 409 when custom code is already taken', async () => {
 		mockLocals.auth.userId = 'user_123';
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		(createShortUrl as any).mockRejectedValue(new ShortCodeConflictError('my-link'));
+		vi.mocked(createShortUrl).mockRejectedValue(new ShortCodeConflictError('my-link'));
 
 		const event: Partial<RequestEvent> = {
 			platform: mockPlatform,
@@ -296,8 +299,7 @@ describe('POST /api/v1/shorten', () => {
 			})
 		};
 
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		const response = await POST(event as any);
+		const response = await POST(event as Parameters<typeof POST>[0]);
 		const json = await response.json();
 
 		expect(response.status).toBe(409);
@@ -319,8 +321,7 @@ describe('POST /api/v1/shorten', () => {
 			})
 		};
 
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		const response = await POST(event as any);
+		const response = await POST(event as Parameters<typeof POST>[0]);
 		const json = (await response.json()) as { error: string };
 
 		expect(response.status).toBe(400);
@@ -343,8 +344,7 @@ describe('POST /api/v1/shorten', () => {
 			})
 		};
 
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		const response = await POST(event as any);
+		const response = await POST(event as Parameters<typeof POST>[0]);
 		const json = (await response.json()) as { error: string };
 
 		expect(response.status).toBe(400);
@@ -353,10 +353,8 @@ describe('POST /api/v1/shorten', () => {
 	});
 
 	it('should sanitize URL in logs by removing query and hash', async () => {
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		(checkAnonymousRateLimit as any).mockResolvedValue({ success: true });
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		(createShortUrl as any).mockResolvedValue({ shortCode: 'abc', originalUrl: 'https://example.com/path' });
+		vi.mocked(checkAnonymousRateLimit).mockResolvedValue({ success: true });
+		vi.mocked(createShortUrl).mockResolvedValue({ shortCode: 'abc', isExisting: false, expiresAt: null });
 
 		const event: Partial<RequestEvent> = {
 			platform: mockPlatform,
@@ -370,8 +368,7 @@ describe('POST /api/v1/shorten', () => {
 			})
 		};
 
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		const response = await POST(event as any);
+		const response = await POST(event as Parameters<typeof POST>[0]);
 
 		expect(response.status).toBe(200);
 		expect(logger.info).toHaveBeenCalledWith(
@@ -381,10 +378,8 @@ describe('POST /api/v1/shorten', () => {
 	});
 
 	it('should trust X-Forwarded-For only when explicitly enabled', async () => {
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		(checkAnonymousRateLimit as any).mockResolvedValue({ success: true });
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		(createShortUrl as any).mockResolvedValue({ shortCode: 'abc', originalUrl: 'https://example.com' });
+		vi.mocked(checkAnonymousRateLimit).mockResolvedValue({ success: true });
+		vi.mocked(createShortUrl).mockResolvedValue({ shortCode: 'abc', isExisting: false, expiresAt: null });
 
 		const trustedPlatform = {
 			env: {
@@ -405,8 +400,7 @@ describe('POST /api/v1/shorten', () => {
 			})
 		};
 
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		await POST(trustedEvent as any);
+		await POST(trustedEvent as Parameters<typeof POST>[0]);
 
 		expect(checkAnonymousRateLimit).toHaveBeenCalledWith('203.0.113.7', trustedPlatform);
 
@@ -422,8 +416,7 @@ describe('POST /api/v1/shorten', () => {
 			})
 		};
 
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		await POST(untrustedEvent as any);
+		await POST(untrustedEvent as Parameters<typeof POST>[0]);
 
 		expect(checkAnonymousRateLimit).toHaveBeenCalledWith('unknown', mockPlatform);
 	});
