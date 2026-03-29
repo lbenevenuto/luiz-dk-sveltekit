@@ -2,50 +2,38 @@
 
 > Guidelines for AI coding agents operating in this repository.
 
-## CRITICAL RULES - NEVER SKIP
+## CRITICAL RULES — NEVER SKIP, NO EXCEPTIONS
 
-### Important Restrictions - NO EXCEPTIONS
+### Restrictions
 
-- **NEVER** skip writing tests for new features
-- **NEVER** make code changes that aren't directly related to your assigned task
-- **NEVER** create files unless absolutely necessary for achieving goals
-- **NEVER** proactively create documentation files (`*.md`) or README files unless explicitly requested
-- **NEVER** over-engineer solutions — build only what's explicitly requested
-- **NEVER** disable ESLint rules with `eslint-disable` comments — fix the underlying issues instead
-- **NEVER** use `any` type — define proper types
+- **Never commit or push** without explicit user instruction
+- **Never skip writing tests** for new features — all new code requires test coverage
+- **Never make code changes unrelated to the assigned task** — scope changes strictly to what was asked
+- **Never use `any` type** — define proper TypeScript types for all values, parameters, and return types
+- **Never disable ESLint rules** with any suppression directive (`eslint-disable`, `eslint-disable-next-line`, `eslint-disable-line`, or block-form `/* eslint-disable */` comments) — fix the underlying issue instead
+- **Never create files** unless absolutely necessary for achieving goals
+- **Never proactively create documentation files** (`*.md`) or README files unless explicitly requested
+- **Never over-engineer solutions** — build only what's explicitly requested
 
-### Required Commands - ALWAYS Execute
+### Required Workflow
 
-- **ALWAYS** read all links provided in prompts before beginning implementation
-- **ALWAYS** run `bun run lint && bun run test` before completing any task
-- **ALWAYS** check Context7 for latest docs when working with external libraries
-- **ALWAYS** check and update `AGENTS.md` after any change to ensure it stays in sync with the codebase
-
-### Commit Message Format
-
-Follow [semantic-release](https://semantic-release.gitbook.io/semantic-release/) conventional commit format:
-
-```
-feat: add URL expiration support
-fix: correct rate limit window calculation
-chore: update dependencies
-refactor: extract validation logic into utility
-test: add coverage for redirect handler
-docs: update API usage examples
-```
-
-### Pull Request Format
-
-- Keep PR descriptions **super concise**
-- **NEVER** add "Generated with Claude Code" or any AI attribution/signature to PR descriptions
+- **Always use the [GitHub MCP tool](https://github.com/github/github-mcp-server) first** for any GitHub operations (PRs, issues, branches, file lookups) — prefer it over CLI commands like `gh`. If unavailable, ask the repository maintainer how to configure GitHub workflow tools.
+- **Always use [Context7](https://github.com/upstash/context7)** for documentation lookups — it provides up-to-date library docs and code examples via MCP. If unavailable, consult official library documentation directly.
+- **Always add Copilot as a reviewer** when creating pull requests
+- **Always assign the PR to its author** when creating pull requests
+- **Always keep PR descriptions super concise** — never add "Generated with Claude Code" or any AI attribution/signature
+- **Always read all links provided in a prompt** before beginning implementation
+- **Always run `bun run lint && bun run check && bun run test`** before marking any task complete
+- **Always use [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/)** for [semantic-release](https://semantic-release.gitbook.io/semantic-release/) — e.g. `feat:`, `fix:`, `chore:`, `refactor:`, `test:`, `docs:`
+- **Always check and update `AGENTS.md`** after any change to ensure it stays in sync with the codebase
 
 ---
 
 ## Tech Stack
 
 - **Framework**: SvelteKit (Svelte 5 with runes) on Cloudflare Pages
-- **Runtime**: Bun (package manager + scripts), Node 24.x for Wrangler tooling
-- **Database**: Drizzle ORM on SQLite (local dev) / Cloudflare D1 (production)
+- **Runtime**: Bun (package manager + scripts), Node (see `.node-version`) for Wrangler tooling
+- **Database**: Drizzle ORM on SQLite/better-sqlite3 (local dev) / Cloudflare D1 (production)
 - **Auth**: Clerk (server-side via `@clerk/backend`, client-side via Clerk JS SDK)
 - **Styling**: Tailwind CSS v4 (utility-first, no component-scoped styles)
 - **Validation**: Zod v4 (`zod` import path)
@@ -73,7 +61,7 @@ docs: update API usage examples
 
 ### CI Pipeline (`.github/workflows/ci.yml`)
 
-Runs on push to `main` and all PRs: lint -> typecheck -> test (with coverage thresholds) -> build.
+Runs on push to `main` and all PRs: lint -> typecheck -> test -> build.
 
 ### Pre-commit Hook
 
@@ -95,22 +83,13 @@ Husky runs `lint-staged` on commit: prettier + eslint on `*.{js,ts,svelte,json}`
 - Group order: framework (`@sveltejs/kit`) -> external libs -> `$lib/server` -> `$lib/` -> relative
 - Zod is imported as `import { z } from 'zod'`
 
-```typescript
-import { json } from '@sveltejs/kit';
-import type { RequestHandler } from './$types';
-import { createShortUrl } from '$lib/utils';
-import { logger } from '$lib/server/logger';
-import { z } from 'zod';
-```
-
 ### TypeScript
 
 - **Strict mode** enabled (`"strict": true`)
 - Prefer type inference where obvious; explicit types for function signatures
 - Use `interface` for object shapes, `type` for unions/aliases
 - Drizzle schema types via `$inferSelect` / `$inferInsert`
-- Avoid `as any` — when unavoidable in tests, use `eslint-disable` comment on the line
-- Never use `@ts-ignore` or `@ts-expect-error`
+- Never use `as any`, `@ts-ignore`, or `@ts-expect-error`
 
 ### Naming Conventions
 
@@ -136,18 +115,6 @@ import { z } from 'zod';
 - **Infrastructure errors**: Try-catch, log with `logger.error()`, fail-open when appropriate
 - **Never** use empty catch blocks — always log or re-throw
 
-```typescript
-// Custom error class pattern
-export class ShortCodeConflictError extends Error {
-	public readonly shortCode: string;
-	constructor(shortCode: string) {
-		super(`Short code "${shortCode}" is already taken`);
-		this.name = 'ShortCodeConflictError';
-		this.shortCode = shortCode;
-	}
-}
-```
-
 ## Svelte 5 Patterns
 
 This project uses **Svelte 5 runes** exclusively. No legacy `$:`, `export let`, or stores API.
@@ -156,7 +123,6 @@ This project uses **Svelte 5 runes** exclusively. No legacy `$:`, `export let`, 
 - **State**: `let value = $state<Type>(initial)`
 - **Derived**: `const computed = $derived(expression)`
 - **Bindable props**: `value = $bindable('')` for two-way binding
-- **Component props type**: Define inline or as a separate `interface`, destructure in `$props()`
 
 ## Server-Side Patterns
 
@@ -177,7 +143,7 @@ Export typed load: `export const load: PageServerLoad = async ({ platform, local
 
 ### Database Access
 
-- Get DB via adapter factory: `const db = await getDb(platform)` or `getDatabaseAdapter(platform)`
+- Get DB via `getDb(platform)` from `$lib/server/db` or `getDatabaseAdapter(platform)` from `$lib/adapters/factory`
 - Drizzle query builder: `db.select().from(urls).where(eq(urls.shortCode, code))`
 - Schemas in `src/lib/server/db/schemas/` — barrel export from `index.ts`
 
@@ -187,38 +153,17 @@ Use structured logger from `$lib/server/logger`:
 
 ```typescript
 logger.info('event.name', { key: 'value' });
-logger.warn('warning.name', { context });
 logger.error('error.name', { error: err instanceof Error ? err.message : String(err) });
 ```
 
 ## Testing
 
-- **Framework**: Vitest with `node` environment
+- **Framework**: Vitest with `node` environment (workspace project config in `vite.config.ts`)
 - **Assertions required**: `expect.requireAssertions` is enabled — every test MUST have at least one `expect()`
 - **Mocking**: Use `vi.mock()` for module mocks, `vi.fn()` for function mocks, `vi.spyOn()` for spies
 - **Test colocation**: Tests live next to source files (`foo.ts` -> `foo.test.ts`)
+- **Route tests**: Named `server.test.ts` in the route directory
 - **SvelteKit mocks**: Mock `$lib/*` and `$app/*` paths via `vi.mock()`
-
-```typescript
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { POST } from './+server';
-import type { RequestEvent } from '@sveltejs/kit';
-
-vi.mock('$lib/server/rate-limit', () => ({
-	checkAnonymousRateLimit: vi.fn()
-}));
-
-describe('POST /api/v1/shorten', () => {
-	beforeEach(() => {
-		vi.clearAllMocks();
-	});
-
-	it('should return 429 if rate limit exceeded', async () => {
-		// ...setup mocks, call handler, assert response
-		expect(response.status).toBe(429);
-	});
-});
-```
 
 ## Architecture Notes
 
@@ -226,4 +171,4 @@ describe('POST /api/v1/shorten', () => {
 - **Factory functions**: `src/lib/adapters/factory.ts` resolves correct adapter based on `dev` flag
 - **Platform check**: Always guard `platform` access — it's `undefined` during SSR/prerender
 - **Env vars**: Accessed via `platform.env` (Cloudflare bindings), NOT `process.env` (except Sentry DSN fallback)
-- **Hooks chain**: `initialHook` -> `sentryInitHandle` -> `sentryHandle` -> `authHandle` -> `securityHeadersHandle`
+- **Hooks chain**: `initialHook` -> `sentryInitHandle` -> `Sentry.sentryHandle()` -> `authHandle` -> `securityHeadersHandle`
