@@ -1,6 +1,7 @@
 import type { PageServerLoad } from './$types';
 import { getClerkClient } from '$lib/server/clerk';
 import { fetchAnalytics } from '$lib/server/analytics';
+import { getUserUrls } from '$lib/server/db/queries/urls';
 import { logger } from '$lib/server/logger';
 
 export const load: PageServerLoad = async ({ platform, url, locals }) => {
@@ -20,7 +21,6 @@ export const load: PageServerLoad = async ({ platform, url, locals }) => {
 			filterUser = await clerkClient.users.getUser(userId);
 
 			// Fetch user's shortcodes
-			const { getUserUrls } = await import('$lib/server/db/queries/urls');
 			const userUrls = await getUserUrls(locals.db, userId);
 			userShortCodes = userUrls.map((u) => u.shortCode);
 		} catch (error) {

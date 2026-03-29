@@ -9,16 +9,11 @@ export async function getUserUrls(db: DrizzleClient, userId: string): Promise<Ur
 
 export async function getUrlByShortCode(db: DrizzleClient, shortCode: string): Promise<Url | undefined> {
 	const res = await db.select().from(urls).where(eq(urls.shortCode, shortCode));
-	return res[0] || undefined;
+	return res[0] ?? undefined;
 }
 
 export async function deleteUrlById(db: DrizzleClient, id: number) {
 	return await db.delete(urls).where(eq(urls.id, id));
-}
-
-export async function checkCustomCodeConflict(db: DrizzleClient, customCode: string): Promise<Url | undefined> {
-	const res = await db.select().from(urls).where(eq(urls.shortCode, customCode));
-	return res[0] || undefined;
 }
 
 export async function insertUrl(
@@ -37,7 +32,7 @@ export async function findExistingUserUrlExpiring(
 		.select()
 		.from(urls)
 		.where(and(eq(urls.originalUrl, originalUrl), isNotNull(urls.expiresAt), eq(urls.userId, userId)));
-	return res[0] || undefined;
+	return res[0] ?? undefined;
 }
 
 export async function findExistingUserUrlPermanent(
@@ -49,7 +44,7 @@ export async function findExistingUserUrlPermanent(
 		.select()
 		.from(urls)
 		.where(and(eq(urls.originalUrl, originalUrl), isNull(urls.expiresAt), eq(urls.userId, userId)));
-	return res[0] || undefined;
+	return res[0] ?? undefined;
 }
 
 export async function findExistingGlobalUrlExpiring(db: DrizzleClient, originalUrl: string): Promise<Url | undefined> {
@@ -57,7 +52,7 @@ export async function findExistingGlobalUrlExpiring(db: DrizzleClient, originalU
 		.select()
 		.from(urls)
 		.where(and(eq(urls.originalUrl, originalUrl), isNotNull(urls.expiresAt), isNull(urls.userId)));
-	return res[0] || undefined;
+	return res[0] ?? undefined;
 }
 
 export async function findExistingGlobalUrlPermanent(db: DrizzleClient, originalUrl: string): Promise<Url | undefined> {
@@ -65,5 +60,5 @@ export async function findExistingGlobalUrlPermanent(db: DrizzleClient, original
 		.select()
 		.from(urls)
 		.where(and(eq(urls.originalUrl, originalUrl), isNull(urls.expiresAt), isNull(urls.userId)));
-	return res[0] || undefined;
+	return res[0] ?? undefined;
 }

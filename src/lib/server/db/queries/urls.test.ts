@@ -5,7 +5,6 @@ import {
 	getUrlByShortCode,
 	deleteUrlById,
 	insertUrl,
-	checkCustomCodeConflict,
 	findExistingUserUrlPermanent,
 	findExistingUserUrlExpiring,
 	findExistingGlobalUrlPermanent,
@@ -79,22 +78,6 @@ describe('URL Queries DAL', () => {
 		expect(mockChain.insert).toHaveBeenCalled();
 		expect(mockChain.values).toHaveBeenCalledWith(newUrl);
 		expect(result).toEqual([{ id: 1, ...newUrl }]);
-	});
-
-	it('checkCustomCodeConflict returns first result if code exists', async () => {
-		mockChain.where.mockResolvedValueOnce([{ id: 1 }]);
-		const result = await checkCustomCodeConflict(mockDb, 'custom');
-
-		expect(mockChain.select).toHaveBeenCalled();
-		expect(mockChain.where).toHaveBeenCalled();
-		expect(result).toEqual({ id: 1 });
-	});
-
-	it('checkCustomCodeConflict returns undefined if code does not exist', async () => {
-		mockChain.where.mockResolvedValueOnce([]);
-		const result = await checkCustomCodeConflict(mockDb, 'custom');
-
-		expect(result).toBeUndefined();
 	});
 
 	it('findExistingUserUrlPermanent queries with url and userId', async () => {

@@ -9,8 +9,7 @@ export const GET: RequestHandler = async ({ platform, params, request, locals })
 
 	const res = await getUrlByShortCode(locals.db, shortCode);
 	if (res) {
-		const expiresAtMs =
-			res.expiresAt instanceof Date ? res.expiresAt.getTime() : res.expiresAt ? res.expiresAt * 1000 : null;
+		const expiresAtMs = res.expiresAt ? res.expiresAt.getTime() : null;
 		if (expiresAtMs && expiresAtMs <= Date.now()) {
 			await deleteUrlById(locals.db, res.id);
 			logger.warn('redirect.expired', { shortCode });

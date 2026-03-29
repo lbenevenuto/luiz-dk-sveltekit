@@ -3,7 +3,7 @@ import { generateShortCode } from './hashids';
 import type { DrizzleClient } from '$lib/server/db/client';
 
 import {
-	checkCustomCodeConflict,
+	getUrlByShortCode,
 	insertUrl,
 	findExistingUserUrlExpiring,
 	findExistingUserUrlPermanent,
@@ -45,19 +45,17 @@ export class ShortCodeConflictError extends Error {
 }
 
 export const createShortUrl = async (
-	url: string,
+	normalizedUrl: string,
 	expiresAt: number | null,
 	platform: Readonly<App.Platform> | undefined,
 	db: DrizzleClient,
 	userId: string | null = null,
 	customCode: string | null = null
 ): Promise<CreateShortUrlResult> => {
-	const normalizedUrl = normalizeUrl(url);
-
 	const expiresAtDate = expiresAt ? new Date(expiresAt * 1000) : null;
 
 	if (customCode) {
-		const existing = await checkCustomCodeConflict(db, customCode);
+		const existing = await getUrlByShortCode(db, customCode);
 
 		if (existing) {
 			throw new ShortCodeConflictError(customCode);
@@ -104,10 +102,7 @@ export const createShortUrl = async (
 
 	if (existing) {
 		const nowSeconds = Math.floor(Date.now() / 1000);
-		const existingExpiresAtSeconds =
-			existing.expiresAt instanceof Date
-				? Math.floor(existing.expiresAt.getTime() / 1000)
-				: (existing.expiresAt ?? null);
+		const existingExpiresAtSeconds = existing.expiresAt ? Math.floor(existing.expiresAt.getTime() / 1000) : null;
 		const isExpired = existingExpiresAtSeconds !== null && existingExpiresAtSeconds <= nowSeconds;
 
 		if (!isExpired) {

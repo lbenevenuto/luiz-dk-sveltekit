@@ -1,6 +1,5 @@
-import { drizzle } from 'drizzle-orm/d1';
-import * as schema from './schemas';
 import { dev } from '$app/environment';
+import { createD1Client, createSQLiteClient } from './client';
 import type { DrizzleClient } from './client';
 
 let db: DrizzleClient;
@@ -8,17 +7,14 @@ let db: DrizzleClient;
 export async function getDb(platform?: App.Platform): Promise<DrizzleClient> {
 	if (dev) {
 		if (!db) {
-			const { default: Database } = await import('better-sqlite3');
-			const { drizzle: drizzleSqlite } = await import('drizzle-orm/better-sqlite3');
-			const sqlite = new Database('./data/local.db', { fileMustExist: false });
-			db = drizzleSqlite(sqlite, { schema });
+			db = await createSQLiteClient();
 		}
 		return db;
 	}
 
 	if (platform?.env?.DB) {
 		if (!db) {
-			db = drizzle(platform.env.DB, { schema });
+			db = await createD1Client(platform.env.DB);
 		}
 		return db;
 	}

@@ -83,7 +83,7 @@ vi.mock('$lib/adapters/factory', () => ({
 }));
 
 vi.mock('$lib/server/db/queries/urls', () => ({
-	checkCustomCodeConflict: vi.fn(),
+	getUrlByShortCode: vi.fn(),
 	insertUrl: vi.fn(),
 	findExistingUserUrlExpiring: vi.fn(),
 	findExistingUserUrlPermanent: vi.fn(),
@@ -105,14 +105,14 @@ describe('createShortUrl', () => {
 
 	describe('custom codes', () => {
 		it('throws ShortCodeConflictError if custom code exists', async () => {
-			vi.mocked(queries.checkCustomCodeConflict).mockResolvedValue(mockUrl({ shortCode: 'mycode' }));
+			vi.mocked(queries.getUrlByShortCode).mockResolvedValue(mockUrl({ shortCode: 'mycode' }));
 			await expect(createShortUrl('https://example.com', null, mockPlatform, mockDb, null, 'mycode')).rejects.toThrow(
 				ShortCodeConflictError
 			);
 		});
 
 		it('inserts directly if custom code does not exist', async () => {
-			vi.mocked(queries.checkCustomCodeConflict).mockResolvedValue(undefined);
+			vi.mocked(queries.getUrlByShortCode).mockResolvedValue(undefined);
 			const result = await createShortUrl('https://example.com', null, mockPlatform, mockDb, null, 'newcode');
 
 			expect(queries.insertUrl).toHaveBeenCalledWith(mockDb, {
