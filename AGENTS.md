@@ -32,8 +32,8 @@
 ## Tech Stack
 
 - **Framework**: SvelteKit (Svelte 5 with runes) on Cloudflare Pages
-- **Runtime**: Bun (package manager + scripts), Node 24.x for Wrangler tooling
-- **Database**: Drizzle ORM on SQLite (local dev) / Cloudflare D1 (production)
+- **Runtime**: Bun (package manager + scripts), Node (see `.node-version`) for Wrangler tooling
+- **Database**: Drizzle ORM on SQLite/better-sqlite3 (local dev) / Cloudflare D1 (production)
 - **Auth**: Clerk (server-side via `@clerk/backend`, client-side via Clerk JS SDK)
 - **Styling**: Tailwind CSS v4 (utility-first, no component-scoped styles)
 - **Validation**: Zod v4 (`zod` import path)
@@ -61,7 +61,7 @@
 
 ### CI Pipeline (`.github/workflows/ci.yml`)
 
-Runs on push to `main` and all PRs: lint -> typecheck -> test (coverage thresholds: 45% lines/functions/statements, 35% branches) -> build.
+Runs on push to `main` and all PRs: lint -> typecheck -> test -> build.
 
 ### Pre-commit Hook
 
@@ -143,7 +143,7 @@ Export typed load: `export const load: PageServerLoad = async ({ platform, local
 
 ### Database Access
 
-- Get DB via adapter factory: `const db = await getDb(platform)` or `getDatabaseAdapter(platform)`
+- Get DB via `getDb(platform)` from `$lib/server/db` or `getDatabaseAdapter(platform)` from `$lib/adapters/factory`
 - Drizzle query builder: `db.select().from(urls).where(eq(urls.shortCode, code))`
 - Schemas in `src/lib/server/db/schemas/` — barrel export from `index.ts`
 
@@ -158,10 +158,11 @@ logger.error('error.name', { error: err instanceof Error ? err.message : String(
 
 ## Testing
 
-- **Framework**: Vitest with `node` environment
+- **Framework**: Vitest with `node` environment (workspace project config in `vite.config.ts`)
 - **Assertions required**: `expect.requireAssertions` is enabled — every test MUST have at least one `expect()`
 - **Mocking**: Use `vi.mock()` for module mocks, `vi.fn()` for function mocks, `vi.spyOn()` for spies
 - **Test colocation**: Tests live next to source files (`foo.ts` -> `foo.test.ts`)
+- **Route tests**: Named `server.test.ts` in the route directory
 - **SvelteKit mocks**: Mock `$lib/*` and `$app/*` paths via `vi.mock()`
 
 ## Architecture Notes
@@ -170,4 +171,4 @@ logger.error('error.name', { error: err instanceof Error ? err.message : String(
 - **Factory functions**: `src/lib/adapters/factory.ts` resolves correct adapter based on `dev` flag
 - **Platform check**: Always guard `platform` access — it's `undefined` during SSR/prerender
 - **Env vars**: Accessed via `platform.env` (Cloudflare bindings), NOT `process.env` (except Sentry DSN fallback)
-- **Hooks chain**: `initialHook` -> `sentryInitHandle` -> `sentryHandle` -> `authHandle` -> `securityHeadersHandle`
+- **Hooks chain**: `initialHook` -> `sentryInitHandle` -> `Sentry.sentryHandle()` -> `authHandle` -> `securityHeadersHandle`
