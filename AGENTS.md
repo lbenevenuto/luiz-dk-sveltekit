@@ -24,8 +24,39 @@
 - **Always keep PR descriptions super concise** — never add "Generated with Claude Code" or any AI attribution/signature
 - **Always read all links provided in a prompt** before beginning implementation
 - **Always run `bun run lint && bun run check && bun run test`** before marking any task complete
-- **Always use [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/)** for [semantic-release](https://semantic-release.gitbook.io/semantic-release/) — e.g. `feat:`, `fix:`, `chore:`, `refactor:`, `test:`, `docs:`
+- **Always use [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/)** for [semantic-release](https://semantic-release.gitbook.io/semantic-release/) — see [Commit Convention](#commit-convention) below for the full rules
 - **Always check and update `AGENTS.md`** after any change to ensure it stays in sync with the codebase
+
+---
+
+## Commit Convention
+
+This project uses [semantic-release](https://semantic-release.gitbook.io/semantic-release/) with the default configuration. Commit messages **directly control versioning and changelog generation** — every commit to `main` is analyzed automatically.
+
+### Commit Message → Release Type
+
+| Commit message                                                                                                   | Release type             |
+| ---------------------------------------------------------------------------------------------------------------- | ------------------------ |
+| `fix(pencil): stop graphite breaking when too much pressure applied`                                             | Fix Release              |
+| `feat(pencil): add 'graphiteWidth' option`                                                                       | Feature Release          |
+| `perf(pencil): remove graphiteWidth option`<br><br>`BREAKING CHANGE: The graphiteWidth option has been removed.` | Breaking Release (major) |
+
+The `BREAKING CHANGE:` token must be in the **footer** of the commit (after a blank line).
+
+### Message Format
+
+```
+<type>(<scope>): <description>
+
+[optional body]
+
+[optional footer(s)]
+```
+
+- **type**: `feat`, `fix`, `perf`, `refactor`, `chore`, `docs`, `style`, `test`, `build`, `ci`, `revert`
+- **scope**: Optional noun describing the affected module (e.g. `db`, `auth`, `api`)
+- **description**: Imperative present tense, lowercase start, no period
+- **footer**: For `BREAKING CHANGE:` notes and issue refs (`Closes #123`)
 
 ---
 
