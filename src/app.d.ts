@@ -2,6 +2,7 @@
 // for information about these interfaces
 
 import type { User } from '@clerk/backend';
+import type { DrizzleClient } from '$lib/server/db/client';
 
 export interface GlobalCounterDurableObject extends Rpc.DurableObjectBranded {
 	nextValue(): Promise<number>;
@@ -14,6 +15,7 @@ export type UserRole = 'admin' | 'user';
 declare global {
 	namespace App {
 		interface Locals {
+			db: DrizzleClient;
 			auth: {
 				userId: string | null;
 				sessionId: string | null;
