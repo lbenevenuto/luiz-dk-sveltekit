@@ -2,181 +2,167 @@
 
 > Guidelines for AI coding agents operating in this repository.
 
-## CRITICAL RULES — NEVER SKIP, NO EXCEPTIONS
-
-### Restrictions
+## CRITICAL RULES — NEVER SKIP
 
 - **Never commit or push** without explicit user instruction
-- **Never skip writing tests** for new features — all new code requires test coverage
-- **Never make code changes unrelated to the assigned task** — scope changes strictly to what was asked
-- **Never use `any` type** — define proper TypeScript types for all values, parameters, and return types
-- **Never disable ESLint rules** with any suppression directive (`eslint-disable`, `eslint-disable-next-line`, `eslint-disable-line`, or block-form `/* eslint-disable */` comments) — fix the underlying issue instead
-- **Never create files** unless absolutely necessary for achieving goals
-- **Never proactively create documentation files** (`*.md`) or README files unless explicitly requested
-- **Never over-engineer solutions** — build only what's explicitly requested
+- **Never skip writing tests** — all new code requires test coverage
+- **Never make unrelated changes** — stick strictly to the assigned task
+- **Never use `any` type** — define proper TypeScript types
+- **Never disable ESLint rules** — fix the underlying issue instead (exception: external lib typedefs in `app.d.ts`)
+- **Never create files** unless absolutely necessary
+- **Never proactively create documentation** unless explicitly requested
+- **Never over-engineer** — build only what's requested
 
 ### Required Workflow
 
-- **Always use the [GitHub MCP tool](https://github.com/github/github-mcp-server) first** for any GitHub operations (PRs, issues, branches, file lookups) — prefer it over CLI commands like `gh`. If unavailable, ask the repository maintainer how to configure GitHub workflow tools.
-- **Always use [Context7](https://github.com/upstash/context7)** for documentation lookups — it provides up-to-date library docs and code examples via MCP. If unavailable, consult official library documentation directly.
-- **Always add Copilot as a reviewer** when creating pull requests
-- **Always assign the PR to its author** when creating pull requests
-- **Always keep PR descriptions super concise** — never add "Generated with Claude Code" or any AI attribution/signature
-- **Always read all links provided in a prompt** before beginning implementation
-- **Always run `bun run lint && bun run check && bun run test`** before marking any task complete
-- **Always use [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/)** for [semantic-release](https://semantic-release.gitbook.io/semantic-release/) — see [Commit Convention](#commit-convention) below for the full rules
-- **Always check and update `AGENTS.md`** after any change to ensure it stays in sync with the codebase
+- Use **GitHub MCP tools** for PRs/issues/branches (not CLI commands)
+- Use **Context7** for library documentation lookups
+- Add **Copilot as reviewer** on PRs, assign PR to author
+- Keep PR descriptions **concise** — no AI attribution
+- Read **all links** in prompts before implementing
+- Run `bun run lint && bun run check && bun run test` before completing tasks
+- Use **Conventional Commits** for semantic-release
+- Update **AGENTS.md** after changes that affect conventions
+
+#### Verification Required
+
+**AFTER each workflow step, VERIFY it succeeded:**
+
+| Workflow Item        | Verification Action                                       |
+| -------------------- | --------------------------------------------------------- |
+| Create PR            | Read PR to confirm it exists with correct title/body      |
+| Add Copilot reviewer | Read PR to confirm `requested_reviewers` includes Copilot |
+| Assign PR to author  | Read PR to confirm `assignees` includes PR author         |
+| Run lint/check/test  | Confirm exit code 0, do not proceed on failure            |
+
+**Never assume a command succeeded — always verify the result.**
 
 ---
 
 ## Commit Convention
 
-This project uses [semantic-release](https://semantic-release.gitbook.io/semantic-release/) with the default configuration. Commit messages **directly control versioning and changelog generation** — every commit to `main` is analyzed automatically.
+Uses [semantic-release](https://semantic-release.gitbook.io/semantic-release/) — commits directly control versioning.
 
-### Commit Message → Release Type
-
-| Commit message                                                                                                   | Release type             |
-| ---------------------------------------------------------------------------------------------------------------- | ------------------------ |
-| `fix(pencil): stop graphite breaking when too much pressure applied`                                             | Fix Release              |
-| `feat(pencil): add 'graphiteWidth' option`                                                                       | Feature Release          |
-| `perf(pencil): remove graphiteWidth option`<br><br>`BREAKING CHANGE: The graphiteWidth option has been removed.` | Breaking Release (major) |
-
-The `BREAKING CHANGE:` token must be in the **footer** of the commit (after a blank line).
-
-### Message Format
-
-```
-<type>(<scope>): <description>
-
-[optional body]
-
-[optional footer(s)]
-```
-
-- **type**: `feat`, `fix`, `perf`, `refactor`, `chore`, `docs`, `style`, `test`, `build`, `ci`, `revert`
-- **scope**: Optional noun describing the affected module (e.g. `db`, `auth`, `api`)
-- **description**: Imperative present tense, lowercase start, no period
-- **footer**: For `BREAKING CHANGE:` notes and issue refs (`Closes #123`)
+| Commit message                                         | Release type |
+| ------------------------------------------------------ | ------------ |
+| `fix(scope): description`                              | Patch        |
+| `feat(scope): description`                             | Minor        |
+| `perf(scope): description` + `BREAKING CHANGE:` footer | Major        |
 
 ---
 
 ## Tech Stack
 
-- **Framework**: SvelteKit (Svelte 5 with runes) on Cloudflare Pages
-- **Runtime**: Bun (package manager + scripts), Node (see `.node-version`) for Wrangler tooling
-- **Database**: Drizzle ORM on SQLite/better-sqlite3 (local dev) / Cloudflare D1 (production)
-- **Auth**: Clerk (server-side via `@clerk/backend`, client-side via Clerk JS SDK)
-- **Styling**: Tailwind CSS v4 (utility-first, no component-scoped styles)
-- **Validation**: Zod v4 (`zod` import path)
-- **Monitoring**: Sentry (`@sentry/sveltekit`)
-- **Cloudflare Bindings**: D1 (DB), KV (CACHE), Analytics Engine (ANALYTICS), Durable Objects (GLOBAL_COUNTER_DO)
+- **Framework:** SvelteKit (Svelte 5 runes) on Cloudflare Pages
+- **Runtime:** Bun (package manager), Node (for Wrangler, see `.node-version`)
+- **Database:** Drizzle ORM on SQLite (local) / Cloudflare D1 (prod)
+- **Auth:** Clerk (`@clerk/backend` server-side, JS SDK client-side)
+- **Styling:** Tailwind CSS v4 (utility-first)
+- **Validation:** Zod v4
+- **Monitoring:** Sentry (`@sentry/sveltekit`)
+- **Cloudflare Bindings:** D1 (DB), KV (CACHE), Analytics Engine, Durable Objects
+
+---
 
 ## Commands
 
-| Task                     | Command                                              |
-| ------------------------ | ---------------------------------------------------- |
-| Install                  | `bun install`                                        |
-| Dev server               | `bun run dev`                                        |
-| Build                    | `bun run build`                                      |
-| Lint (prettier + eslint) | `bun run lint`                                       |
-| Format                   | `bun run format`                                     |
-| Typecheck                | `bun run check`                                      |
-| Run all tests            | `bun run test`                                       |
-| Run tests in watch mode  | `bun run test:unit`                                  |
-| Run a single test file   | `bunx vitest run src/lib/adapters/analytics.test.ts` |
-| Run tests matching name  | `bunx vitest run -t "should handle errors"`          |
-| Tests with coverage      | `bun run test -- --coverage`                         |
-| Generate DB migrations   | `bun run db:generate`                                |
-| Apply migrations (local) | `bun run db:migrate`                                 |
-| Deploy                   | `bun run deploy`                                     |
+| Task               | Command                                              |
+| ------------------ | ---------------------------------------------------- |
+| Install            | `bun install`                                        |
+| Dev                | `bun run dev`                                        |
+| Build              | `bun run build`                                      |
+| Preview            | `bun run preview`                                    |
+| Lint               | `bun run lint`                                       |
+| Format             | `bun run format`                                     |
+| Typecheck          | `bun run check`                                      |
+| Test (all)         | `bun run test`                                       |
+| Test (watch)       | `bun run test:unit`                                  |
+| Test (single file) | `bunx vitest run src/lib/adapters/analytics.test.ts` |
+| Test (by name)     | `bunx vitest run -t "should handle errors"`          |
+| Test (coverage)    | `bun run test -- --coverage`                         |
+| DB generate        | `bun run db:generate`                                |
+| DB migrate (local) | `bun run db:migrate`                                 |
+| DB migrate (prod)  | `bun run db:migrate:prod`                            |
+| Deploy             | `bun run deploy`                                     |
 
-### CI Pipeline (`.github/workflows/ci.yml`)
+**CI:** Runs `lint -> check -> test -> build` on push to `main` and all PRs.
 
-Runs on push to `main` and all PRs: lint -> typecheck -> test -> build.
+**Pre-commit:** Husky + lint-staged runs prettier + eslint on `*.{js,ts,svelte,json}`.
 
-### Pre-commit Hook
-
-Husky runs `lint-staged` on commit: prettier + eslint on `*.{js,ts,svelte,json}` files.
+---
 
 ## Code Style
 
 ### Formatting (Prettier)
 
-- **Tabs** for indentation (not spaces)
+- **Tabs** for indentation
 - **Single quotes**, no trailing commas
-- **Print width**: 120 characters
+- **Print width:** 120
 - Plugins: `prettier-plugin-svelte`, `prettier-plugin-tailwindcss`
 
 ### Imports
 
-- Use `$lib/` alias for all library imports, `$app/` for SvelteKit internals
+- Use `$lib/` for library imports, `$app/` for SvelteKit internals
 - Use `import type` for type-only imports
-- Group order: framework (`@sveltejs/kit`) -> external libs -> `$lib/server` -> `$lib/` -> relative
-- Zod is imported as `import { z } from 'zod'`
+- Group order: framework → external libs → `$lib/server` → `$lib/` → relative
+- Zod: `import { z } from 'zod'`
 
 ### TypeScript
 
 - **Strict mode** enabled (`"strict": true`)
-- Prefer type inference where obvious; explicit types for function signatures
+- Prefer inference where obvious; explicit types for function signatures
 - Use `interface` for object shapes, `type` for unions/aliases
-- Drizzle schema types via `$inferSelect` / `$inferInsert`
-- Never use `as any`, `@ts-ignore`, or `@ts-expect-error`
+- Drizzle types: `typeof table.$inferSelect` / `$inferInsert`
+- Never use `as any`, `@ts-ignore`, `@ts-expect-error` (except external lib typedefs)
 
 ### Naming Conventions
 
-| Item                      | Convention                | Example                                    |
-| ------------------------- | ------------------------- | ------------------------------------------ |
-| Files (lib/utils)         | kebab-case                | `rate-limit.ts`, `auth-handle.ts`          |
-| Svelte components         | PascalCase                | `FormInput.svelte`, `SEO.svelte`           |
-| Svelte stores             | kebab-case + `.svelte.ts` | `toast.svelte.ts`                          |
-| Functions                 | camelCase                 | `createShortUrl`, `requireAuth`            |
-| Variables                 | camelCase                 | `shortCode`, `userId`                      |
-| Types/Interfaces          | PascalCase                | `ClickData`, `Toast`, `UserRole`           |
-| Constants (regex, config) | UPPER_SNAKE_CASE          | `CUSTOM_CODE_REGEX`                        |
-| DB columns                | snake_case                | `short_code`, `original_url`               |
-| Test files                | colocated, `*.test.ts`    | `analytics.test.ts` next to `analytics.ts` |
+| Item                | Convention                | Example                    |
+| ------------------- | ------------------------- | -------------------------- |
+| Files (lib/utils)   | kebab-case                | `rate-limit.ts`            |
+| Svelte components   | PascalCase                | `FormInput.svelte`         |
+| Svelte stores       | kebab-case + `.svelte.ts` | `toast.svelte.ts`          |
+| Functions/variables | camelCase                 | `createShortUrl`, `userId` |
+| Types/Interfaces    | PascalCase                | `ClickData`, `UserRole`    |
+| Constants           | UPPER_SNAKE_CASE          | `CUSTOM_CODE_REGEX`        |
+| DB columns          | snake_case                | `short_code`               |
+| Test files          | colocated, `*.test.ts`    | `analytics.test.ts`        |
 
 ### Error Handling
 
-- **API endpoints**: Return `json({ error: string }, { status: number })` for client errors
-- **Auth guards**: Throw SvelteKit `error(401, { message })` or `error(403, { message })`
-- **Redirects**: Throw SvelteKit `redirect(302, '/path')`
-- **Custom errors**: Extend `Error` with `name` property and typed fields
-- **Validation**: Zod `safeParse()` -> return 400 with `z.prettifyError()`
-- **Infrastructure errors**: Try-catch, log with `logger.error()`, fail-open when appropriate
-- **Never** use empty catch blocks — always log or re-throw
+- **API endpoints:** Return `json({ error: string }, { status })` for client errors
+- **Auth guards:** Throw `error(401, { message })` or `error(403, { message })`
+- **Redirects:** Throw `redirect(302, '/path')`
+- **Validation:** Zod `safeParse()` → return 400 with error details
+- **Infrastructure:** Try-catch, log with `logger.error()`, fail-open when appropriate
+- **Never** use empty catch blocks
+
+---
 
 ## Svelte 5 Patterns
 
-This project uses **Svelte 5 runes** exclusively. No legacy `$:`, `export let`, or stores API.
+Uses **Svelte 5 runes exclusively** — no legacy `$:`, `export let`, or stores API.
 
-- **Props**: `let { prop1, prop2 = default }: PropsType = $props()`
-- **State**: `let value = $state<Type>(initial)`
-- **Derived**: `const computed = $derived(expression)`
-- **Bindable props**: `value = $bindable('')` for two-way binding
+- **Props:** `let { prop1, prop2 = default }: PropsType = $props()`
+- **State:** `let value = $state<Type>(initial)`
+- **Derived:** `const computed = $derived(expression)`
+- **Bindable:** `value = $bindable('')` for two-way binding
+
+---
 
 ## Server-Side Patterns
 
 ### Route Handlers (`+server.ts`)
 
-Export typed handlers: `export const GET: RequestHandler = async ({ platform, request, locals }) => { ... }`
-
-- Access Cloudflare bindings via `platform.env`
-- Access auth state via `locals.auth` (populated by hooks)
-- Always validate input with Zod before processing
+Export typed handlers: `export const GET: RequestHandler = async ({ platform, request, locals }) => { ... }`. Access Cloudflare bindings via `platform.env`, auth via `locals.auth`, and always validate input with Zod.
 
 ### Load Functions (`+page.server.ts`)
 
-Export typed load: `export const load: PageServerLoad = async ({ platform, locals }) => { ... }`
-
-- Auth checks first: `if (!locals.auth.userId) throw redirect(302, '/login')`
-- Use `requireAuth(locals)` / `requireAdmin(locals)` from `$lib/server/auth`
+Export typed load: `export const load: PageServerLoad = async ({ platform, locals }) => { ... }`. Do auth checks first: `if (!locals.auth.userId) throw redirect(302, '/login')`. Use `requireAuth(locals)` / `requireAdmin(locals)` from `$lib/server/auth`.
 
 ### Database Access
 
-- Get DB via `getDb(platform)` from `$lib/server/db` or `getDatabaseAdapter(platform)` from `$lib/adapters/factory`
-- Drizzle query builder: `db.select().from(urls).where(eq(urls.shortCode, code))`
-- Schemas in `src/lib/server/db/schemas/` — barrel export from `index.ts`
+Get DB via `getDb(platform)` from `$lib/server/db` or `getDatabaseAdapter(platform)` from `$lib/adapters/factory`. Drizzle query builder: `db.select().from(urls).where(eq(urls.shortCode, code))`. Schemas in `src/lib/server/db/schemas/` with barrel export from `index.ts`.
 
 ### Logging
 
@@ -187,19 +173,23 @@ logger.info('event.name', { key: 'value' });
 logger.error('error.name', { error: err instanceof Error ? err.message : String(err) });
 ```
 
+---
+
 ## Testing
 
-- **Framework**: Vitest with `node` environment (workspace project config in `vite.config.ts`)
-- **Assertions required**: `expect.requireAssertions` is enabled — every test MUST have at least one `expect()`
-- **Mocking**: Use `vi.mock()` for module mocks, `vi.fn()` for function mocks, `vi.spyOn()` for spies
-- **Test colocation**: Tests live next to source files (`foo.ts` -> `foo.test.ts`)
-- **Route tests**: Named `server.test.ts` in the route directory
-- **SvelteKit mocks**: Mock `$lib/*` and `$app/*` paths via `vi.mock()`
+- **Framework:** Vitest with `node` environment (workspace project config in `vite.config.ts`)
+- **Assertions required:** `expect.requireAssertions` is enabled — every test MUST have at least one `expect()`
+- **Mocking:** Use `vi.mock()` for module mocks, `vi.fn()` for function mocks, `vi.spyOn()` for spies
+- **Test colocation:** Tests live next to source files (`foo.ts` -> `foo.test.ts`)
+- **Route tests:** Named `server.test.ts` in the route directory
+- **SvelteKit mocks:** Mock `$lib/*` and `$app/*` paths via `vi.mock()`
+
+---
 
 ## Architecture Notes
 
-- **Adapter pattern**: `src/lib/adapters/` provides swappable implementations (Cloudflare vs local dev)
-- **Factory functions**: `src/lib/adapters/factory.ts` resolves correct adapter based on `dev` flag
-- **Platform check**: Always guard `platform` access — it's `undefined` during SSR/prerender
-- **Env vars**: Accessed via `platform.env` (Cloudflare bindings), NOT `process.env` (except Sentry DSN fallback)
-- **Hooks chain**: `initialHook` -> `sentryInitHandle` -> `Sentry.sentryHandle()` -> `authHandle` -> `securityHeadersHandle`
+- **Adapter pattern:** `src/lib/adapters/` provides swappable implementations (Cloudflare vs local dev)
+- **Factory functions:** `src/lib/adapters/factory.ts` resolves correct adapter based on `dev` flag
+- **Platform check:** Always guard `platform` access — it's `undefined` during SSR/prerender
+- **Env vars:** Accessed via `platform.env` (Cloudflare bindings), NOT `process.env` (except Sentry DSN fallback)
+- **Hooks chain:** `initialHook` -> `sentryInitHandle` -> `Sentry.sentryHandle()` -> `authHandle` -> `securityHeadersHandle`
