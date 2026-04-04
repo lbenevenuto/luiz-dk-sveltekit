@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 vi.mock('$app/environment', () => ({
 	browser: true
@@ -12,8 +12,27 @@ async function loadClerkModule() {
 	return import('./clerk');
 }
 
+function createClerkStub(overrides: Partial<NonNullable<Window['Clerk']>> = {}): NonNullable<Window['Clerk']> {
+	return {
+		load: vi.fn(),
+		client: {} as NonNullable<Window['Clerk']>['client'],
+		user: null,
+		session: null,
+		signOut: vi.fn(),
+		addListener: vi.fn(() => () => undefined),
+		openSignIn: vi.fn(),
+		openSignUp: vi.fn(),
+		setActive: vi.fn(),
+		mountUserProfile: vi.fn(),
+		unmountUserProfile: vi.fn(),
+		handleRedirectCallback: vi.fn(),
+		...overrides
+	};
+}
+
 describe('clerk client helpers', () => {
 	beforeEach(() => {
+		vi.useFakeTimers();
 		vi.resetModules();
 		const testWindow = getTestWindow();
 		Object.defineProperty(globalThis, 'window', {
@@ -23,26 +42,19 @@ describe('clerk client helpers', () => {
 		delete testWindow.Clerk;
 	});
 
+	afterEach(() => {
+		vi.useRealTimers();
+	});
+
 	it('waits for the script global before resolving', async () => {
 		const { waitForClerkScript } = await loadClerkModule();
-		const promise = waitForClerkScript(100);
+		const promise = waitForClerkScript(5000);
 
-		setTimeout(() => {
-			getTestWindow().Clerk = {
-				load: vi.fn(),
-				client: {} as NonNullable<Window['Clerk']>['client'],
-				user: null,
-				session: null,
-				signOut: vi.fn(),
-				addListener: vi.fn(() => () => undefined),
-				openSignIn: vi.fn(),
-				openSignUp: vi.fn(),
-				setActive: vi.fn(),
-				mountUserProfile: vi.fn(),
-				unmountUserProfile: vi.fn(),
-				handleRedirectCallback: vi.fn()
-			};
-		}, 10);
+		// Simulate the Clerk script appearing on window
+		getTestWindow().Clerk = createClerkStub();
+
+		// Advance past one polling interval (50ms) so the setInterval callback detects it
+		await vi.advanceTimersByTimeAsync(50);
 
 		const clerk = await promise;
 		expect(clerk).toBe(getTestWindow().Clerk);
@@ -57,45 +69,35 @@ describe('clerk client helpers', () => {
 			window.Clerk.client = {} as NonNullable<Window['Clerk']>['client'];
 		});
 
-		getTestWindow().Clerk = {
+		// Clerk script is present but not yet initialized (no client)
+		getTestWindow().Clerk = createClerkStub({
 			load,
-			client: undefined as unknown as NonNullable<Window['Clerk']>['client'],
-			user: null,
-			session: null,
-			signOut: vi.fn(),
-			addListener: vi.fn(() => () => undefined),
-			openSignIn: vi.fn(),
-			openSignUp: vi.fn(),
-			setActive: vi.fn(),
-			mountUserProfile: vi.fn(),
-			unmountUserProfile: vi.fn(),
-			handleRedirectCallback: vi.fn()
-		};
+			client: undefined as unknown as NonNullable<Window['Clerk']>['client']
+		});
 
-		const clerk = await initializeClerk({ publishableKey: 'pk_test' }, 100);
+		const clerk = await initializeClerk({ publishableKey: 'pk_test' }, 5000);
 
 		expect(load).toHaveBeenCalledWith({ publishableKey: 'pk_test' });
 		expect(clerk.client).toBeDefined();
-		await expect(waitForClerk(100)).resolves.toBe(clerk);
+		await expect(waitForClerk(5000)).resolves.toBe(clerk);
 	});
 
 	it('rejects when Clerk.load never resolves', async () => {
 		const { initializeClerk } = await loadClerkModule();
-		getTestWindow().Clerk = {
+		getTestWindow().Clerk = createClerkStub({
 			load: vi.fn(() => new Promise<void>(() => undefined)),
-			client: undefined as unknown as NonNullable<Window['Clerk']>['client'],
-			user: null,
-			session: null,
-			signOut: vi.fn(),
-			addListener: vi.fn(() => () => undefined),
-			openSignIn: vi.fn(),
-			openSignUp: vi.fn(),
-			setActive: vi.fn(),
-			mountUserProfile: vi.fn(),
-			unmountUserProfile: vi.fn(),
-			handleRedirectCallback: vi.fn()
-		};
+			client: undefined as unknown as NonNullable<Window['Clerk']>['client']
+		});
 
-		await expect(initializeClerk({ publishableKey: 'pk_test' }, 20)).rejects.toThrow('Clerk initialization timed out');
+		// Attach the rejection handler before advancing timers so
+		// the re-throw in the .catch() chain is not reported as unhandled
+		const rejection = initializeClerk({ publishableKey: 'pk_test' }, 5000).catch((e: unknown) => e);
+
+		// Advance past the withTimeout deadline to trigger rejection
+		await vi.advanceTimersByTimeAsync(5000);
+
+		const error = await rejection;
+		expect(error).toBeInstanceOf(Error);
+		expect((error as Error).message).toBe('Clerk initialization timed out');
 	});
 });
