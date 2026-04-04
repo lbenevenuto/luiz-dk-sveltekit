@@ -55,6 +55,7 @@ export default {
 						'{{/each}}',
 						'{{/each}}',
 						'{{/if}}',
+						'',
 						'{{extraFooter}}'
 					].join('\n')
 				}
