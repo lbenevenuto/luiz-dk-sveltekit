@@ -1,3 +1,11 @@
+## [1.2.4](https://github.com/lbenevenuto/luiz-dk-sveltekit/compare/v1.2.3...v1.2.4) (2026-04-04)
+
+### 🐛 Bug Fixes
+
+* **ci:** add blank line before Full Changelog link in release notes ([43b1bf2](https://github.com/lbenevenuto/luiz-dk-sveltekit/commit/43b1bf26739ca07fd390afe6fc660c1e19a52c18))
+
+**Full Changelog**: https://github.com/lbenevenuto/luiz-dk-sveltekit/compare/v1.2.3...v1.2.4
+
 ## [1.2.3](https://github.com/lbenevenuto/luiz-dk-sveltekit/compare/v1.2.2...v1.2.3) (2026-04-04)
 
 ### 🐛 Bug Fixes
