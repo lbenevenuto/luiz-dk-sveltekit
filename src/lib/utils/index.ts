@@ -108,6 +108,7 @@ export const createShortUrl = async (
 		if (!isExpired) {
 			if (cacheAdapter && !existingExpiresAtSeconds) {
 				await cacheAdapter.set(cacheKey, existing.shortCode, 604800); // 7 days
+				await cacheAdapter.set(`redirect:${existing.shortCode}`, normalizedUrl, 604800);
 			}
 			return { shortCode: existing.shortCode, isExisting: true, expiresAt: existingExpiresAtSeconds };
 		}
@@ -126,6 +127,7 @@ export const createShortUrl = async (
 
 	if (cacheAdapter && !expiresAt) {
 		await cacheAdapter.set(cacheKey, shortCode, 604800); // 7 days
+		await cacheAdapter.set(`redirect:${shortCode}`, normalizedUrl, 604800);
 	}
 
 	return { shortCode, isExisting: false, expiresAt: expiresAt ?? null };

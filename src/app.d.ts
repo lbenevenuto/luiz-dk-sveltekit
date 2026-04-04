@@ -15,6 +15,7 @@ export type UserRole = 'admin' | 'user';
 declare global {
 	namespace App {
 		interface Locals {
+			requestId: string;
 			db: DrizzleClient;
 			auth: {
 				userId: string | null;

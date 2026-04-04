@@ -9,7 +9,7 @@ import { z } from 'zod';
 const CUSTOM_CODE_REGEX = /^[a-zA-Z0-9_-]+$/;
 
 const shortenRequestSchema = z.object({
-	url: z.url(),
+	url: z.url().max(2048),
 	expiresIn: z.number().positive().max(31536000).optional(), // max 1 year in seconds
 	customCode: z.string().min(3).max(50).regex(CUSTOM_CODE_REGEX).optional()
 });
