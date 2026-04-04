@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { parseBrowser, fetchAnalytics } from './analytics';
+import { parseBrowser } from './analytics';
 
 vi.mock('$app/environment', () => ({
 	dev: true
@@ -12,6 +12,12 @@ vi.mock('$lib/server/logger', () => ({
 		error: vi.fn()
 	}
 }));
+
+async function loadAnalyticsModule(isDev: boolean) {
+	vi.doMock('$app/environment', () => ({ dev: isDev }));
+	const mod = await import('./analytics');
+	return mod;
+}
 
 describe('parseBrowser', () => {
 	it('detects Chrome', () => {
@@ -64,6 +70,8 @@ describe('sanitizeShortCodes', () => {
 	// sanitizeShortCodes is not exported, but we test it indirectly through fetchAnalytics
 	// by passing invalid short codes and verifying they're filtered out
 	it('filters invalid short codes via fetchAnalytics', async () => {
+		vi.resetModules();
+		const { fetchAnalytics } = await loadAnalyticsModule(true);
 		const platform = {
 			env: {
 				CLOUDFLARE_ACCOUNT_ID: 'test',
@@ -87,15 +95,25 @@ describe('fetchAnalytics', () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
 		vi.restoreAllMocks();
+		vi.resetModules();
 	});
 
-	it('returns error when credentials are missing', async () => {
+	it('returns empty result without error in dev when credentials are missing', async () => {
+		const { fetchAnalytics } = await loadAnalyticsModule(true);
 		const result = await fetchAnalytics(undefined, { days: 7 });
 		expect(result.analytics).toEqual([]);
 		expect(result.error).toBeUndefined();
 	});
 
+	it('returns error in production when credentials are missing', async () => {
+		const { fetchAnalytics } = await loadAnalyticsModule(false);
+		const result = await fetchAnalytics(undefined, { days: 7 });
+		expect(result.analytics).toEqual([]);
+		expect(result.error).toBe('Cloudflare credentials not configured');
+	});
+
 	it('normalizes days to allowed values', async () => {
+		const { fetchAnalytics } = await loadAnalyticsModule(true);
 		const fetchSpy = vi.spyOn(globalThis, 'fetch').mockResolvedValue(
 			new Response(
 				JSON.stringify({
@@ -123,6 +141,7 @@ describe('fetchAnalytics', () => {
 	});
 
 	it('returns analytics data on successful fetch', async () => {
+		const { fetchAnalytics } = await loadAnalyticsModule(true);
 		vi.spyOn(globalThis, 'fetch').mockResolvedValue(
 			new Response(
 				JSON.stringify({
@@ -159,6 +178,7 @@ describe('fetchAnalytics', () => {
 	});
 
 	it('returns empty results on fetch failure', async () => {
+		const { fetchAnalytics } = await loadAnalyticsModule(true);
 		vi.spyOn(globalThis, 'fetch').mockResolvedValue(new Response('Server error', { status: 500 }));
 
 		const platform = {
