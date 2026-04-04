@@ -304,6 +304,25 @@
 			{@render children()}
 		</div>
 	</main>
+
+	<footer class="flex-none border-t border-gray-700/50 bg-gray-800/50">
+		<div
+			class="mx-auto flex max-w-7xl flex-col items-center gap-2 px-4 py-3 sm:flex-row sm:justify-between sm:px-6 lg:px-8"
+		>
+			<div class="flex items-center gap-3">
+				<a href={resolve('/')} class="text-xs font-semibold text-indigo-500">🔗 luiz.dk</a>
+				<span class="text-gray-700">&middot;</span>
+				<nav class="flex gap-3">
+					{#each NAV_LINKS as link (link.href)}
+						<a href={link.href} class="text-xs text-gray-500 transition-colors hover:text-gray-300">{link.label}</a>
+					{/each}
+				</nav>
+			</div>
+			<p class="text-xs text-gray-600">
+				&copy; {new Date().getFullYear()} luiz.dk
+			</p>
+		</div>
+	</footer>
 </div>
 
 <Toast />
