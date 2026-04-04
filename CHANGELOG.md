@@ -1,3 +1,11 @@
+## [1.2.0](https://github.com/lbenevenuto/luiz-dk-sveltekit/compare/v1.1.0...v1.2.0) (2026-04-04)
+
+### ✨ Features
+
+* **ci:** add PR links and contributor avatars to release notes ([725ce72]())
+
+**Full Changelog**: https://github.com/lbenevenuto/luiz-dk-sveltekit/compare/v1.1.0...v1.2.0
+
 ## [1.1.0](https://github.com/lbenevenuto/luiz-dk-sveltekit/compare/v1.0.0...v1.1.0) (2026-04-04)
 
 ### ✨ Features
