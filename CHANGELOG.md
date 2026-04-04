@@ -1,3 +1,10 @@
+## [1.2.3](https://github.com/lbenevenuto/luiz-dk-sveltekit/compare/v1.2.2...v1.2.3) (2026-04-04)
+
+### 🐛 Bug Fixes
+
+* **ci:** simplify release notes and restore Full Changelog link ([7620137](https://github.com/lbenevenuto/luiz-dk-sveltekit/commit/76201376817e0835205e419468ee8a8731b0996b))
+**Full Changelog**: https://github.com/lbenevenuto/luiz-dk-sveltekit/compare/v1.2.2...v1.2.3
+
 ## [1.2.2](https://github.com/lbenevenuto/luiz-dk-sveltekit/compare/v1.2.1...v1.2.2) (2026-04-04)
 
 ### 🐛 Bug Fixes
