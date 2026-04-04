@@ -40,7 +40,7 @@
 	}
 
 	onMount(() => {
-		if (!browser || !data.clerkPublishableKey) {
+		if (!browser || !data.clerkPublishableKey || !data.clerkFrontendApi) {
 			return;
 		}
 
@@ -94,15 +94,15 @@
 <svelte:head>
 	<link rel="icon" href={favicon} />
 
-	<!-- Rest of your HTML file -->
-
-	<script
-		async
-		crossorigin="anonymous"
-		data-clerk-publishable-key={data.clerkPublishableKey}
-		src={`https://${data.clerkFrontendApi}/npm/@clerk/clerk-js@5/dist/clerk.browser.js`}
-		type="text/javascript"
-	></script>
+	{#if data.clerkPublishableKey && data.clerkFrontendApi}
+		<script
+			async
+			crossorigin="anonymous"
+			data-clerk-publishable-key={data.clerkPublishableKey}
+			src={`https://${data.clerkFrontendApi}/npm/@clerk/clerk-js@5/dist/clerk.browser.js`}
+			type="text/javascript"
+		></script>
+	{/if}
 </svelte:head>
 
 <div
