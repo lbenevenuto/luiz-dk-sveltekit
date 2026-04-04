@@ -12,6 +12,9 @@
 	import SEO from '$lib/components/SEO.svelte';
 
 	type Step = 'credentials' | 'second-factor';
+	type EmailFactor = Extract<ClerkSupportedSecondFactor, { strategy: 'email_code' }>;
+	type PhoneFactor = Extract<ClerkSupportedSecondFactor, { strategy: 'phone_code' }>;
+	type TotpFactor = Extract<ClerkSupportedSecondFactor, { strategy: 'totp' }>;
 
 	let step = $state<Step>('credentials');
 	let email = $state('');
@@ -49,9 +52,26 @@
 		return goto(withBase(path));
 	}
 
+	function isEmailFactor(factor: ClerkSupportedSecondFactor): factor is EmailFactor {
+		return factor.strategy === 'email_code';
+	}
+
+	function isPhoneFactor(factor: ClerkSupportedSecondFactor): factor is PhoneFactor {
+		return factor.strategy === 'phone_code';
+	}
+
+	function isTotpFactor(factor: ClerkSupportedSecondFactor): factor is TotpFactor {
+		return factor.strategy === 'totp';
+	}
+
 	onMount(async () => {
 		if (browser) {
 			redirectUrl = normalizeRedirectPath(page.url.searchParams.get('redirect_url'));
+
+			if (!page.data.clerkPublishableKey || !page.data.clerkFrontendApi) {
+				clerkError = 'Authentication is not configured for this environment.';
+				return;
+			}
 
 			try {
 				const clerk = await waitForClerk();
@@ -63,7 +83,7 @@
 				}
 			} catch (err) {
 				console.error('Clerk failed to load:', err);
-				clerkError = 'Authentication service is not ready. Please refresh the page.';
+				clerkError = 'Authentication failed to initialize. Check Clerk production keys and frontend API.';
 			}
 		}
 	});
@@ -107,6 +127,10 @@
 
 			if (result.status === 'complete') {
 				// No 2FA - sign in complete
+				if (!result.createdSessionId) {
+					error = 'Sign in failed. Please try again.';
+					return;
+				}
 				await clerk.setActive({ session: result.createdSessionId });
 				goToRedirect(redirectUrl);
 			} else if (result.status === 'needs_second_factor') {
@@ -117,12 +141,9 @@
 				const supportedSecondFactors = result.supportedSecondFactors || [];
 
 				// Prefer email_code over phone_code over totp
-				// eslint-disable-next-line @typescript-eslint/no-explicit-any
-				const emailFactor = supportedSecondFactors.find((f: any) => f.strategy === 'email_code');
-				// eslint-disable-next-line @typescript-eslint/no-explicit-any
-				const phoneFactor = supportedSecondFactors.find((f: any) => f.strategy === 'phone_code');
-				// eslint-disable-next-line @typescript-eslint/no-explicit-any
-				const totpFactor = supportedSecondFactors.find((f: any) => f.strategy === 'totp');
+				const emailFactor = supportedSecondFactors.find(isEmailFactor);
+				const phoneFactor = supportedSecondFactors.find(isPhoneFactor);
+				const totpFactor = supportedSecondFactors.find(isTotpFactor);
 
 				if (emailFactor) {
 					secondFactorStrategy = 'email_code';
@@ -189,6 +210,10 @@
 			});
 
 			if (result.status === 'complete') {
+				if (!result.createdSessionId) {
+					error = 'Verification failed. Please try again.';
+					return;
+				}
 				await clerk.setActive({ session: result.createdSessionId });
 				goToRedirect(redirectUrl);
 			} else {

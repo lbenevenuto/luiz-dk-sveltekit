@@ -1,4 +1,5 @@
 import { sanitizeIdentifier } from '$lib/utils/validation';
+import { logger } from '$lib/server/logger';
 
 interface RateLimitResult {
 	success: boolean;
@@ -19,7 +20,7 @@ export async function checkAnonymousRateLimit(
 ): Promise<RateLimitResult> {
 	// Local dev: Allow all requests
 	if (!platform?.env.CACHE) {
-		console.warn('KV cache not available (local dev), allowing request');
+		logger.warn('rate_limit.cache_unavailable');
 		return { success: true };
 	}
 
@@ -66,7 +67,9 @@ export async function checkAnonymousRateLimit(
 			resetAt: now + windowSeconds * 1000
 		};
 	} catch (error) {
-		console.error('Rate limiting error:', error);
+		logger.error('rate_limit.check_failed', {
+			error: error instanceof Error ? error.message : String(error)
+		});
 		// Fail open: allow the request if rate limiter fails
 		return { success: true };
 	}

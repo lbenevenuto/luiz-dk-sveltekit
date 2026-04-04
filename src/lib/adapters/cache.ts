@@ -4,6 +4,7 @@
  */
 
 import type Redis from 'ioredis';
+import { logger } from '$lib/server/logger';
 
 export interface CacheAdapter {
 	get(key: string): Promise<string | null>;
@@ -42,15 +43,13 @@ export class InMemoryCacheAdapter implements CacheAdapter {
  * KV Cache Adapter (Cloudflare Production)
  */
 export class KVAdapter implements CacheAdapter {
-	constructor(private kv: KVNamespace) {
-		console.log('Constructor called for KVAdapter');
-	}
+	constructor(private kv: KVNamespace) {}
 
 	async get(key: string): Promise<string | null> {
 		try {
 			return await this.kv.get(key);
 		} catch (error) {
-			console.error('KV get error:', error);
+			logger.error('cache.kv.get_failed', { key, error: error instanceof Error ? error.message : String(error) });
 			return null;
 		}
 	}
@@ -61,7 +60,7 @@ export class KVAdapter implements CacheAdapter {
 				expirationTtl: ttl
 			});
 		} catch (error) {
-			console.error('KV set error:', error);
+			logger.error('cache.kv.set_failed', { key, error: error instanceof Error ? error.message : String(error) });
 		}
 	}
 
@@ -69,7 +68,7 @@ export class KVAdapter implements CacheAdapter {
 		try {
 			await this.kv.delete(key);
 		} catch (error) {
-			console.error('KV delete error:', error);
+			logger.error('cache.kv.delete_failed', { key, error: error instanceof Error ? error.message : String(error) });
 		}
 	}
 }
@@ -78,15 +77,13 @@ export class KVAdapter implements CacheAdapter {
  * Redis Cache Adapter (Local Development)
  */
 export class RedisAdapter implements CacheAdapter {
-	constructor(private redis: Redis) {
-		console.log('Constructor called for RedisAdapter');
-	}
+	constructor(private redis: Redis) {}
 
 	async get(key: string): Promise<string | null> {
 		try {
 			return await this.redis.get(key);
 		} catch (error) {
-			console.error('Redis get error:', error);
+			logger.error('cache.redis.get_failed', { key, error: error instanceof Error ? error.message : String(error) });
 			return null;
 		}
 	}
@@ -95,7 +92,7 @@ export class RedisAdapter implements CacheAdapter {
 		try {
 			await this.redis.setex(key, ttl, value);
 		} catch (error) {
-			console.error('Redis set error:', error);
+			logger.error('cache.redis.set_failed', { key, error: error instanceof Error ? error.message : String(error) });
 		}
 	}
 
@@ -103,7 +100,7 @@ export class RedisAdapter implements CacheAdapter {
 		try {
 			await this.redis.del(key);
 		} catch (error) {
-			console.error('Redis delete error:', error);
+			logger.error('cache.redis.delete_failed', { key, error: error instanceof Error ? error.message : String(error) });
 		}
 	}
 }

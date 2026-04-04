@@ -1,6 +1,16 @@
 import { describe, it, expect, vi } from 'vitest';
 import { CloudflareAnalyticsAdapter, ConsoleAnalyticsAdapter, type ClickData } from './analytics';
 
+vi.mock('$lib/server/logger', () => ({
+	logger: {
+		info: vi.fn(),
+		warn: vi.fn(),
+		error: vi.fn()
+	}
+}));
+
+import { logger } from '$lib/server/logger';
+
 describe('CloudflareAnalyticsAdapter', () => {
 	it('should write data point to analytics engine', async () => {
 		const mockAnalytics = {
@@ -33,20 +43,19 @@ describe('CloudflareAnalyticsAdapter', () => {
 			})
 		};
 
-		const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
-
 		const adapter = new CloudflareAnalyticsAdapter(mockAnalytics);
 
 		await adapter.trackRedirect('abc', {} as ClickData);
 
-		expect(consoleSpy).toHaveBeenCalledWith('Analytics tracking error:', expect.any(Error));
-		consoleSpy.mockRestore();
+		expect(logger.error).toHaveBeenCalledWith(
+			'analytics.track_failed',
+			expect.objectContaining({ shortCode: 'abc', error: 'Analytics error' })
+		);
 	});
 });
 
 describe('ConsoleAnalyticsAdapter', () => {
-	it('should log to console', async () => {
-		const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
+	it('should log through the structured logger', async () => {
 		const adapter = new ConsoleAnalyticsAdapter();
 
 		const data: ClickData = {
@@ -58,14 +67,12 @@ describe('ConsoleAnalyticsAdapter', () => {
 
 		await adapter.trackRedirect('abc', data);
 
-		expect(consoleSpy).toHaveBeenCalledWith(
-			'[Analytics]',
+		expect(logger.info).toHaveBeenCalledWith(
+			'analytics.track_local',
 			expect.objectContaining({
 				shortCode: 'abc',
 				country: 'US'
 			})
 		);
-
-		consoleSpy.mockRestore();
 	});
 });

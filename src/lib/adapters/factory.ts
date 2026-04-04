@@ -14,6 +14,7 @@ import { InMemoryCacheAdapter, type CacheAdapter, KVAdapter, RedisAdapter } from
 import { type AnalyticsAdapter, CloudflareAnalyticsAdapter, ConsoleAnalyticsAdapter } from './analytics';
 import { dev } from '$app/environment';
 import type Redis from 'ioredis';
+import { logger } from '$lib/server/logger';
 
 let devIdGeneratorAdapter: IdGeneratorAdapter | null = null;
 let devCacheAdapter: CacheAdapter | null = null;
@@ -42,7 +43,9 @@ export async function getIdGeneratorAdapter(platform: Readonly<App.Platform> | u
 		try {
 			devIdGeneratorAdapter = new RedisIdGenerator(await getOrCreateDevRedis());
 		} catch (err) {
-			console.warn('Redis unavailable, falling back to in-memory ID generator:', err);
+			logger.warn('adapter.id_generator.redis_unavailable', {
+				error: err instanceof Error ? err.message : String(err)
+			});
 			devIdGeneratorAdapter = new InMemoryIdGenerator();
 		}
 
@@ -92,7 +95,9 @@ export async function getCacheAdapter(platform: Readonly<App.Platform> | undefin
 		try {
 			devCacheAdapter = new RedisAdapter(await getOrCreateDevRedis());
 		} catch (err) {
-			console.warn('Redis unavailable, using in-memory cache:', err);
+			logger.warn('adapter.cache.redis_unavailable', {
+				error: err instanceof Error ? err.message : String(err)
+			});
 			devCacheAdapter = new InMemoryCacheAdapter();
 		}
 

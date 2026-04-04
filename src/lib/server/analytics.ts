@@ -1,3 +1,4 @@
+import { dev } from '$app/environment';
 import { logger } from '$lib/server/logger';
 
 interface AnalyticsRow {
@@ -117,6 +118,14 @@ export async function fetchAnalytics(
 	options: { days: number; shortCodes?: string[] }
 ): Promise<AnalyticsResult> {
 	if (!platform?.env.CLOUDFLARE_ACCOUNT_ID || !platform?.env.CLOUDFLARE_API_TOKEN_ANALYTICS) {
+		if (dev) {
+			logger.info('analytics.unconfigured_dev');
+			return {
+				analytics: [],
+				charts: undefined
+			};
+		}
+
 		return {
 			analytics: [],
 			charts: undefined,

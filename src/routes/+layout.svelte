@@ -7,6 +7,8 @@
 	import { onMount } from 'svelte';
 	import { browser } from '$app/environment';
 	import { dark } from '@clerk/themes';
+	import type { User } from '@clerk/backend';
+	import { getClerkUser, initializeClerk, subscribeToClerkState, waitForClerk } from '$lib/client/clerk';
 	import { isPublicRoute } from '$lib/routes/public';
 
 	interface LayoutData {
@@ -18,14 +20,12 @@
 		children,
 		data
 	}: {
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		children: any;
+		children: import('svelte').Snippet;
 		data: LayoutData;
 	} = $props();
 
 	let isMobileMenuOpen = $state(false);
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	let user = $state<any>(null);
+	let user = $state<User | null>(null);
 	const RAW_NAV_LINKS = [
 		{ path: '/', label: 'Home' },
 		{ path: '/shortener', label: 'Shortener' },
@@ -39,60 +39,40 @@
 		isMobileMenuOpen = !isMobileMenuOpen;
 	}
 
-	onMount(async () => {
-		if (!browser || !data.clerkPublishableKey) {
-			console.warn('Not in browser or missing publishable key');
+	onMount(() => {
+		if (!browser || !data.clerkPublishableKey || !data.clerkFrontendApi) {
 			return;
 		}
 
-		// Wait for Clerk script to load (it's async)
-		const waitForClerk = async () => {
-			let attempts = 0;
-			const maxAttempts = 50; // 5 seconds max (50 * 100ms)
+		let unsubscribe: (() => void) | undefined;
 
-			while (!window.Clerk && attempts < maxAttempts) {
-				await new Promise((resolve) => setTimeout(resolve, 100));
-				attempts++;
+		void (async () => {
+			try {
+				await initializeClerk({
+					publishableKey: data.clerkPublishableKey,
+					appearance: {
+						baseTheme: dark
+					}
+				});
+
+				user = getClerkUser();
+				unsubscribe = subscribeToClerkState(({ user: nextUser }) => {
+					user = nextUser;
+				});
+			} catch {
+				user = null;
 			}
+		})();
 
-			if (!window.Clerk) {
-				console.error('Clerk script failed to load after 5 seconds');
-				return false;
-			}
-
-			return true;
+		return () => {
+			unsubscribe?.();
 		};
-
-		try {
-			const clerkAvailable = await waitForClerk();
-
-			if (!clerkAvailable || !window.Clerk) {
-				console.error('Clerk not available after timeout');
-				return;
-			}
-
-			await window.Clerk.load({
-				publishableKey: data.clerkPublishableKey,
-				appearance: {
-					baseTheme: dark
-				}
-			});
-
-			// Listen for user changes
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			window.Clerk.addListener((resources: any) => {
-				user = resources.user;
-			});
-
-			user = window.Clerk.user;
-		} catch (error) {
-			console.error('Failed to load Clerk:', error);
-		}
 	});
 
 	async function handleSignOut() {
-		if (window.Clerk) {
-			await window.Clerk.signOut();
+		const clerk = await waitForClerk();
+		await clerk.signOut();
+		if (browser) {
 			window.location.href = '/';
 		}
 	}
@@ -114,15 +94,15 @@
 <svelte:head>
 	<link rel="icon" href={favicon} />
 
-	<!-- Rest of your HTML file -->
-
-	<script
-		async
-		crossorigin="anonymous"
-		data-clerk-publishable-key={data.clerkPublishableKey}
-		src={`https://${data.clerkFrontendApi}/npm/@clerk/clerk-js@5/dist/clerk.browser.js`}
-		type="text/javascript"
-	></script>
+	{#if data.clerkPublishableKey && data.clerkFrontendApi}
+		<script
+			async
+			crossorigin="anonymous"
+			data-clerk-publishable-key={data.clerkPublishableKey}
+			src={`https://${data.clerkFrontendApi}/npm/@clerk/clerk-js@5/dist/clerk.browser.js`}
+			type="text/javascript"
+		></script>
+	{/if}
 </svelte:head>
 
 <div

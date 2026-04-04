@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, it, expect } from 'vitest';
-import { buildCspDirectives, resolveSentryDsn } from './hooks.server';
+import { buildCspDirectives, requestIdHook, resolveSentryDsn, securityHeadersHandle } from './hooks.server';
+import { requestContext } from '$lib/server/logger';
 
 describe('hooks security helpers', () => {
 	const originalSentryDsn = process.env.SENTRY_DSN;
@@ -58,5 +59,39 @@ describe('hooks security helpers', () => {
 	it('falls back to process env when platform env is missing', () => {
 		(process.env as unknown as Record<string, string>).SENTRY_DSN = 'https://fallback@fallback.ingest.sentry.io/1';
 		expect(resolveSentryDsn(undefined)).toBe('https://fallback@fallback.ingest.sentry.io/1');
+	});
+
+	it('adds a request id header and exposes it through async local storage', async () => {
+		const response = await requestIdHook({
+			event: {
+				locals: {} as App.Locals
+			} as Parameters<typeof requestIdHook>[0]['event'],
+			resolve: async () => {
+				const store = requestContext.getStore();
+				return new Response(store?.requestId ?? 'missing');
+			}
+		});
+
+		expect(response.headers.get('X-Request-Id')).toBeTruthy();
+		expect(await response.text()).toBe(response.headers.get('X-Request-Id'));
+	});
+
+	it('applies expected security headers', async () => {
+		const response = await securityHeadersHandle({
+			event: {
+				platform: {
+					env: {
+						CLERK_FRONTEND_API: 'frontend.clerk.accounts.dev',
+						SENTRY_DSN: 'https://platform@platform.ingest.sentry.io/2'
+					}
+				} as App.Platform
+			} as Parameters<typeof securityHeadersHandle>[0]['event'],
+			resolve: async () => new Response('ok')
+		});
+
+		expect(response.headers.get('X-Frame-Options')).toBe('DENY');
+		expect(response.headers.get('Strict-Transport-Security')).toContain('max-age=31536000');
+		expect(response.headers.get('Content-Security-Policy')).toContain('frontend.clerk.accounts.dev');
+		expect(response.headers.get('Content-Security-Policy')).toContain('platform.ingest.sentry.io');
 	});
 });
