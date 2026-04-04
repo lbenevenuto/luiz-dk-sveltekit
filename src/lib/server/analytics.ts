@@ -50,6 +50,18 @@ function sanitizeShortCodes(shortCodes?: string[]): string[] | undefined {
 	return Array.from(unique);
 }
 
+export function parseBrowser(ua: string): string {
+	if (!ua || ua === 'Unknown') return 'Unknown';
+	const lower = ua.toLowerCase();
+	if (lower.includes('bot') || lower.includes('crawl') || lower.includes('spider')) return 'Bot';
+	if (ua.includes('Edg')) return 'Edge';
+	if (ua.includes('OPR') || ua.includes('Opera')) return 'Opera';
+	if (ua.includes('Chrome') && !ua.includes('Edg')) return 'Chrome';
+	if (ua.includes('Firefox')) return 'Firefox';
+	if (ua.includes('Safari') && !ua.includes('Chrome')) return 'Safari';
+	return 'Other';
+}
+
 function aggregateAnalytics(analytics: Array<AnalyticsRow & { id: string }>, days: number) {
 	const dailyClicks = new Map<string, number>();
 	const countryStats = new Map<string, number>();
@@ -72,13 +84,7 @@ function aggregateAnalytics(analytics: Array<AnalyticsRow & { id: string }>, day
 		countryStats.set(country, (countryStats.get(country) || 0) + 1);
 
 		const ua = row.userAgent || 'Unknown';
-		let browser = 'Other';
-		if (ua.includes('Chrome')) browser = 'Chrome';
-		else if (ua.includes('Firefox')) browser = 'Firefox';
-		else if (ua.includes('Safari')) browser = 'Safari';
-		else if (ua.includes('Edge')) browser = 'Edge';
-		else if (ua.includes('bot')) browser = 'Bot';
-		browserStats.set(browser, (browserStats.get(browser) || 0) + 1);
+		browserStats.set(parseBrowser(ua), (browserStats.get(parseBrowser(ua)) || 0) + 1);
 
 		let referrer = row.referrer || 'Direct';
 		try {
@@ -130,6 +136,8 @@ export async function fetchAnalytics(
 
 	const filters = [`timestamp > NOW() - INTERVAL '${days}' DAY`];
 	if (sanitizedShortCodes && sanitizedShortCodes.length > 0) {
+		// NOTE: Cloudflare Analytics Engine SQL API does not support parameterized queries.
+		// Short codes are validated against SHORT_CODE_REGEX (alphanumeric + _ and -) before interpolation.
 		const codesList = sanitizedShortCodes.map((code) => `'${code}'`).join(',');
 		filters.push(`blob1 IN (${codesList})`);
 	}

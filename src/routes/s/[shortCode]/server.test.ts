@@ -15,12 +15,20 @@ vi.mock('$lib/server/db/queries/urls', () => ({
 	deleteUrlById: vi.fn()
 }));
 
+vi.mock('$lib/adapters/factory', () => ({
+	getCacheAdapter: vi.fn(),
+	getAnalyticsAdapter: vi.fn()
+}));
+
 import { logger } from '$lib/server/logger';
 import { getUrlByShortCode } from '$lib/server/db/queries/urls';
+import { getCacheAdapter, getAnalyticsAdapter } from '$lib/adapters/factory';
 
 describe('GET /s/[shortCode]', () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
+		vi.mocked(getCacheAdapter).mockResolvedValue(null);
+		vi.mocked(getAnalyticsAdapter).mockReturnValue({ trackRedirect: vi.fn().mockResolvedValue(undefined) });
 	});
 
 	it('sanitizes logged redirect target by removing query and hash', async () => {
@@ -55,6 +63,12 @@ describe('GET /s/[shortCode]', () => {
 	});
 
 	it('returns 410 Gone for an expired link and deletes it', async () => {
+		const mockCache = {
+			get: vi.fn().mockResolvedValue(null),
+			set: vi.fn(),
+			delete: vi.fn()
+		};
+		vi.mocked(getCacheAdapter).mockResolvedValue(mockCache);
 		vi.mocked(getUrlByShortCode).mockResolvedValue({
 			id: 1,
 			shortCode: 'abc',
@@ -75,6 +89,7 @@ describe('GET /s/[shortCode]', () => {
 		expect(response.status).toBe(410);
 		expect(await response.text()).toBe('This link has expired.');
 
+		expect(mockCache.delete).toHaveBeenCalledWith('redirect:abc');
 		expect(logger.warn).toHaveBeenCalledWith('redirect.expired', { shortCode: 'abc' });
 	});
 
@@ -107,6 +122,8 @@ describe('GET /s/[shortCode]', () => {
 		});
 
 		const mockWaitUntil = vi.fn();
+		const mockTrackRedirect = vi.fn().mockResolvedValue(undefined);
+		vi.mocked(getAnalyticsAdapter).mockReturnValue({ trackRedirect: mockTrackRedirect });
 
 		const event = {
 			params: { shortCode: 'trackme' },
@@ -123,8 +140,30 @@ describe('GET /s/[shortCode]', () => {
 			location: 'https://example.com/track'
 		});
 
-		// By importing factory inside the test or mocking it, we could assert exact analytics calls.
-		// For now just checking it doesn't crash to get the branch coverage and calls waitUntil
 		expect(mockWaitUntil).toHaveBeenCalled();
+	});
+
+	it('serves from cache without querying DB for permanent URLs', async () => {
+		const mockCache = {
+			get: vi.fn().mockResolvedValue('https://example.com/cached'),
+			set: vi.fn(),
+			delete: vi.fn()
+		};
+		vi.mocked(getCacheAdapter).mockResolvedValue(mockCache);
+
+		const event = {
+			params: { shortCode: 'cached' },
+			request: new Request('http://localhost/s/cached'),
+			locals: { db: {} as DrizzleClient }
+		} as Parameters<typeof GET>[0];
+
+		await expect(GET(event)).rejects.toMatchObject({
+			status: 302,
+			location: 'https://example.com/cached'
+		});
+
+		expect(mockCache.get).toHaveBeenCalledWith('redirect:cached');
+		expect(getUrlByShortCode).not.toHaveBeenCalled();
+		expect(logger.info).toHaveBeenCalledWith('redirect.cache_hit', expect.objectContaining({ shortCode: 'cached' }));
 	});
 });

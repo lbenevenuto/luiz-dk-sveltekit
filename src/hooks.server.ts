@@ -3,7 +3,7 @@ import { type Handle, type HandleServerError } from '@sveltejs/kit';
 import { sequence } from '@sveltejs/kit/hooks';
 import * as Sentry from '@sentry/sveltekit';
 import { authHandle } from '$lib/server/auth-handle';
-import { logger } from '$lib/server/logger';
+import { logger, requestContext } from '$lib/server/logger';
 import { getDb } from '$lib/server/db';
 
 let envValidated = false;
@@ -94,9 +94,19 @@ export function buildCspDirectives(input: { clerkFrontendApi?: string; sentryDsn
 		"object-src 'none'",
 		"base-uri 'self'",
 		"form-action 'self'",
-		"frame-ancestors 'none'"
+		"frame-ancestors 'none'",
+		'upgrade-insecure-requests'
 	];
 }
+
+export const requestIdHook: Handle = async ({ event, resolve }) => {
+	event.locals.requestId = crypto.randomUUID();
+	return requestContext.run({ requestId: event.locals.requestId }, async () => {
+		const response = await resolve(event);
+		response.headers.set('X-Request-Id', event.locals.requestId);
+		return response;
+	});
+};
 
 export const initialHook: Handle = async ({ event, resolve }) => {
 	if (!envValidated) {
@@ -153,6 +163,7 @@ export const securityHeadersHandle: Handle = async ({ event, resolve }) => {
 };
 
 export const handle: Handle = sequence(
+	requestIdHook,
 	initialHook,
 	sentryInitHandle,
 	Sentry.sentryHandle(),

@@ -29,7 +29,8 @@ export const authHandle: Handle = async ({ event, resolve }) => {
 	if (requestState.isSignedIn) {
 		const authData = requestState.toAuth();
 		const user = await clerkClient.users.getUser(authData.userId);
-		const role = (user.publicMetadata?.role as UserRole) || 'user';
+		const rawRole = user.publicMetadata?.role;
+		const role: UserRole = rawRole === 'admin' ? 'admin' : 'user';
 		event.locals.auth = {
 			userId: authData.userId,
 			sessionId: authData.sessionId,

@@ -45,6 +45,7 @@ describe('POST /api/v1/shorten', () => {
 		} as App.Platform;
 
 		mockLocals = {
+			requestId: 'test-id',
 			db: {} as DrizzleClient,
 			auth: {
 				userId: null,

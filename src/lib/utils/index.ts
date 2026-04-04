@@ -20,7 +20,6 @@ interface CreateShortUrlResult {
 
 export function normalizeUrl(input: string): string {
 	const u = new URL(input.trim());
-	u.hash = '';
 	u.hostname = u.hostname.toLowerCase();
 
 	if (u.pathname !== '/' && u.pathname.endsWith('/')) {
@@ -28,10 +27,10 @@ export function normalizeUrl(input: string): string {
 	}
 
 	const base = `${u.protocol}//${u.host}`;
-	if ((u.pathname === '/' || u.pathname === '') && !u.search) {
+	if ((u.pathname === '/' || u.pathname === '') && !u.search && !u.hash) {
 		return base;
 	}
-	return `${base}${u.pathname}${u.search}`;
+	return `${base}${u.pathname}${u.search}${u.hash}`;
 }
 
 export class ShortCodeConflictError extends Error {
@@ -108,6 +107,7 @@ export const createShortUrl = async (
 		if (!isExpired) {
 			if (cacheAdapter && !existingExpiresAtSeconds) {
 				await cacheAdapter.set(cacheKey, existing.shortCode, 604800); // 7 days
+				await cacheAdapter.set(`redirect:${existing.shortCode}`, normalizedUrl, 604800);
 			}
 			return { shortCode: existing.shortCode, isExisting: true, expiresAt: existingExpiresAtSeconds };
 		}
@@ -126,6 +126,7 @@ export const createShortUrl = async (
 
 	if (cacheAdapter && !expiresAt) {
 		await cacheAdapter.set(cacheKey, shortCode, 604800); // 7 days
+		await cacheAdapter.set(`redirect:${shortCode}`, normalizedUrl, 604800);
 	}
 
 	return { shortCode, isExisting: false, expiresAt: expiresAt ?? null };
