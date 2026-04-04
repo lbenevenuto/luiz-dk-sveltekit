@@ -20,7 +20,6 @@ interface CreateShortUrlResult {
 
 export function normalizeUrl(input: string): string {
 	const u = new URL(input.trim());
-	u.hash = '';
 	u.hostname = u.hostname.toLowerCase();
 
 	if (u.pathname !== '/' && u.pathname.endsWith('/')) {
@@ -28,10 +27,10 @@ export function normalizeUrl(input: string): string {
 	}
 
 	const base = `${u.protocol}//${u.host}`;
-	if ((u.pathname === '/' || u.pathname === '') && !u.search) {
+	if ((u.pathname === '/' || u.pathname === '') && !u.search && !u.hash) {
 		return base;
 	}
-	return `${base}${u.pathname}${u.search}`;
+	return `${base}${u.pathname}${u.search}${u.hash}`;
 }
 
 export class ShortCodeConflictError extends Error {

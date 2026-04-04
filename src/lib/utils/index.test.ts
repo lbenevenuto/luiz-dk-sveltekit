@@ -7,9 +7,9 @@ describe('normalizeUrl', () => {
 		expect(normalizeUrl('https://Example.Com/Path')).toBe('https://example.com/Path');
 	});
 
-	it('should strip the hash fragment', () => {
-		expect(normalizeUrl('https://example.com/page#section')).toBe('https://example.com/page');
-		expect(normalizeUrl('https://example.com/#top')).toBe('https://example.com');
+	it('should preserve the hash fragment', () => {
+		expect(normalizeUrl('https://example.com/page#section')).toBe('https://example.com/page#section');
+		expect(normalizeUrl('https://example.com/#top')).toBe('https://example.com/#top');
 	});
 
 	it('should strip trailing slashes from paths', () => {
@@ -27,8 +27,8 @@ describe('normalizeUrl', () => {
 		expect(normalizeUrl('https://example.com?foo=bar&baz=1')).toBe('https://example.com/?foo=bar&baz=1');
 	});
 
-	it('should preserve query strings and strip hash', () => {
-		expect(normalizeUrl('https://example.com/page?q=1#hash')).toBe('https://example.com/page?q=1');
+	it('should preserve query strings and hash fragment', () => {
+		expect(normalizeUrl('https://example.com/page?q=1#hash')).toBe('https://example.com/page?q=1#hash');
 	});
 
 	it('should handle URLs with ports', () => {
