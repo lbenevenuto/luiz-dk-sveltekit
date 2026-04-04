@@ -36,7 +36,28 @@ export default {
 			'@semantic-release/release-notes-generator',
 			{
 				preset: 'conventionalcommits',
-				presetConfig: { types: TYPES }
+				presetConfig: { types: TYPES },
+				writerOpts: {
+					finalizeContext(context) {
+						if (context.previousTag && context.currentTag) {
+							context.extraFooter = `**Full Changelog**: https://github.com/${context.owner}/${context.repository}/compare/${context.previousTag}...${context.currentTag}`;
+						}
+						return context;
+					},
+					footerPartial: [
+						'{{#if noteGroups}}',
+						'{{#each noteGroups}}',
+						'',
+						'### {{title}}',
+						'',
+						'{{#each notes}}',
+						'- {{#if commit.scope}}**{{commit.scope}}:** {{/if}}{{text}}',
+						'{{/each}}',
+						'{{/each}}',
+						'{{/if}}',
+						'{{extraFooter}}'
+					].join('\n')
+				}
 			}
 		],
 		[

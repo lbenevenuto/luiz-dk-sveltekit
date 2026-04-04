@@ -85,19 +85,3 @@ jobs:
         run: npx semantic-release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Recreate release with contributor avatars
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
-          if [ -z "$TAG" ]; then exit 0; fi
-
-          BODY=$(gh release view "$TAG" --json body --jq '.body')
-          if [ -z "$BODY" ]; then exit 0; fi
-
-          gh release delete "$TAG" --yes
-          gh release create "$TAG" \
-            --title "$TAG" \
-            --notes "$BODY" \
-            --generate-notes
