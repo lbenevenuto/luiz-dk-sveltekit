@@ -1,3 +1,11 @@
+## [1.2.6](https://github.com/lbenevenuto/luiz-dk-sveltekit/compare/v1.2.5...v1.2.6) (2026-04-04)
+
+### 🐛 Bug Fixes
+
+* **ci:** use RELEASE_TOKEN for semantic-release to trigger deploy ([86432c1](https://github.com/lbenevenuto/luiz-dk-sveltekit/commit/86432c117c3e1328490ceaa19a14617d09b36a29))
+
+**Full Changelog**: https://github.com/lbenevenuto/luiz-dk-sveltekit/compare/v1.2.5...v1.2.6
+
 ## [1.2.5](https://github.com/lbenevenuto/luiz-dk-sveltekit/compare/v1.2.4...v1.2.5) (2026-04-04)
 
 ### ♻️ Refactoring
