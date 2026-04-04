@@ -1,3 +1,9 @@
+## [1.2.1](https://github.com/lbenevenuto/luiz-dk-sveltekit/compare/v1.2.0...v1.2.1) (2026-04-04)
+
+### 🐛 Bug Fixes
+
+* **ci:** use GitHub API for contributor avatars in releases ([687af66](https://github.com/lbenevenuto/luiz-dk-sveltekit/commit/687af661f11b8131fce9705d6259587d4291270d))
+
 ## [1.2.0](https://github.com/lbenevenuto/luiz-dk-sveltekit/compare/v1.1.0...v1.2.0) (2026-04-04)
 
 ### ✨ Features
