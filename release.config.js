@@ -12,6 +12,11 @@ const TYPES = [
 	{ type: 'revert', section: '⏪ Reverts' }
 ];
 
+const EMAIL_TO_GITHUB = {
+	'luiz.benevenuto@gmail.com': 'lbenevenuto',
+	'jarvis@openclaw.ai': 'lbenevenuto'
+};
+
 /** @type {import('semantic-release').GlobalConfig} */
 export default {
 	branches: ['main'],
@@ -40,26 +45,21 @@ export default {
 				writerOpts: {
 					commitsSort: ['subject', 'scope'],
 					finalizeContext(context) {
-						const contributors = new Set();
+						const contributors = new Map();
 						for (const group of context.commitGroups) {
 							for (const commit of group.commits) {
-								if (commit.authorName && commit.authorName !== 'semantic-release-bot') {
-									contributors.add(commit.authorName);
+								if (commit.authorEmail && commit.authorEmail !== 'semantic-release-bot@martynus.net') {
+									const gh = EMAIL_TO_GITHUB[commit.authorEmail];
+									if (gh && !contributors.has(gh)) {
+										contributors.set(gh, commit.authorName);
+									}
 								}
 							}
 						}
-						context.contributors = [...contributors].sort();
+						context.contributors = [...contributors.keys()];
 						return context;
 					},
 					footerPartial: [
-						'{{#if contributors}}',
-						'',
-						'### 👥 Contributors',
-						'',
-						'{{#each contributors}}',
-						'- {{this}}',
-						'{{/each}}',
-						'{{/if}}',
 						'{{#if noteGroups}}',
 						'{{#each noteGroups}}',
 						'',
@@ -69,7 +69,17 @@ export default {
 						'- {{#if commit.scope}}**{{commit.scope}}:** {{/if}}{{text}}',
 						'{{/each}}',
 						'{{/each}}',
-						'{{/if}}'
+						'{{/if}}',
+						'{{#if contributors}}',
+						'',
+						'## Contributors',
+						'',
+						'{{#each contributors}}',
+						'- @{{this}}',
+						'{{/each}}',
+						'{{/if}}',
+						'',
+						'**Full Changelog**: https://github.com/{{@root.owner}}/{{@root.repository}}/compare/{{@root.previousTag}}...{{@root.currentTag}}'
 					].join('\n')
 				}
 			}
