@@ -1,3 +1,11 @@
+## [1.2.5](https://github.com/lbenevenuto/luiz-dk-sveltekit/compare/v1.2.4...v1.2.5) (2026-04-04)
+
+### ♻️ Refactoring
+
+* **ci:** extract shared setup into composite action ([da0db4a](https://github.com/lbenevenuto/luiz-dk-sveltekit/commit/da0db4ac863973d50a2f14f5f964df4c07dae545))
+
+**Full Changelog**: https://github.com/lbenevenuto/luiz-dk-sveltekit/compare/v1.2.4...v1.2.5
+
 ## [1.2.4](https://github.com/lbenevenuto/luiz-dk-sveltekit/compare/v1.2.3...v1.2.4) (2026-04-04)
 
 ### 🐛 Bug Fixes
