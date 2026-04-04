@@ -1,3 +1,11 @@
+## [1.1.0](https://github.com/lbenevenuto/luiz-dk-sveltekit/compare/v1.0.0...v1.1.0) (2026-04-04)
+
+### ✨ Features
+
+* **ci:** add contributors and full changelog to GitHub releases ([2a42c25](https://github.com/lbenevenuto/luiz-dk-sveltekit/commit/2a42c25c83d43924ff8f1760c0b5f3480d091d48))
+
+**Full Changelog**: https://github.com/lbenevenuto/luiz-dk-sveltekit/compare/v1.0.0...v1.1.0
+
 ## 1.0.0 (2026-04-04)
 
 ### ✨ Features
