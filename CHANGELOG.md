@@ -1,3 +1,11 @@
+## [1.2.7](https://github.com/lbenevenuto/luiz-dk-sveltekit/compare/v1.2.6...v1.2.7) (2026-04-04)
+
+### 🐛 Bug Fixes
+
+* **ci:** use bunx to run wrangler in deploy workflow ([69db212](https://github.com/lbenevenuto/luiz-dk-sveltekit/commit/69db212eaadd593c2fc8c754c252d351f9014333))
+
+**Full Changelog**: https://github.com/lbenevenuto/luiz-dk-sveltekit/compare/v1.2.6...v1.2.7
+
 ## [1.2.6](https://github.com/lbenevenuto/luiz-dk-sveltekit/compare/v1.2.5...v1.2.6) (2026-04-04)
 
 ### 🐛 Bug Fixes
