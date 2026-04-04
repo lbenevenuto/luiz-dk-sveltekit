@@ -45,20 +45,50 @@ export default {
 				writerOpts: {
 					commitsSort: ['subject', 'scope'],
 					finalizeContext(context) {
-						const contributors = new Map();
+						const contributors = new Set();
 						for (const group of context.commitGroups) {
 							for (const commit of group.commits) {
 								if (commit.authorEmail && commit.authorEmail !== 'semantic-release-bot@martynus.net') {
 									const gh = EMAIL_TO_GITHUB[commit.authorEmail];
-									if (gh && !contributors.has(gh)) {
-										contributors.set(gh, commit.authorName);
+									if (gh) {
+										contributors.add(gh);
+										commit.githubUser = gh;
 									}
+								}
+
+								const prRef = (commit.references || []).find((r) => r.prefix === '#' && /^\d+$/.test(r.issue));
+								if (prRef) {
+									commit.prNumber = prRef.issue;
 								}
 							}
 						}
-						context.contributors = [...contributors.keys()];
+
+						const parts = [];
+
+						if (contributors.size > 0) {
+							parts.push('## Contributors');
+							parts.push('');
+							for (const user of [...contributors].sort()) {
+								parts.push(`- @${user}`);
+							}
+						}
+
+						if (context.previousTag && context.currentTag) {
+							parts.push('');
+							parts.push(
+								`**Full Changelog**: https://github.com/${context.owner}/${context.repository}/compare/${context.previousTag}...${context.currentTag}`
+							);
+						}
+
+						context.extraFooter = parts.join('\n');
 						return context;
 					},
+					commitPartial: [
+						'*{{#if scope}} **{{scope}}:**{{/if}} {{#if subject}}{{{subject}}}{{else}}{{{header}}}{{/if}}',
+						'{{~#if githubUser}} by @{{githubUser}}{{/if}}',
+						'{{~#if prNumber}} in [#{{prNumber}}]({{~@root.host}}/{{~@root.owner}}/{{~@root.repository}}/pull/{{prNumber}}){{/if}}',
+						'{{~#unless prNumber}}{{~#if @root.linkReferences}} ([{{shortHash}}]({{commitUrlFormat}})){{else}} {{shortHash}}{{/if}}{{/unless}}\n'
+					].join(''),
 					footerPartial: [
 						'{{#if noteGroups}}',
 						'{{#each noteGroups}}',
@@ -70,16 +100,7 @@ export default {
 						'{{/each}}',
 						'{{/each}}',
 						'{{/if}}',
-						'{{#if contributors}}',
-						'',
-						'## Contributors',
-						'',
-						'{{#each contributors}}',
-						'- @{{this}}',
-						'{{/each}}',
-						'{{/if}}',
-						'',
-						'**Full Changelog**: https://github.com/{{@root.owner}}/{{@root.repository}}/compare/{{@root.previousTag}}...{{@root.currentTag}}'
+						'{{extraFooter}}'
 					].join('\n')
 				}
 			}
