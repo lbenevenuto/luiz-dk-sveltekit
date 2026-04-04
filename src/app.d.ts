@@ -65,41 +65,162 @@ declare global {
 		};
 	}
 
+	type ClerkAppearance = {
+		baseTheme?: unknown;
+		variables?: Record<string, string>;
+		elements?: Record<string, string>;
+	};
+
+	type ClerkError = {
+		code?: string;
+		message?: string;
+	};
+
+	type ClerkApiError = {
+		errors?: ClerkError[];
+	};
+
+	type ClerkOAuthStrategy = 'oauth_google' | 'oauth_github';
+
+	type ClerkSignInSecondFactorStrategy = 'email_code' | 'phone_code' | 'totp';
+
+	type ClerkResetPasswordStrategy = 'reset_password_email_code';
+
+	type ClerkSignInStatus = 'complete' | 'needs_second_factor' | string;
+
+	type ClerkEmailSecondFactor = {
+		strategy: 'email_code';
+		emailAddressId: string;
+	};
+
+	type ClerkPhoneSecondFactor = {
+		strategy: 'phone_code';
+		phoneNumberId: string;
+	};
+
+	type ClerkTotpSecondFactor = {
+		strategy: 'totp';
+	};
+
+	type ClerkSupportedSecondFactor = ClerkEmailSecondFactor | ClerkPhoneSecondFactor | ClerkTotpSecondFactor;
+
+	type ClerkResetPasswordFactor = {
+		strategy: ClerkResetPasswordStrategy;
+		emailAddressId: string;
+	};
+
+	interface ClerkSession {
+		id: string;
+		getToken(): Promise<string | null>;
+	}
+
+	interface ClerkSignInAttempt {
+		status: ClerkSignInStatus;
+		createdSessionId?: string;
+		supportedSecondFactors?: ClerkSupportedSecondFactor[];
+		supportedFirstFactors?: ClerkResetPasswordFactor[];
+		firstFactorVerification?: {
+			externalVerificationRedirectURL?: URL | string | null;
+		};
+		attemptFirstFactor(
+			params:
+				| {
+						strategy: 'password';
+						password: string;
+				  }
+				| {
+						strategy: ClerkResetPasswordStrategy;
+						code: string;
+						password: string;
+				  }
+		): Promise<ClerkSignInAttempt>;
+		prepareFirstFactor(params: { strategy: ClerkResetPasswordStrategy; emailAddressId: string }): Promise<void>;
+		prepareSecondFactor(
+			params:
+				| {
+						strategy: 'email_code';
+						emailAddressId: string;
+				  }
+				| {
+						strategy: 'phone_code';
+						phoneNumberId: string;
+				  }
+		): Promise<void>;
+		attemptSecondFactor(params: {
+			strategy: ClerkSignInSecondFactorStrategy;
+			code: string;
+		}): Promise<ClerkSignInAttempt>;
+	}
+
+	interface ClerkSignUpAttempt {
+		status?: string;
+		createdSessionId?: string;
+		verifications?: {
+			externalAccount?: {
+				externalVerificationRedirectURL?: URL | string | null;
+			};
+		};
+		prepareEmailAddressVerification(params: { strategy: 'email_code' }): Promise<void>;
+		attemptEmailAddressVerification(params: { code: string }): Promise<ClerkSignUpAttempt & { status: string }>;
+	}
+
+	interface ClerkStateSnapshot {
+		user: User | null;
+		session: ClerkSession | null;
+	}
+
+	interface Clerk {
+		load(options: { publishableKey: string; appearance?: ClerkAppearance }): Promise<void>;
+		user: User | null;
+		session: ClerkSession | null;
+		client: {
+			signIn: {
+				create(
+					params:
+						| {
+								identifier: string;
+						  }
+						| {
+								strategy: ClerkOAuthStrategy;
+								redirect_url: string;
+						  }
+				): Promise<ClerkSignInAttempt>;
+			};
+			signUp: {
+				create(
+					params:
+						| {
+								emailAddress: string;
+								password: string;
+						  }
+						| {
+								strategy: ClerkOAuthStrategy;
+								redirect_url: string;
+						  }
+				): Promise<ClerkSignUpAttempt>;
+			};
+		};
+		signOut(): Promise<void>;
+		addListener(callback: (resources: ClerkStateSnapshot) => void): () => void;
+		openSignIn(options?: { initialScreen?: string }): void;
+		openSignUp(): void;
+		setActive(options: { session: string }): Promise<void>;
+		mountUserProfile(
+			node: HTMLElement,
+			props?: {
+				appearance?: ClerkAppearance;
+			}
+		): void;
+		unmountUserProfile(node: HTMLElement): void;
+		handleRedirectCallback(
+			params?: Record<string, string>,
+			callback?: (url: string) => void | Promise<void>
+		): Promise<void>;
+	}
+
 	// Clerk client-side types
 	interface Window {
-		Clerk?: {
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			load: (options: { publishableKey: string; appearance?: any }) => Promise<void>;
-			user: User | null;
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			session: any;
-			client: {
-				signIn: {
-					// eslint-disable-next-line @typescript-eslint/no-explicit-any
-					create: (params: any) => Promise<any>;
-					// eslint-disable-next-line @typescript-eslint/no-explicit-any
-					authenticateWithRedirect: (params: any) => Promise<void>;
-				};
-				signUp: {
-					// eslint-disable-next-line @typescript-eslint/no-explicit-any
-					create: (options: any) => Promise<any>;
-					// eslint-disable-next-line @typescript-eslint/no-explicit-any
-					authenticateWithRedirect: (params: any) => Promise<void>;
-				};
-			};
-			signOut: () => Promise<void>;
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			addListener: (callback: (resources: any) => void) => () => void;
-			openSignIn: (options?: { initialScreen?: string }) => void;
-			openSignUp: () => void;
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			setActive: (options: { session: string }) => Promise<any>;
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			mountUserProfile: (node: HTMLElement, props?: any) => void;
-			unmountUserProfile: (node: HTMLElement) => void;
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			handleRedirectCallback: (params?: any, callback?: (url: string) => void | Promise<void>) => Promise<void>;
-		};
+		Clerk?: Clerk;
 	}
 }
 

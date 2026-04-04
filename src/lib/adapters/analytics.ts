@@ -1,3 +1,5 @@
+import { logger } from '$lib/server/logger';
+
 /**
  * Analytics Adapters
  * Cloudflare Analytics Engine for production, console for local
@@ -28,7 +30,10 @@ export class CloudflareAnalyticsAdapter implements AnalyticsAdapter {
 				indexes: [data.ipHash]
 			});
 		} catch (error) {
-			console.error('Analytics tracking error:', error);
+			logger.error('analytics.track_failed', {
+				shortCode,
+				error: error instanceof Error ? error.message : String(error)
+			});
 		}
 	}
 }
@@ -38,7 +43,7 @@ export class CloudflareAnalyticsAdapter implements AnalyticsAdapter {
  */
 export class ConsoleAnalyticsAdapter implements AnalyticsAdapter {
 	async trackRedirect(shortCode: string, data: ClickData): Promise<void> {
-		console.log('[Analytics]', {
+		logger.info('analytics.track_local', {
 			shortCode,
 			country: data.country,
 			userAgent: data.userAgent,

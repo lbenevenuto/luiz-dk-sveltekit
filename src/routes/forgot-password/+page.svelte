@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { browser } from '$app/environment';
+	import { page } from '$app/state';
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
 	import FormInput from '$lib/components/FormInput.svelte';
@@ -60,6 +61,11 @@
 
 	onMount(async () => {
 		if (browser) {
+			if (!page.data.clerkPublishableKey || !page.data.clerkFrontendApi) {
+				clerkError = 'Authentication is not configured for this environment.';
+				return;
+			}
+
 			try {
 				const clerk = await waitForClerk();
 				clerkLoaded = true;
@@ -70,7 +76,7 @@
 				}
 			} catch (err) {
 				console.error('Clerk failed to load:', err);
-				clerkError = 'Authentication service is not ready. Please refresh the page.';
+				clerkError = 'Authentication failed to initialize. Check Clerk production keys and frontend API.';
 			}
 		}
 	});
@@ -175,6 +181,10 @@
 			});
 
 			if (result.status === 'complete') {
+				if (!result.createdSessionId) {
+					error = 'Password reset incomplete. Please try again.';
+					return;
+				}
 				// Automatically sign in the user with new password
 				await clerk.setActive({ session: result.createdSessionId });
 				step = 'success';

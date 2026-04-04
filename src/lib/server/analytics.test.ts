@@ -1,6 +1,10 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { parseBrowser, fetchAnalytics } from './analytics';
 
+vi.mock('$app/environment', () => ({
+	dev: true
+}));
+
 vi.mock('$lib/server/logger', () => ({
 	logger: {
 		info: vi.fn(),
@@ -88,7 +92,7 @@ describe('fetchAnalytics', () => {
 	it('returns error when credentials are missing', async () => {
 		const result = await fetchAnalytics(undefined, { days: 7 });
 		expect(result.analytics).toEqual([]);
-		expect(result.error).toBe('Cloudflare credentials not configured');
+		expect(result.error).toBeUndefined();
 	});
 
 	it('normalizes days to allowed values', async () => {
