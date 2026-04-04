@@ -86,29 +86,18 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Append contributors to release
+      - name: Recreate release with contributor avatars
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
           if [ -z "$TAG" ]; then exit 0; fi
 
-          PREV_TAG=$(git describe --tags --abbrev=0 "${TAG}^" 2>/dev/null || echo "")
+          BODY=$(gh release view "$TAG" --json body --jq '.body')
+          if [ -z "$BODY" ]; then exit 0; fi
 
-          AUTO_NOTES=$(gh api repos/${{ github.repository }}/releases/generate-notes \
-            -f tag_name="$TAG" \
-            ${PREV_TAG:+-f previous_tag_name="$PREV_TAG"} \
-            --jq '.body')
-
-          CONTRIBUTORS=$(echo "$AUTO_NOTES" | sed -n '/## New Contributors/,$ p; /\*\*Full Changelog\*\*/,$ p' | head -50)
-          if [ -z "$CONTRIBUTORS" ]; then
-            CONTRIBUTORS=$(echo "$AUTO_NOTES" | grep -A 100 '^\*\*Full Changelog\*\*' | head -5)
-          fi
-
-          if [ -n "$CONTRIBUTORS" ]; then
-            CURRENT_BODY=$(gh release view "$TAG" --json body --jq '.body')
-            UPDATED_BODY="${CURRENT_BODY}
-
-          ${CONTRIBUTORS}"
-            gh release edit "$TAG" --notes "$UPDATED_BODY"
-          fi
+          gh release delete "$TAG" --yes
+          gh release create "$TAG" \
+            --title "$TAG" \
+            --notes "$BODY" \
+            --generate-notes
