@@ -1,3 +1,15 @@
+## [1.3.0](https://github.com/lbenevenuto/luiz-dk-sveltekit/compare/v1.2.7...v1.3.0) (2026-04-05)
+
+### ✨ Features
+
+* **charts:** migrate from Chart.js to LayerCake with interactive SVG charts ([e81a289](https://github.com/lbenevenuto/luiz-dk-sveltekit/commit/e81a289dcaf80dd222548f22683b8d0d27efdde7))
+
+### 🐛 Bug Fixes
+
+* **charts:** improve a11y and security from Copilot review ([2dffc02](https://github.com/lbenevenuto/luiz-dk-sveltekit/commit/2dffc025101c243b36894a65a5b273674155608a))
+
+**Full Changelog**: https://github.com/lbenevenuto/luiz-dk-sveltekit/compare/v1.2.7...v1.3.0
+
 ## [1.2.7](https://github.com/lbenevenuto/luiz-dk-sveltekit/compare/v1.2.6...v1.2.7) (2026-04-04)
 
 ### 🐛 Bug Fixes
