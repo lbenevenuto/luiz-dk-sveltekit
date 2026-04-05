@@ -1,3 +1,11 @@
+## [1.3.2](https://github.com/lbenevenuto/luiz-dk-sveltekit/compare/v1.3.1...v1.3.2) (2026-04-05)
+
+### ♻️ Refactoring
+
+* **db:** remove redundant return await in url queries ([440fd1f](https://github.com/lbenevenuto/luiz-dk-sveltekit/commit/440fd1fdc80936e2de0b5f0b04ea297fbb61359a))
+
+**Full Changelog**: https://github.com/lbenevenuto/luiz-dk-sveltekit/compare/v1.3.1...v1.3.2
+
 ## [1.3.1](https://github.com/lbenevenuto/luiz-dk-sveltekit/compare/v1.3.0...v1.3.1) (2026-04-05)
 
 ### 🐛 Bug Fixes
