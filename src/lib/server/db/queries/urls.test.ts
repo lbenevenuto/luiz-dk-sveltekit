@@ -150,7 +150,7 @@ describe('URL Queries DAL', () => {
 			expect(result.urls).toEqual(mockUrls);
 			expect(result.total).toBe(1);
 			expect(result.page).toBe(1);
-			expect(result.pageSize).toBe(25);
+			expect(result.pageSize).toBe(10);
 			expect(result.totalPages).toBe(1);
 		});
 
@@ -160,7 +160,7 @@ describe('URL Queries DAL', () => {
 
 			const result = await searchUrls(db, { page: 1 });
 
-			expect(result.totalPages).toBe(3);
+			expect(result.totalPages).toBe(8);
 			expect(result.total).toBe(75);
 		});
 

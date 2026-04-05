@@ -16,16 +16,24 @@ interface SqlApiResponse {
 	rows: number;
 }
 
-type AnalyticsResult = {
-	analytics: Array<AnalyticsRow & { id: string }>;
-	charts:
-		| {
-				daily: Array<{ date: string; count: number }>;
-				countries: Array<{ label: string; value: number }>;
-				browsers: Array<{ label: string; value: number }>;
-				referrers: Array<{ label: string; value: number }>;
-		  }
-		| undefined;
+export type ChartData = {
+	daily: Array<{ date: string; count: number }>;
+	countries: Array<{ label: string; value: number }>;
+	browsers: Array<{ label: string; value: number }>;
+	referrers: Array<{ label: string; value: number }>;
+};
+
+export type ChartResult = {
+	charts: ChartData | undefined;
+	error?: string;
+};
+
+export type LogResult = {
+	rows: Array<AnalyticsRow & { id: string }>;
+	totalRows: number;
+	page: number;
+	pageSize: number;
+	totalPages: number;
 	error?: string;
 };
 
@@ -63,7 +71,7 @@ export function parseBrowser(ua: string): string {
 	return 'Other';
 }
 
-function aggregateAnalytics(analytics: Array<AnalyticsRow & { id: string }>, days: number) {
+function aggregateAnalytics(analytics: Array<AnalyticsRow & { id: string }>, days: number): ChartData {
 	const dailyClicks = new Map<string, number>();
 	const countryStats = new Map<string, number>();
 	const browserStats = new Map<string, number>();
@@ -113,36 +121,7 @@ function aggregateAnalytics(analytics: Array<AnalyticsRow & { id: string }>, day
 	};
 }
 
-export async function fetchAnalytics(
-	platform: App.Platform | undefined,
-	options: { days: number; shortCodes?: string[] }
-): Promise<AnalyticsResult> {
-	if (!platform?.env.CLOUDFLARE_ACCOUNT_ID || !platform?.env.CLOUDFLARE_API_TOKEN_ANALYTICS) {
-		if (dev) {
-			logger.info('analytics.unconfigured_dev');
-			return {
-				analytics: [],
-				charts: undefined
-			};
-		}
-
-		return {
-			analytics: [],
-			charts: undefined,
-			error: 'Cloudflare credentials not configured'
-		};
-	}
-
-	const days = normalizeDays(options.days);
-	const sanitizedShortCodes = sanitizeShortCodes(options.shortCodes);
-
-	if (options.shortCodes && sanitizedShortCodes && sanitizedShortCodes.length === 0) {
-		return {
-			analytics: [],
-			charts: undefined
-		};
-	}
-
+function buildFilters(days: number, sanitizedShortCodes?: string[]): string[] {
 	const filters = [`timestamp > NOW() - INTERVAL '${days}' DAY`];
 	if (sanitizedShortCodes && sanitizedShortCodes.length > 0) {
 		// NOTE: Cloudflare Analytics Engine SQL API does not support parameterized queries.
@@ -150,8 +129,124 @@ export async function fetchAnalytics(
 		const codesList = sanitizedShortCodes.map((code) => `'${code}'`).join(',');
 		filters.push(`blob1 IN (${codesList})`);
 	}
+	return filters;
+}
 
-	const sql = `
+async function queryAnalyticsEngine(platform: App.Platform, sql: string): Promise<SqlApiResponse> {
+	const response = await fetch(
+		`https://api.cloudflare.com/client/v4/accounts/${platform.env.CLOUDFLARE_ACCOUNT_ID}/analytics_engine/sql`,
+		{
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+				Authorization: `Bearer ${platform.env.CLOUDFLARE_API_TOKEN_ANALYTICS}`
+			},
+			body: `${sql} FORMAT JSON`
+		}
+	);
+
+	if (!response.ok) {
+		const text = await response.text();
+		logger.error('analytics.sql_error', { status: response.status, body: text });
+		throw new Error(`Failed to fetch analytics data: ${response.statusText}`);
+	}
+
+	return (await response.json()) as SqlApiResponse;
+}
+
+function prepareShortCodes(shortCodes?: string[]): { empty: boolean; sanitized: string[] | undefined } {
+	const sanitized = sanitizeShortCodes(shortCodes);
+	if (shortCodes && sanitized && sanitized.length === 0) {
+		return { empty: true, sanitized };
+	}
+	return { empty: false, sanitized };
+}
+
+function checkPlatform(platform: App.Platform | undefined): string | null {
+	if (!platform?.env.CLOUDFLARE_ACCOUNT_ID || !platform?.env.CLOUDFLARE_API_TOKEN_ANALYTICS) {
+		if (dev) {
+			logger.info('analytics.unconfigured_dev');
+			return null;
+		}
+		return 'Cloudflare credentials not configured';
+	}
+	return null;
+}
+
+export async function fetchChartAnalytics(
+	platform: App.Platform | undefined,
+	options: { days: number; shortCodes?: string[] }
+): Promise<ChartResult> {
+	const configError = checkPlatform(platform);
+	if (configError !== null || !platform) {
+		return { charts: undefined, error: configError ?? undefined };
+	}
+
+	const days = normalizeDays(options.days);
+	const { empty, sanitized } = prepareShortCodes(options.shortCodes);
+	if (empty) return { charts: undefined };
+
+	const filters = buildFilters(days, sanitized);
+	const whereClause = filters.join(' AND ');
+
+	const chartSql = `
+		SELECT
+			blob1 as shortCode,
+			blob2 as country,
+			blob3 as userAgent,
+			blob4 as referrer,
+			toDateTime(double1 / 1000) as timestamp
+		FROM luiz_dk_analytics
+		WHERE ${whereClause}
+		ORDER BY timestamp DESC
+		LIMIT 10000
+	`;
+
+	try {
+		const chartResult = await queryAnalyticsEngine(platform, chartSql);
+		const chartRows = chartResult.data.map((row) => ({
+			...row,
+			id: crypto.randomUUID(),
+			timestamp: new Date(row.timestamp).toISOString()
+		}));
+
+		return { charts: aggregateAnalytics(chartRows, days) };
+	} catch (error) {
+		logger.error('analytics.chart_fetch_error', {
+			error: error instanceof Error ? error.message : String(error)
+		});
+		return { charts: undefined, error: 'Failed to fetch analytics data' };
+	}
+}
+
+export async function fetchAnalyticsLog(
+	platform: App.Platform | undefined,
+	options: { days: number; shortCodes?: string[]; page?: number; pageSize?: number }
+): Promise<LogResult> {
+	const emptyLog: LogResult = { rows: [], totalRows: 0, page: 1, pageSize: 10, totalPages: 0 };
+
+	const configError = checkPlatform(platform);
+	if (configError !== null || !platform) {
+		return { ...emptyLog, error: configError ?? undefined };
+	}
+
+	const days = normalizeDays(options.days);
+	const { empty, sanitized } = prepareShortCodes(options.shortCodes);
+	if (empty) return emptyLog;
+
+	const filters = buildFilters(days, sanitized);
+	const whereClause = filters.join(' AND ');
+
+	const MAX_OFFSET = 10000;
+	const page = options.page ?? 1;
+	const pageSize = options.pageSize ?? 10;
+	const offset = (page - 1) * pageSize;
+
+	if (offset > MAX_OFFSET) {
+		return emptyLog;
+	}
+
+	const logSql = `
 		SELECT
 			blob1 as shortCode,
 			blob2 as country,
@@ -160,50 +255,43 @@ export async function fetchAnalytics(
 			index1 as ipHash,
 			toDateTime(double1 / 1000) as timestamp
 		FROM luiz_dk_analytics
-		WHERE ${filters.join(' AND ')}
+		WHERE ${whereClause}
 		ORDER BY timestamp DESC
-		LIMIT 1000
+		LIMIT ${pageSize}
+		OFFSET ${offset}
+	`;
+
+	const countSql = `
+		SELECT count() as total
+		FROM luiz_dk_analytics
+		WHERE ${whereClause}
 	`;
 
 	try {
-		const response = await fetch(
-			`https://api.cloudflare.com/client/v4/accounts/${platform.env.CLOUDFLARE_ACCOUNT_ID}/analytics_engine/sql`,
-			{
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-					Authorization: `Bearer ${platform.env.CLOUDFLARE_API_TOKEN_ANALYTICS}`
-				},
-				body: `${sql} FORMAT JSON`
-			}
-		);
+		const [logResult, countResult] = await Promise.all([
+			queryAnalyticsEngine(platform, logSql),
+			queryAnalyticsEngine(platform, countSql)
+		]);
 
-		if (!response.ok) {
-			const text = await response.text();
-			logger.error('analytics.sql_error', { status: response.status, body: text });
-			throw new Error(`Failed to fetch analytics data: ${response.statusText}`);
-		}
-
-		const result = (await response.json()) as SqlApiResponse;
-		const analytics = result.data.map((row) => ({
+		const rows = logResult.data.map((row) => ({
 			...row,
 			id: crypto.randomUUID(),
 			timestamp: new Date(row.timestamp).toISOString()
 		}));
 
-		return {
-			analytics,
-			charts: aggregateAnalytics(analytics, days)
-		};
-	} catch (error) {
-		logger.error('analytics.fetch_error', {
-			error: error instanceof Error ? error.message : String(error)
-		});
+		const totalRows = Number((countResult.data as unknown as Array<{ total: number }>)[0]?.total ?? 0);
 
 		return {
-			analytics: [],
-			charts: undefined,
-			error: 'Failed to fetch analytics data'
+			rows,
+			totalRows,
+			page,
+			pageSize,
+			totalPages: Math.ceil(totalRows / pageSize)
 		};
+	} catch (error) {
+		logger.error('analytics.log_fetch_error', {
+			error: error instanceof Error ? error.message : String(error)
+		});
+		return { ...emptyLog, error: 'Failed to fetch analytics data' };
 	}
 }

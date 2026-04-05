@@ -20,7 +20,7 @@ interface SearchUrlsResult {
 
 export async function searchUrls(db: DrizzleClient, params: SearchUrlsParams): Promise<SearchUrlsResult> {
 	const page = params.page ?? 1;
-	const pageSize = params.pageSize ?? 25;
+	const pageSize = params.pageSize ?? 10;
 	const offset = (page - 1) * pageSize;
 
 	const conditions = [];
