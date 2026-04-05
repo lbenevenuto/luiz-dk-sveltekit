@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { page } from '$app/state';
 	import LineChart from '$lib/components/charts/LineChart.svelte';
 	import BarChart from '$lib/components/charts/BarChart.svelte';
 	import DoughnutChart from '$lib/components/charts/DoughnutChart.svelte';
@@ -27,6 +26,7 @@
 				}>;
 			};
 			days: number;
+			filterUser?: { id: string } | null;
 		};
 	}
 
@@ -117,7 +117,7 @@
 				['page', String(pagination.pageIndex + 1)],
 				['pageSize', String(pagination.pageSize)]
 			];
-			const userId = page.url.searchParams.get('userId');
+			const userId = data.filterUser?.id;
 			if (userId) entries.push(['userId', userId]);
 			const qs = entries.map(([k, v]) => `${encodeURIComponent(k)}=${encodeURIComponent(v)}`).join('&');
 
@@ -154,7 +154,7 @@
 
 	// Derive a key that changes when days or userId changes, triggering a refetch
 	let lastFetchKey = $state('');
-	const fetchKey = $derived(`${data.days}:${page.url.searchParams.get('userId') ?? ''}`);
+	const fetchKey = $derived(`${data.days}:${data.filterUser?.id ?? ''}`);
 
 	$effect(() => {
 		if (fetchKey !== lastFetchKey) {
