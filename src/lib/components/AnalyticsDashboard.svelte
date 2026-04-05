@@ -155,7 +155,9 @@
 											{new Date(row.timestamp).toLocaleString()}
 										</td>
 										<td class="px-6 py-4 text-sm font-medium whitespace-nowrap text-blue-600 dark:text-blue-400">
-											<a href={`/s/${row.shortCode}`} target="_blank" class="hover:underline">{row.shortCode}</a>
+											<a href={`/s/${row.shortCode}`} target="_blank" rel="noopener noreferrer" class="hover:underline"
+												>{row.shortCode}</a
+											>
 										</td>
 										<td class="px-6 py-4 text-sm whitespace-nowrap text-gray-900 dark:text-white">
 											{row.country || 'Unknown'}

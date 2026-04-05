@@ -57,17 +57,19 @@
 		{#each data as item, i (item.label)}
 			{@const isHovered = hoveredIndex === i}
 			{@const isDimmed = hoveredIndex !== null && hoveredIndex !== i}
-			<!-- svelte-ignore a11y_no_static_element_interactions -->
-			<div
-				class="flex items-center gap-2 rounded px-1 py-0.5"
+			<button
+				type="button"
+				class="flex w-full items-center gap-2 rounded border-none bg-transparent px-1 py-0.5 text-left text-sm"
 				style="opacity: {isDimmed ? 0.4 : 1}; transition: opacity 150ms ease; cursor: pointer;"
 				onmouseenter={() => (hoveredIndex = i)}
 				onmouseleave={() => (hoveredIndex = null)}
+				onfocus={() => (hoveredIndex = i)}
+				onblur={() => (hoveredIndex = null)}
 			>
 				<div class="h-3 w-3 rounded-sm" style="background-color: {colors[i % colors.length]}"></div>
 				<span class="text-gray-700 dark:text-gray-300" class:font-semibold={isHovered}>{item.label}</span>
 				<span class="ml-auto text-gray-500 dark:text-gray-400" class:font-semibold={isHovered}>{item.value}</span>
-			</div>
+			</button>
 		{/each}
 	</div>
 </div>
