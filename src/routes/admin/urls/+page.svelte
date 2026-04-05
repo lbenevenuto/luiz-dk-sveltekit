@@ -30,11 +30,12 @@
 
 	function buildUrl(overrides: Record<string, string | undefined>) {
 		const entries: [string, string][] = [];
-		const q = overrides.q ?? data.q;
-		const userId = overrides.userId ?? data.userIdFilter;
-		const anonymous = overrides.anonymous ?? (data.anonymous ? 'true' : undefined);
-		const pg = overrides.page ?? String(data.page);
-		const ps = overrides.pageSize ?? String(data.pageSize);
+		const has = (key: string) => Object.hasOwn(overrides, key);
+		const q = has('q') ? overrides.q : data.q;
+		const userId = has('userId') ? overrides.userId : data.userIdFilter;
+		const anonymous = has('anonymous') ? overrides.anonymous : data.anonymous ? 'true' : undefined;
+		const pg = has('page') ? overrides.page : String(data.page);
+		const ps = has('pageSize') ? overrides.pageSize : String(data.pageSize);
 
 		if (q) entries.push(['q', q]);
 		if (anonymous === 'true') {

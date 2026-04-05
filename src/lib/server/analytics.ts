@@ -237,9 +237,14 @@ export async function fetchAnalyticsLog(
 	const filters = buildFilters(days, sanitized);
 	const whereClause = filters.join(' AND ');
 
+	const MAX_OFFSET = 10000;
 	const page = options.page ?? 1;
 	const pageSize = options.pageSize ?? 10;
 	const offset = (page - 1) * pageSize;
+
+	if (offset > MAX_OFFSET) {
+		return emptyLog;
+	}
 
 	const logSql = `
 		SELECT
