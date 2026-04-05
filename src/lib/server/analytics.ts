@@ -30,7 +30,7 @@ type AnalyticsResult = {
 };
 
 const SHORT_CODE_REGEX = /^[a-zA-Z0-9_-]{1,50}$/;
-const ALLOWED_DAYS = new Set([7, 30, 90]);
+const ALLOWED_DAYS = new Set([7, 30, 90, 180]);
 
 function normalizeDays(days: number): number {
 	return ALLOWED_DAYS.has(days) ? days : 7;
