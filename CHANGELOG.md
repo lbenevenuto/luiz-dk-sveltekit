@@ -1,3 +1,11 @@
+## [1.4.0](https://github.com/lbenevenuto/luiz-dk-sveltekit/compare/v1.3.2...v1.4.0) (2026-04-05)
+
+### ✨ Features
+
+* **admin:** add URL query/filter page ([6b78da9](https://github.com/lbenevenuto/luiz-dk-sveltekit/commit/6b78da9e80ae39ea10b4f1ef613d092e3c1312fd))
+
+**Full Changelog**: https://github.com/lbenevenuto/luiz-dk-sveltekit/compare/v1.3.2...v1.4.0
+
 ## [1.3.2](https://github.com/lbenevenuto/luiz-dk-sveltekit/compare/v1.3.1...v1.3.2) (2026-04-05)
 
 ### ♻️ Refactoring
