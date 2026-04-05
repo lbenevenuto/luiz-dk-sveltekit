@@ -8,7 +8,8 @@ import {
 	findExistingUserUrlPermanent,
 	findExistingUserUrlExpiring,
 	findExistingGlobalUrlPermanent,
-	findExistingGlobalUrlExpiring
+	findExistingGlobalUrlExpiring,
+	searchUrls
 } from './urls';
 
 function createChainableMock(resolvedValue?: unknown) {
@@ -17,9 +18,31 @@ function createChainableMock(resolvedValue?: unknown) {
 		from: vi.fn().mockReturnThis(),
 		where: vi.fn().mockResolvedValue(resolvedValue ?? []),
 		limit: vi.fn().mockReturnThis(),
+		offset: vi.fn().mockResolvedValue(resolvedValue ?? []),
+		orderBy: vi.fn().mockReturnThis(),
 		delete: vi.fn().mockReturnThis(),
 		insert: vi.fn().mockReturnThis(),
 		values: vi.fn().mockResolvedValue(resolvedValue ?? [])
+	};
+	return chain;
+}
+
+function createSearchMock(urls: unknown[] = [], count = 0) {
+	let callCount = 0;
+	const chain = {
+		select: vi.fn().mockReturnThis(),
+		from: vi.fn().mockReturnThis(),
+		where: vi.fn().mockImplementation(function (this: typeof chain) {
+			callCount++;
+			if (callCount === 2) {
+				// count query resolves directly from where
+				return Promise.resolve([{ count }]);
+			}
+			return this;
+		}),
+		orderBy: vi.fn().mockReturnThis(),
+		limit: vi.fn().mockReturnThis(),
+		offset: vi.fn().mockResolvedValue(urls)
 	};
 	return chain;
 }
@@ -114,5 +137,80 @@ describe('URL Queries DAL', () => {
 		expect(mockChain.select).toHaveBeenCalled();
 		expect(mockChain.where).toHaveBeenCalled();
 		expect(result).toEqual({ id: 1 });
+	});
+
+	describe('searchUrls', () => {
+		it('returns paginated results with defaults', async () => {
+			const mockUrls = [{ id: 1, shortCode: 'abc' }];
+			const searchMock = createSearchMock(mockUrls, 1);
+			const db = searchMock as unknown as DrizzleClient;
+
+			const result = await searchUrls(db, {});
+
+			expect(result.urls).toEqual(mockUrls);
+			expect(result.total).toBe(1);
+			expect(result.page).toBe(1);
+			expect(result.pageSize).toBe(25);
+			expect(result.totalPages).toBe(1);
+		});
+
+		it('calculates totalPages correctly', async () => {
+			const searchMock = createSearchMock([], 75);
+			const db = searchMock as unknown as DrizzleClient;
+
+			const result = await searchUrls(db, { page: 1 });
+
+			expect(result.totalPages).toBe(3);
+			expect(result.total).toBe(75);
+		});
+
+		it('passes query parameter for search', async () => {
+			const searchMock = createSearchMock([], 0);
+			const db = searchMock as unknown as DrizzleClient;
+
+			await searchUrls(db, { query: 'test' });
+
+			expect(searchMock.where).toHaveBeenCalled();
+			expect(searchMock.select).toHaveBeenCalledTimes(2);
+		});
+
+		it('passes userId filter', async () => {
+			const searchMock = createSearchMock([], 0);
+			const db = searchMock as unknown as DrizzleClient;
+
+			await searchUrls(db, { userId: 'user123' });
+
+			expect(searchMock.where).toHaveBeenCalled();
+		});
+
+		it('passes null userId for anonymous filter', async () => {
+			const searchMock = createSearchMock([], 0);
+			const db = searchMock as unknown as DrizzleClient;
+
+			await searchUrls(db, { userId: null });
+
+			expect(searchMock.where).toHaveBeenCalled();
+		});
+
+		it('applies pagination offset correctly', async () => {
+			const searchMock = createSearchMock([], 50);
+			const db = searchMock as unknown as DrizzleClient;
+
+			await searchUrls(db, { page: 2, pageSize: 10 });
+
+			expect(searchMock.limit).toHaveBeenCalledWith(10);
+			expect(searchMock.offset).toHaveBeenCalledWith(10);
+		});
+
+		it('returns empty results when no matches', async () => {
+			const searchMock = createSearchMock([], 0);
+			const db = searchMock as unknown as DrizzleClient;
+
+			const result = await searchUrls(db, { query: 'nonexistent' });
+
+			expect(result.urls).toEqual([]);
+			expect(result.total).toBe(0);
+			expect(result.totalPages).toBe(0);
+		});
 	});
 });

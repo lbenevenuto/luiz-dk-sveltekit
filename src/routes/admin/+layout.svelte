@@ -7,6 +7,7 @@
 	// We need to typecase the hrefs to make `resolve` happy with literal types
 	const tabs = [
 		{ name: 'Analytics', href: '/admin/analytics' as const },
+		{ name: 'URLs', href: '/admin/urls' as const },
 		{ name: 'Users', href: '/admin/users' as const }
 	];
 
