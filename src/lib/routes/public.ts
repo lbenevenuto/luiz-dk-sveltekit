@@ -4,6 +4,7 @@ export const PUBLIC_ROUTES = [
 	'/login',
 	'/register',
 	'/forgot-password',
+	'/sso-callback',
 	'/403',
 	'/shortener',
 	'/api/v1/shorten',

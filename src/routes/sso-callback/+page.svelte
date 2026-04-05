@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { browser } from '$app/environment';
+	import { goto } from '$app/navigation';
 	import { waitForClerk } from '$lib/client/clerk';
 	import { normalizeRedirectPath, withBase } from '$lib/client/redirect';
 
@@ -37,7 +38,13 @@
 
 		try {
 			const clerk = await waitForClerk();
-			await clerk.handleRedirectCallback();
+			await clerk.handleRedirectCallback(
+				{
+					signInFallbackRedirectUrl: redirectTo,
+					signUpFallbackRedirectUrl: redirectTo
+				},
+				(to: string) => goto(to)
+			);
 
 			// Session/user can take a moment to hydrate after OAuth callback.
 			const hasSession = await waitForSession(clerk);
