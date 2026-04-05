@@ -1,3 +1,16 @@
+## [1.5.0](https://github.com/lbenevenuto/luiz-dk-sveltekit/compare/v1.4.1...v1.5.0) (2026-04-05)
+
+### ✨ Features
+
+* **admin:** add URL management, paginated analytics log, and TanStack Table ([05ac634](https://github.com/lbenevenuto/luiz-dk-sveltekit/commit/05ac6343ddde7559ff35353ee45b8da7b1a7c729))
+
+### 🐛 Bug Fixes
+
+* **admin:** address Copilot review feedback ([b54a7e8](https://github.com/lbenevenuto/luiz-dk-sveltekit/commit/b54a7e873a10ab3800aadb7bcba2a74ece13318b))
+* **analytics:** align log filter with chart filter state ([a98f980](https://github.com/lbenevenuto/luiz-dk-sveltekit/commit/a98f980dc7f74986939a91be2648e3be84eaff42))
+
+**Full Changelog**: https://github.com/lbenevenuto/luiz-dk-sveltekit/compare/v1.4.1...v1.5.0
+
 ## [1.4.1](https://github.com/lbenevenuto/luiz-dk-sveltekit/compare/v1.4.0...v1.4.1) (2026-04-05)
 
 ### 🐛 Bug Fixes
