@@ -11,7 +11,7 @@ export const load: PageServerLoad = async ({ platform, url, locals }) => {
 
 	const daysParam = url.searchParams.get('days');
 	let days = daysParam ? parseInt(daysParam) : 7;
-	if (isNaN(days) || ![7, 30, 90].includes(days)) {
+	if (isNaN(days) || ![7, 30, 90, 180].includes(days)) {
 		days = 7;
 	}
 

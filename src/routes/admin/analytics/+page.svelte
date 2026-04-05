@@ -2,11 +2,11 @@
 	import type { PageData } from './$types';
 	import AnalyticsDashboard from '$lib/components/AnalyticsDashboard.svelte';
 
-	export let data: PageData;
+	let { data }: { data: PageData } = $props();
 </script>
 
 <div class="container mx-auto max-w-7xl px-4 py-8">
-	<div class="mb-8 flex items-center justify-between">
+	<div class="mb-8 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
 		<div>
 			<h1 class="text-3xl font-bold text-gray-900 dark:text-white">Analytics Dashboard</h1>
 			{#if data.filterUser}
@@ -34,7 +34,7 @@
 				</p>
 			{/if}
 		</div>
-		<div class="flex items-center space-x-4">
+		<div class="flex flex-wrap items-center gap-2">
 			<a
 				href="?days=7{data.filterUser ? `&userId=${data.filterUser.id}` : ''}"
 				class="rounded-md px-3 py-2 text-sm font-medium {data.days === 7
@@ -55,6 +55,13 @@
 					? 'bg-blue-600 text-white'
 					: 'bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600'}"
 				>90 Days</a
+			>
+			<a
+				href="?days=180{data.filterUser ? `&userId=${data.filterUser.id}` : ''}"
+				class="rounded-md px-3 py-2 text-sm font-medium {data.days === 180
+					? 'bg-blue-600 text-white'
+					: 'bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600'}"
+				>180 Days</a
 			>
 		</div>
 	</div>

@@ -1,6 +1,7 @@
 <script lang="ts">
-	import Chart from '$lib/components/Chart.svelte';
-	import { resolve } from '$app/paths';
+	import LineChart from '$lib/components/charts/LineChart.svelte';
+	import BarChart from '$lib/components/charts/BarChart.svelte';
+	import DoughnutChart from '$lib/components/charts/DoughnutChart.svelte';
 
 	interface AnalyticsItem {
 		id: string;
@@ -11,21 +12,25 @@
 		userAgent: string;
 	}
 
-	export let data: {
-		streamed: {
-			analytics: Promise<{
-				analytics: AnalyticsItem[];
-				charts?: {
-					daily: { date: string; count: number }[];
-					countries: { label: string; value: number }[];
-					browsers: { label: string; value: number }[];
-					referrers: { label: string; value: number }[];
-				};
-				error?: string;
-			}>;
+	interface Props {
+		data: {
+			streamed: {
+				analytics: Promise<{
+					analytics: AnalyticsItem[];
+					charts?: {
+						daily: { date: string; count: number }[];
+						countries: { label: string; value: number }[];
+						browsers: { label: string; value: number }[];
+						referrers: { label: string; value: number }[];
+					};
+					error?: string;
+				}>;
+			};
+			days: number;
 		};
-		days: number;
-	};
+	}
+
+	let { data }: Props = $props();
 </script>
 
 <div>
@@ -50,79 +55,41 @@
 
 		<!-- Charts Section -->
 		{#if !result.error && result.charts}
-			{@const dailyData = {
-				labels: result.charts.daily.map((d) => d.date) || [],
-				datasets: [
-					{
-						label: 'Clicks',
-						data: result.charts.daily.map((d) => d.count) || [],
-						fill: true,
-						borderColor: 'rgb(59, 130, 246)',
-						tension: 0.3
-					}
-				]
-			}}
-
-			{@const countriesData = {
-				labels: result.charts.countries.map((d) => d.label) || [],
-				datasets: [
-					{
-						label: 'Clicks',
-						data: result.charts.countries.map((d) => d.value) || [],
-						backgroundColor: [
-							'rgba(255, 99, 132, 0.5)',
-							'rgba(54, 162, 235, 0.5)',
-							'rgba(255, 206, 86, 0.5)',
-							'rgba(75, 192, 192, 0.5)',
-							'rgba(153, 102, 255, 0.5)'
-						]
-					}
-				]
-			}}
-
-			{@const browserData = {
-				labels: result.charts.browsers.map((d) => d.label) || [],
-				datasets: [
-					{
-						data: result.charts.browsers.map((d) => d.value) || [],
-						backgroundColor: [
-							'rgba(54, 162, 235, 0.8)',
-							'rgba(255, 159, 64, 0.8)',
-							'rgba(75, 192, 192, 0.8)',
-							'rgba(255, 205, 86, 0.8)',
-							'rgba(201, 203, 207, 0.8)'
-						]
-					}
-				]
-			}}
-
 			<div class="mb-8 grid grid-cols-1 gap-6 lg:grid-cols-2">
 				<!-- Daily Clicks -->
 				<div class="rounded-lg border border-gray-200 bg-white p-6 shadow dark:border-gray-700 dark:bg-gray-800">
 					<h3 class="mb-4 text-lg font-medium text-gray-900 dark:text-white">Daily Clicks</h3>
-					<div class="h-80 w-full">
-						<Chart type="line" data={dailyData} options={{ responsive: true, maintainAspectRatio: false }} />
-					</div>
+					{#if result.charts.daily.length > 0}
+						<div class="h-80 w-full">
+							<LineChart data={result.charts.daily} />
+						</div>
+					{:else}
+						<p class="py-8 text-center text-sm text-gray-500 dark:text-gray-400">No click data available.</p>
+					{/if}
 				</div>
 
 				<!-- Top Countries -->
 				<div class="rounded-lg border border-gray-200 bg-white p-6 shadow dark:border-gray-700 dark:bg-gray-800">
 					<h3 class="mb-4 text-lg font-medium text-gray-900 dark:text-white">Top Countries</h3>
-					<div class="h-80 w-full">
-						<Chart
-							type="bar"
-							data={countriesData}
-							options={{ indexAxis: 'y', responsive: true, maintainAspectRatio: false }}
-						/>
-					</div>
+					{#if result.charts.countries.length > 0}
+						<div class="h-80 w-full">
+							<BarChart data={result.charts.countries} />
+						</div>
+					{:else}
+						<p class="py-8 text-center text-sm text-gray-500 dark:text-gray-400">No country data available.</p>
+					{/if}
 				</div>
 
 				<!-- Browser Distribution -->
 				<div class="rounded-lg border border-gray-200 bg-white p-6 shadow dark:border-gray-700 dark:bg-gray-800">
 					<h3 class="mb-4 text-lg font-medium text-gray-900 dark:text-white">Browsers</h3>
-					<div class="flex h-64 justify-center">
-						<Chart type="doughnut" data={browserData} options={{ responsive: true, maintainAspectRatio: false }} />
-					</div>
+					{#if result.charts.browsers.length > 0}
+						<div class="flex h-64 justify-center">
+							<DoughnutChart data={result.charts.browsers} />
+						</div>
+					{:else}
+						<p class="py-8 text-center text-sm text-gray-500 dark:text-gray-400">No browser data available.</p>
+					{/if}
 				</div>
 
 				<!-- Referrers List (Text based as it can be long) -->
@@ -188,11 +155,7 @@
 											{new Date(row.timestamp).toLocaleString()}
 										</td>
 										<td class="px-6 py-4 text-sm font-medium whitespace-nowrap text-blue-600 dark:text-blue-400">
-											<a
-												href={resolve('/s/[shortCode]', { shortCode: row.shortCode })}
-												target="_blank"
-												class="hover:underline">{row.shortCode}</a
-											>
+											<a href={`/s/${row.shortCode}`} target="_blank" class="hover:underline">{row.shortCode}</a>
 										</td>
 										<td class="px-6 py-4 text-sm whitespace-nowrap text-gray-900 dark:text-white">
 											{row.country || 'Unknown'}
