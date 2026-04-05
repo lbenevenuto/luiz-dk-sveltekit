@@ -1,3 +1,11 @@
+## [1.4.1](https://github.com/lbenevenuto/luiz-dk-sveltekit/compare/v1.4.0...v1.4.1) (2026-04-05)
+
+### 🐛 Bug Fixes
+
+* **auth:** preserve redirect URL after OAuth sign-in ([b695ef4](https://github.com/lbenevenuto/luiz-dk-sveltekit/commit/b695ef4f2e5404da70c7141a5a5eb2530ceddd9d))
+
+**Full Changelog**: https://github.com/lbenevenuto/luiz-dk-sveltekit/compare/v1.4.0...v1.4.1
+
 ## [1.4.0](https://github.com/lbenevenuto/luiz-dk-sveltekit/compare/v1.3.2...v1.4.0) (2026-04-05)
 
 ### ✨ Features
