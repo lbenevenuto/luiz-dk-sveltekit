@@ -75,6 +75,7 @@
 		"zod": "^4.3.6"
 	},
 	"dependencies": {
+		"@tanstack/svelte-table": "9.0.0-alpha.10",
 		"d3-scale": "^4.0.2",
 		"d3-shape": "^3.2.0",
 		"layercake": "^10.0.2"

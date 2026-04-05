@@ -1,6 +1,6 @@
 import type { PageServerLoad } from './$types';
 import { redirect } from '@sveltejs/kit';
-import { fetchAnalytics } from '$lib/server/analytics';
+import { fetchChartAnalytics } from '$lib/server/analytics';
 import { getUserUrls } from '$lib/server/db/queries/urls';
 import { logger } from '$lib/server/logger';
 
@@ -27,7 +27,7 @@ export const load: PageServerLoad = async ({ platform, url, locals }) => {
 
 	return {
 		streamed: {
-			analytics: fetchAnalytics(platform, {
+			charts: fetchChartAnalytics(platform, {
 				days,
 				shortCodes: userShortCodes
 			})

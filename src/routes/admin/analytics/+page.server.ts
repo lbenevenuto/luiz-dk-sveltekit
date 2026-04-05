@@ -1,7 +1,7 @@
 import type { PageServerLoad } from './$types';
 import { requireAdmin } from '$lib/server/auth';
 import { getClerkClient } from '$lib/server/clerk';
-import { fetchAnalytics } from '$lib/server/analytics';
+import { fetchChartAnalytics } from '$lib/server/analytics';
 import { getUserUrls } from '$lib/server/db/queries/urls';
 import { logger } from '$lib/server/logger';
 
@@ -22,7 +22,6 @@ export const load: PageServerLoad = async ({ platform, url, locals }) => {
 			const clerkClient = getClerkClient(platform.env);
 			filterUser = await clerkClient.users.getUser(userId);
 
-			// Fetch user's shortcodes
 			const userUrls = await getUserUrls(locals.db, userId);
 			userShortCodes = userUrls.map((u) => u.shortCode);
 		} catch (error) {
@@ -35,7 +34,7 @@ export const load: PageServerLoad = async ({ platform, url, locals }) => {
 
 	return {
 		streamed: {
-			analytics: fetchAnalytics(platform, {
+			charts: fetchChartAnalytics(platform, {
 				days,
 				shortCodes: userShortCodes
 			})
