@@ -1,3 +1,11 @@
+## [1.3.1](https://github.com/lbenevenuto/luiz-dk-sveltekit/compare/v1.3.0...v1.3.1) (2026-04-05)
+
+### 🐛 Bug Fixes
+
+* **ci:** add branch, commit hash, and message to Pages deploy ([c3cc570](https://github.com/lbenevenuto/luiz-dk-sveltekit/commit/c3cc570d9b5f784f72e40fb73bd76fbcc5be9a22))
+
+**Full Changelog**: https://github.com/lbenevenuto/luiz-dk-sveltekit/compare/v1.3.0...v1.3.1
+
 ## [1.3.0](https://github.com/lbenevenuto/luiz-dk-sveltekit/compare/v1.2.7...v1.3.0) (2026-04-05)
 
 ### ✨ Features
