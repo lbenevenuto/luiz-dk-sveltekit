@@ -4,7 +4,7 @@ import type { Url } from '../schemas';
 import type { DrizzleClient } from '../client';
 
 export async function getUserUrls(db: DrizzleClient, userId: string): Promise<Url[]> {
-	return await db.select().from(urls).where(eq(urls.userId, userId));
+	return db.select().from(urls).where(eq(urls.userId, userId));
 }
 
 export async function getUrlByShortCode(db: DrizzleClient, shortCode: string): Promise<Url | undefined> {
@@ -13,14 +13,14 @@ export async function getUrlByShortCode(db: DrizzleClient, shortCode: string): P
 }
 
 export async function deleteUrlById(db: DrizzleClient, id: number) {
-	return await db.delete(urls).where(eq(urls.id, id));
+	return db.delete(urls).where(eq(urls.id, id));
 }
 
 export async function insertUrl(
 	db: DrizzleClient,
 	values: { shortCode: string; originalUrl: string; userId: string | null; expiresAt: Date | null }
 ) {
-	return await db.insert(urls).values(values);
+	return db.insert(urls).values(values);
 }
 
 export async function findExistingUserUrlExpiring(
