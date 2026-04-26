@@ -1,3 +1,11 @@
+## [1.5.1](https://github.com/lbenevenuto/luiz-dk-sveltekit/compare/v1.5.0...v1.5.1) (2026-04-26)
+
+### 🔧 Chores
+
+* **deps:** bump dependencies 2026-04-26 ([84f9e89](https://github.com/lbenevenuto/luiz-dk-sveltekit/commit/84f9e893820c63440f310772f00327e35d06f2a9))
+
+**Full Changelog**: https://github.com/lbenevenuto/luiz-dk-sveltekit/compare/v1.5.0...v1.5.1
+
 ## [1.5.0](https://github.com/lbenevenuto/luiz-dk-sveltekit/compare/v1.4.1...v1.5.0) (2026-04-05)
 
 ### ✨ Features
