@@ -1,3 +1,11 @@
+## [1.5.2](https://github.com/lbenevenuto/luiz-dk-sveltekit/compare/v1.5.1...v1.5.2) (2026-05-05)
+
+### 📝 Documentation
+
+* **agents:** update AGENTS.md with verified tooling and workflow details ([02aab34](https://github.com/lbenevenuto/luiz-dk-sveltekit/commit/02aab3422480b281e56a05b13b634df5c52552a9))
+
+**Full Changelog**: https://github.com/lbenevenuto/luiz-dk-sveltekit/compare/v1.5.1...v1.5.2
+
 ## [1.5.1](https://github.com/lbenevenuto/luiz-dk-sveltekit/compare/v1.5.0...v1.5.1) (2026-04-26)
 
 ### 🔧 Chores
