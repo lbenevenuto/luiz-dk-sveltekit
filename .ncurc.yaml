@@ -1,0 +1,6 @@
+reject:
+  # wrangler 4.87.0 raised the runtime Node requirement to >=22.0.0.
+  # The CI build job runs Bun on top of the runner's pre-installed Node v20,
+  # so wrangler refuses to run during the `prepare` (wrangler types) step.
+  # Re-evaluate once the CI setup action installs Node from .node-version.
+  - wrangler
