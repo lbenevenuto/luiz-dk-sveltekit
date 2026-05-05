@@ -1,3 +1,11 @@
+## [1.6.0](https://github.com/lbenevenuto/luiz-dk-sveltekit/compare/v1.5.3...v1.6.0) (2026-05-05)
+
+### ✨ Features
+
+* **config:** split preview and production env in wrangler ([563344d](https://github.com/lbenevenuto/luiz-dk-sveltekit/commit/563344d5b710a4127485ad808c2539d9ef7e7471))
+
+**Full Changelog**: https://github.com/lbenevenuto/luiz-dk-sveltekit/compare/v1.5.3...v1.6.0
+
 ## [1.5.3](https://github.com/lbenevenuto/luiz-dk-sveltekit/compare/v1.5.2...v1.5.3) (2026-05-05)
 
 ### 🔧 Chores
