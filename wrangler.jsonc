@@ -47,5 +47,87 @@
 			"binding": "ANALYTICS",
 			"dataset": "luiz_dk_analytics"
 		}
-	]
+	],
+	"env": {
+		"preview": {
+			"vars": {
+				"CLOUDFLARE_ACCOUNT_ID": "a45f184e872199b343e927925cbf57b5",
+				"CLERK_PUBLISHABLE_KEY": "pk_test_anVzdC1zcGlkZXItNDQuY2xlcmsuYWNjb3VudHMuZGV2JA",
+				"CLERK_FRONTEND_API": "just-spider-44.clerk.accounts.dev",
+				"BASE_URL": "https://luiz.dk",
+				"RATE_LIMIT_MAX_REQUESTS": "10",
+				"RATE_LIMIT_WINDOW_SECONDS": "60",
+				"SENTRY_DSN": "https://5852440bce4280c4f682558c65a35bb4@o4505868707495936.ingest.us.sentry.io/4510782741807104",
+				"PUBLIC_SENTRY_DSN": "https://5852440bce4280c4f682558c65a35bb4@o4505868707495936.ingest.us.sentry.io/4510782741807104"
+			},
+			"durable_objects": {
+				"bindings": [
+					{
+						"name": "GLOBAL_COUNTER_DO",
+						"class_name": "GlobalCounterDurableObject",
+						"script_name": "durable-object-global-counter"
+					}
+				]
+			},
+			"d1_databases": [
+				{
+					"binding": "DB",
+					"database_name": "luiz_dk",
+					"database_id": "f3811db7-7a47-4476-af34-8bb5d8ad7358"
+				}
+			],
+			"kv_namespaces": [
+				{
+					"binding": "CACHE",
+					"id": "6f8d5d94a48a49559128d83a18022d30"
+				}
+			],
+			"analytics_engine_datasets": [
+				{
+					"binding": "ANALYTICS",
+					"dataset": "luiz_dk_analytics"
+				}
+			]
+		},
+		"production": {
+			"vars": {
+				"CLOUDFLARE_ACCOUNT_ID": "a45f184e872199b343e927925cbf57b5",
+				"CLERK_PUBLISHABLE_KEY": "pk_live_Y2xlcmsubHVpei5kayQ",
+				"CLERK_FRONTEND_API": "clerk.luiz.dk",
+				"BASE_URL": "https://luiz.dk",
+				"RATE_LIMIT_MAX_REQUESTS": "10",
+				"RATE_LIMIT_WINDOW_SECONDS": "60",
+				"SENTRY_DSN": "https://5852440bce4280c4f682558c65a35bb4@o4505868707495936.ingest.us.sentry.io/4510782741807104",
+				"PUBLIC_SENTRY_DSN": "https://5852440bce4280c4f682558c65a35bb4@o4505868707495936.ingest.us.sentry.io/4510782741807104"
+			},
+			"durable_objects": {
+				"bindings": [
+					{
+						"name": "GLOBAL_COUNTER_DO",
+						"class_name": "GlobalCounterDurableObject",
+						"script_name": "durable-object-global-counter"
+					}
+				]
+			},
+			"d1_databases": [
+				{
+					"binding": "DB",
+					"database_name": "luiz_dk",
+					"database_id": "f3811db7-7a47-4476-af34-8bb5d8ad7358"
+				}
+			],
+			"kv_namespaces": [
+				{
+					"binding": "CACHE",
+					"id": "6f8d5d94a48a49559128d83a18022d30"
+				}
+			],
+			"analytics_engine_datasets": [
+				{
+					"binding": "ANALYTICS",
+					"dataset": "luiz_dk_analytics"
+				}
+			]
+		}
+	}
 }
