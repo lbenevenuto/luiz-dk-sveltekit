@@ -1,3 +1,12 @@
+## [1.5.3](https://github.com/lbenevenuto/luiz-dk-sveltekit/compare/v1.5.2...v1.5.3) (2026-05-05)
+
+### 🔧 Chores
+
+* **deps:** bump dependencies 2026-05-05 ([f70a4a5](https://github.com/lbenevenuto/luiz-dk-sveltekit/commit/f70a4a582c06b17bf7a28c74cce3aba55b9025c8))
+* **deps:** pin wrangler to 4.85.0 ([46f24ad](https://github.com/lbenevenuto/luiz-dk-sveltekit/commit/46f24ad38b5a53c5ca3eb93cb709bf24d7d2d855))
+
+**Full Changelog**: https://github.com/lbenevenuto/luiz-dk-sveltekit/compare/v1.5.2...v1.5.3
+
 ## [1.5.2](https://github.com/lbenevenuto/luiz-dk-sveltekit/compare/v1.5.1...v1.5.2) (2026-05-05)
 
 ### 📝 Documentation
