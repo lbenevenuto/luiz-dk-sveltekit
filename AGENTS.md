@@ -61,6 +61,7 @@ Uses [semantic-release](https://semantic-release.gitbook.io/semantic-release/) �
 - **Validation:** Zod v4
 - **Monitoring:** Sentry (`@sentry/sveltekit`)
 - **Cloudflare Bindings:** D1 (DB), KV (CACHE), Analytics Engine, Durable Objects
+- **Optional:** Redis (`ioredis` — local cache + ID generation fallback, see `.env.example`)
 
 ---
 
@@ -76,6 +77,7 @@ Uses [semantic-release](https://semantic-release.gitbook.io/semantic-release/) �
 | Format             | `bun run format`                                                             |
 | Typecheck          | `bun run check`                                                              |
 | Generate types     | `bun run types` (runs `wrangler types` → `worker-configuration.d.ts`)        |
+| Tail logs          | `bun run tail:pages` (stream logs from deployed Pages function)              |
 | Test (all)         | `bun run test`                                                               |
 | Test (watch)       | `bun run test:unit`                                                          |
 | Test (single file) | `bunx vitest run src/lib/adapters/analytics.test.ts`                         |
@@ -92,6 +94,13 @@ Uses [semantic-release](https://semantic-release.gitbook.io/semantic-release/) �
 **Pre-commit:** Husky + lint-staged runs prettier + eslint on `*.{js,ts,svelte,json}`.
 
 **Deploy:** Triggered on GitHub release published. Build uses `CF_PAGES=1`, then CI runs `bunx wrangler pages deploy` with release/commit metadata flags including `--branch`, `--commit-hash`, and `--commit-message`.
+
+**Environment setup:**
+
+- Local dev: copy `.env.example` → `.env`, then `bun run db:migrate`
+- Cloudflare preview: copy `.dev.vars.example` → `.dev.vars` after building
+- Required for `build` / `check`: `PUBLIC_SENTRY_DSN`, `SALT`, `BASE_URL`
+- Prod migrations need: `CLOUDFLARE_ACCOUNT_ID`, `CLOUDFLARE_D1_DATABASE_ID`, `CLOUDFLARE_API_TOKEN`
 
 ---
 
@@ -199,7 +208,12 @@ logger.error('error.name', { error: err instanceof Error ? err.message : String(
 - **Factory functions:** `src/lib/adapters/factory.ts` resolves correct adapter based on `dev` flag
 - **Platform check:** Always guard `platform` access — it's `undefined` during SSR/prerender
 - **Env vars:** Accessed via `platform.env` (Cloudflare bindings), NOT `process.env` (except Sentry DSN fallback)
-- **Hooks chain:** `initialHook` -> `sentryInitHandle` -> `Sentry.sentryHandle()` -> `authHandle` -> `securityHeadersHandle`
+- **Hooks chain:** `requestIdHook` -> `initialHook` -> `sentryInitHandle` -> `Sentry.sentryHandle()` -> `dbHandle` -> `authHandle` -> `securityHeadersHandle`
 - **Lockfile:** `bun.lock` (text-based). CI uses `bun install --frozen-lockfile`.
 - **Node version:** `.node-version` specifies 24.12.0 for Wrangler tooling; `.npmrc` has `engine-strict=true`
 - **Generated types:** `bun run types` generates `worker-configuration.d.ts` from `wrangler.jsonc`
+- **SSR externals:** `vite.config.ts` marks `@sentry/sveltekit` and `zod` as `noExternal` — required for Cloudflare adapter bundling
+- **Wrangler flags:** `compatibility_flags` includes `nodejs_als` and `nodejs_compat` for Node.js API support in Workers
+- **SvelteKit experimental:** `svelte.config.js` enables `instrumentation.server` and `tracing.server`
+- **Prettier tailwind:** `.prettierrc` references `tailwindStylesheet: "./src/routes/layout.css"` — update if moving the Tailwind entry point
+- **Prepare script caveat:** The `prepare` script uses `|| echo ''` which swallows errors from `bun run types` and `svelte-kit sync`. A failure in either will still allow `husky` to run and the script to exit 0.
