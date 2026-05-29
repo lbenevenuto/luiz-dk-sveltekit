@@ -1,3 +1,11 @@
+## [1.6.1](https://github.com/lbenevenuto/luiz-dk-sveltekit/compare/v1.6.0...v1.6.1) (2026-05-29)
+
+### 📝 Documentation
+
+* **agents:** update AGENTS.md with architecture notes and corrected hooks chain ([5fd23cc](https://github.com/lbenevenuto/luiz-dk-sveltekit/commit/5fd23ccd5b6caf8848364532a6c10b09354bcd13))
+
+**Full Changelog**: https://github.com/lbenevenuto/luiz-dk-sveltekit/compare/v1.6.0...v1.6.1
+
 ## [1.6.0](https://github.com/lbenevenuto/luiz-dk-sveltekit/compare/v1.5.3...v1.6.0) (2026-05-05)
 
 ### ✨ Features
