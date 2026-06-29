@@ -1,3 +1,11 @@
+## [1.6.2](https://github.com/lbenevenuto/luiz-dk-sveltekit/compare/v1.6.1...v1.6.2) (2026-06-29)
+
+### 👷 CI/CD
+
+* add weekly Claude dependency-updates workflow ([#26](https://github.com/lbenevenuto/luiz-dk-sveltekit/issues/26)) ([604fbc6](https://github.com/lbenevenuto/luiz-dk-sveltekit/commit/604fbc6f948b0d404b469ebfae5bfd76b2936509))
+
+**Full Changelog**: https://github.com/lbenevenuto/luiz-dk-sveltekit/compare/v1.6.1...v1.6.2
+
 ## [1.6.1](https://github.com/lbenevenuto/luiz-dk-sveltekit/compare/v1.6.0...v1.6.1) (2026-05-29)
 
 ### 📝 Documentation
