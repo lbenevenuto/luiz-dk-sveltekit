@@ -3,17 +3,14 @@ import { redirect } from '@sveltejs/kit';
 import { fetchChartAnalytics } from '$lib/server/analytics';
 import { getUserUrls } from '$lib/server/db/queries/urls';
 import { logger } from '$lib/server/logger';
+import { getErrorMessage, parseDaysParam } from '$lib/utils/validation';
 
 export const load: PageServerLoad = async ({ platform, url, locals }) => {
 	if (!locals.auth.userId) {
 		throw redirect(302, '/login');
 	}
 
-	const daysParam = url.searchParams.get('days');
-	let days = daysParam ? parseInt(daysParam) : 7;
-	if (isNaN(days) || ![7, 30, 90, 180].includes(days)) {
-		days = 7;
-	}
+	const days = parseDaysParam(url.searchParams.get('days'));
 
 	let userShortCodes: string[] = [];
 	try {
@@ -21,7 +18,7 @@ export const load: PageServerLoad = async ({ platform, url, locals }) => {
 		userShortCodes = userUrls.map((u) => u.shortCode);
 	} catch (error) {
 		logger.error('dashboard.user_urls_fetch_error', {
-			error: error instanceof Error ? error.message : String(error)
+			error: getErrorMessage(error)
 		});
 	}
 

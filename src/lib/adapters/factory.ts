@@ -15,6 +15,7 @@ import { type AnalyticsAdapter, CloudflareAnalyticsAdapter, ConsoleAnalyticsAdap
 import { dev } from '$app/environment';
 import type Redis from 'ioredis';
 import { logger } from '$lib/server/logger';
+import { getErrorMessage } from '$lib/utils/validation';
 
 let devIdGeneratorAdapter: IdGeneratorAdapter | null = null;
 let devCacheAdapter: CacheAdapter | null = null;
@@ -44,7 +45,7 @@ export async function getIdGeneratorAdapter(platform: Readonly<App.Platform> | u
 			devIdGeneratorAdapter = new RedisIdGenerator(await getOrCreateDevRedis());
 		} catch (err) {
 			logger.warn('adapter.id_generator.redis_unavailable', {
-				error: err instanceof Error ? err.message : String(err)
+				error: getErrorMessage(err)
 			});
 			devIdGeneratorAdapter = new InMemoryIdGenerator();
 		}
@@ -96,7 +97,7 @@ export async function getCacheAdapter(platform: Readonly<App.Platform> | undefin
 			devCacheAdapter = new RedisAdapter(await getOrCreateDevRedis());
 		} catch (err) {
 			logger.warn('adapter.cache.redis_unavailable', {
-				error: err instanceof Error ? err.message : String(err)
+				error: getErrorMessage(err)
 			});
 			devCacheAdapter = new InMemoryCacheAdapter();
 		}

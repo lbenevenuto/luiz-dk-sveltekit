@@ -2,6 +2,8 @@ import { json } from '@sveltejs/kit';
 import { Webhook } from 'svix';
 import { getClerkClient } from '$lib/server/clerk';
 import { logger } from '$lib/server/logger';
+import { jsonError } from '$lib/server/responses';
+import { getErrorMessage } from '$lib/utils/validation';
 import { z } from 'zod';
 
 const webhookEventSchema = z.object({
@@ -17,7 +19,7 @@ export const POST = async ({ request, platform }: { request: Request; platform?:
 
 	if (!webhookSecret) {
 		logger.error('webhook.clerk.missing_secret', {});
-		return json({ error: 'Webhook secret not configured' }, { status: 500 });
+		return jsonError('Webhook secret not configured', 500);
 	}
 
 	// Verify webhook signature
@@ -26,7 +28,7 @@ export const POST = async ({ request, platform }: { request: Request; platform?:
 	const svix_signature = request.headers.get('svix-signature');
 
 	if (!svix_id || !svix_timestamp || !svix_signature) {
-		return json({ error: 'Missing Svix headers' }, { status: 400 });
+		return jsonError('Missing Svix headers', 400);
 	}
 
 	const body = await request.text();
@@ -42,15 +44,15 @@ export const POST = async ({ request, platform }: { request: Request; platform?:
 			'svix-signature': svix_signature
 		});
 	} catch (err) {
-		logger.error('webhook.clerk.invalid_signature', { error: err instanceof Error ? err.message : String(err) });
-		return json({ error: 'Invalid signature' }, { status: 400 });
+		logger.error('webhook.clerk.invalid_signature', { error: getErrorMessage(err) });
+		return jsonError('Invalid signature', 400);
 	}
 
 	// Validate event structure
 	const parsed = webhookEventSchema.safeParse(rawEvt);
 	if (!parsed.success) {
 		logger.error('webhook.clerk.invalid_structure', { error: parsed.error.message });
-		return json({ error: 'Invalid event structure' }, { status: 400 });
+		return jsonError('Invalid event structure', 400);
 	}
 
 	const { type, data } = parsed.data;
@@ -84,9 +86,9 @@ export const POST = async ({ request, platform }: { request: Request; platform?:
 	} catch (error) {
 		logger.error('webhook.clerk.handler_error', {
 			type,
-			error: error instanceof Error ? error.message : String(error)
+			error: getErrorMessage(error)
 		});
-		return json({ error: 'Failed to process webhook' }, { status: 500 });
+		return jsonError('Failed to process webhook', 500);
 	}
 
 	return json({ success: true, type });
