@@ -1,9 +1,8 @@
 import type { PageServerLoad } from './$types';
 import { requireAdmin } from '$lib/server/auth';
 import { searchUrls } from '$lib/server/db/queries/urls';
+import { ALLOWED_PAGE_SIZES } from '$lib/utils/constants';
 import { z } from 'zod';
-
-const ALLOWED_PAGE_SIZES = [5, 10, 50, 100] as const;
 
 const searchParamsSchema = z.object({
 	q: z.string().optional(),

@@ -3,6 +3,7 @@ import type { RequestHandler } from './$types';
 import { createShortUrl, normalizeUrl, ShortCodeConflictError } from '$lib/utils';
 import { checkAnonymousRateLimit } from '$lib/server/rate-limit';
 import { logger } from '$lib/server/logger';
+import { jsonError, parseJsonBody, validationError } from '$lib/server/responses';
 import { getClientIdentifierForRateLimit, isValidHttpUrl, sanitizeUrlForLog } from '$lib/utils/validation';
 import { z } from 'zod';
 
@@ -16,17 +17,15 @@ const shortenRequestSchema = z.object({
 
 export const POST: RequestHandler = async ({ platform, request, locals }) => {
 	// Parse JSON body safely
-	let body: unknown;
-	try {
-		body = await request.json();
-	} catch {
-		return json({ error: 'Invalid JSON body' }, { status: 400 });
+	const parsedBody = await parseJsonBody(request);
+	if ('response' in parsedBody) {
+		return parsedBody.response;
 	}
 
 	// Validate with Zod
-	const parsed = shortenRequestSchema.safeParse(body);
+	const parsed = shortenRequestSchema.safeParse(parsedBody.data);
 	if (!parsed.success) {
-		return json({ error: 'Validation failed', details: z.prettifyError(parsed.error) }, { status: 400 });
+		return validationError(parsed.error);
 	}
 
 	const { url: originalUrl, expiresIn, customCode } = parsed.data;
@@ -36,11 +35,11 @@ export const POST: RequestHandler = async ({ platform, request, locals }) => {
 
 	// Custom codes require authentication
 	if (customCode && !auth.userId) {
-		return json({ error: 'Authentication required for custom short codes' }, { status: 401 });
+		return jsonError('Authentication required for custom short codes', 401);
 	}
 
 	if (!isValidHttpUrl(originalUrl)) {
-		return json({ error: 'Only http/https URLs are allowed' }, { status: 400 });
+		return jsonError('Only http/https URLs are allowed', 400);
 	}
 
 	// Check rate limit for anonymous users
@@ -70,7 +69,7 @@ export const POST: RequestHandler = async ({ platform, request, locals }) => {
 		shortCode = await createShortUrl(normalizedUrl, expiresAt, platform, locals.db, auth.userId, customCode ?? null);
 	} catch (err) {
 		if (err instanceof ShortCodeConflictError) {
-			return json({ error: `Custom code "${customCode}" is already taken` }, { status: 409 });
+			return jsonError(`Custom code "${customCode}" is already taken`, 409);
 		}
 		throw err;
 	}
