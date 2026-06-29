@@ -3,7 +3,7 @@ import { json } from '@sveltejs/kit';
 import { fetchAnalyticsLog } from '$lib/server/analytics';
 import { getUserUrls } from '$lib/server/db/queries/urls';
 import { jsonError } from '$lib/server/responses';
-import { daysSchema, pageSizeSchema } from '$lib/utils/validation';
+import { daysSchema, pageSizeSchema } from '$lib/server/validation-schemas';
 import { z } from 'zod';
 
 const querySchema = z.object({

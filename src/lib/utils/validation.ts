@@ -2,8 +2,7 @@
  * Common validation utilities
  */
 
-import { z } from 'zod';
-import { ALLOWED_DAYS, ALLOWED_PAGE_SIZES, DEFAULT_DAYS, DEFAULT_PAGE_SIZE } from './constants';
+import { ALLOWED_DAYS, DEFAULT_DAYS } from './constants';
 
 /**
  * Extract a human-readable message from an unknown thrown value.
@@ -12,20 +11,6 @@ import { ALLOWED_DAYS, ALLOWED_PAGE_SIZES, DEFAULT_DAYS, DEFAULT_PAGE_SIZE } fro
 export function getErrorMessage(error: unknown): string {
 	return error instanceof Error ? error.message : String(error);
 }
-
-/** Zod schema coercing/validating an analytics day range, defaulting to {@link DEFAULT_DAYS}. */
-export const daysSchema = z.coerce
-	.number()
-	.int()
-	.refine((v) => (ALLOWED_DAYS as readonly number[]).includes(v))
-	.default(DEFAULT_DAYS);
-
-/** Zod schema coercing/validating a page size, defaulting to {@link DEFAULT_PAGE_SIZE}. */
-export const pageSizeSchema = z.coerce
-	.number()
-	.int()
-	.refine((v) => (ALLOWED_PAGE_SIZES as readonly number[]).includes(v))
-	.default(DEFAULT_PAGE_SIZE);
 
 /**
  * Parse a `days` search-param value, falling back to {@link DEFAULT_DAYS} when missing or invalid.
