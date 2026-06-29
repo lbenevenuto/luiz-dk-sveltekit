@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { toast } from '$lib/stores/toast.svelte';
 	import SEO from '$lib/components/SEO.svelte';
+	import { truncateString } from '$lib/utils/format';
 
 	let url = '';
 	let customCode = '';
@@ -205,7 +206,7 @@
 						rel="noopener"
 						class="break-all text-indigo-500 hover:underline"
 					>
-						{result.originalUrl.length > 60 ? result.originalUrl.substring(0, 60) + '...' : result.originalUrl}
+						{truncateString(result.originalUrl)}
 					</a>
 				</p>
 			</div>
