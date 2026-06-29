@@ -1,5 +1,7 @@
 <script lang="ts">
 	import { getContext } from 'svelte';
+	import { formatDateShort } from '$lib/utils/date';
+	import { formatNumber } from '$lib/utils/format';
 
 	interface ChartDataPoint {
 		date: Date;
@@ -22,8 +24,8 @@
 	}
 
 	let {
-		formatDate = (d: Date) => d.toISOString().split('T')[0],
-		formatValue = (v: number) => v.toLocaleString(),
+		formatDate = formatDateShort,
+		formatValue = formatNumber,
 		label = 'Clicks',
 		color = '#3b82f6'
 	}: Props = $props();

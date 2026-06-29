@@ -5,6 +5,7 @@
 
 import type Redis from 'ioredis';
 import { logger } from '$lib/server/logger';
+import { getErrorMessage } from '$lib/utils/validation';
 
 export interface CacheAdapter {
 	get(key: string): Promise<string | null>;
@@ -49,7 +50,7 @@ export class KVAdapter implements CacheAdapter {
 		try {
 			return await this.kv.get(key);
 		} catch (error) {
-			logger.error('cache.kv.get_failed', { key, error: error instanceof Error ? error.message : String(error) });
+			logger.error('cache.kv.get_failed', { key, error: getErrorMessage(error) });
 			return null;
 		}
 	}
@@ -60,7 +61,7 @@ export class KVAdapter implements CacheAdapter {
 				expirationTtl: ttl
 			});
 		} catch (error) {
-			logger.error('cache.kv.set_failed', { key, error: error instanceof Error ? error.message : String(error) });
+			logger.error('cache.kv.set_failed', { key, error: getErrorMessage(error) });
 		}
 	}
 
@@ -68,7 +69,7 @@ export class KVAdapter implements CacheAdapter {
 		try {
 			await this.kv.delete(key);
 		} catch (error) {
-			logger.error('cache.kv.delete_failed', { key, error: error instanceof Error ? error.message : String(error) });
+			logger.error('cache.kv.delete_failed', { key, error: getErrorMessage(error) });
 		}
 	}
 }
@@ -83,7 +84,7 @@ export class RedisAdapter implements CacheAdapter {
 		try {
 			return await this.redis.get(key);
 		} catch (error) {
-			logger.error('cache.redis.get_failed', { key, error: error instanceof Error ? error.message : String(error) });
+			logger.error('cache.redis.get_failed', { key, error: getErrorMessage(error) });
 			return null;
 		}
 	}
@@ -92,7 +93,7 @@ export class RedisAdapter implements CacheAdapter {
 		try {
 			await this.redis.setex(key, ttl, value);
 		} catch (error) {
-			logger.error('cache.redis.set_failed', { key, error: error instanceof Error ? error.message : String(error) });
+			logger.error('cache.redis.set_failed', { key, error: getErrorMessage(error) });
 		}
 	}
 
@@ -100,7 +101,7 @@ export class RedisAdapter implements CacheAdapter {
 		try {
 			await this.redis.del(key);
 		} catch (error) {
-			logger.error('cache.redis.delete_failed', { key, error: error instanceof Error ? error.message : String(error) });
+			logger.error('cache.redis.delete_failed', { key, error: getErrorMessage(error) });
 		}
 	}
 }

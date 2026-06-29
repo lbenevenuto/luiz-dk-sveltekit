@@ -1,5 +1,7 @@
 import { dev } from '$app/environment';
 import { logger } from '$lib/server/logger';
+import { ALLOWED_DAYS, DEFAULT_DAYS, SHORT_CODE_REGEX } from '$lib/utils/constants';
+import { getErrorMessage } from '$lib/utils/validation';
 
 interface AnalyticsRow {
 	shortCode: string;
@@ -37,11 +39,8 @@ export type LogResult = {
 	error?: string;
 };
 
-const SHORT_CODE_REGEX = /^[a-zA-Z0-9_-]{1,50}$/;
-const ALLOWED_DAYS = new Set([7, 30, 90, 180]);
-
 function normalizeDays(days: number): number {
-	return ALLOWED_DAYS.has(days) ? days : 7;
+	return (ALLOWED_DAYS as readonly number[]).includes(days) ? days : DEFAULT_DAYS;
 }
 
 function sanitizeShortCodes(shortCodes?: string[]): string[] | undefined {
@@ -213,7 +212,7 @@ export async function fetchChartAnalytics(
 		return { charts: aggregateAnalytics(chartRows, days) };
 	} catch (error) {
 		logger.error('analytics.chart_fetch_error', {
-			error: error instanceof Error ? error.message : String(error)
+			error: getErrorMessage(error)
 		});
 		return { charts: undefined, error: 'Failed to fetch analytics data' };
 	}
@@ -290,7 +289,7 @@ export async function fetchAnalyticsLog(
 		};
 	} catch (error) {
 		logger.error('analytics.log_fetch_error', {
-			error: error instanceof Error ? error.message : String(error)
+			error: getErrorMessage(error)
 		});
 		return { ...emptyLog, error: 'Failed to fetch analytics data' };
 	}

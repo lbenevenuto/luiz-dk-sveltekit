@@ -5,6 +5,7 @@
 	import AxisX from './layercake/AxisXHorizontal.svelte';
 	import AxisY from './layercake/AxisY.svelte';
 	import BarTooltip from './layercake/BarTooltip.svelte';
+	import { formatNumber } from '$lib/utils/format';
 
 	interface DataPoint {
 		label: string;
@@ -36,7 +37,7 @@
 		padding={{ top: 8, right: 32, bottom: 24, left: 40 }}
 	>
 		<Svg>
-			<AxisX tickCount={5} format={(d) => (d as number).toLocaleString()} />
+			<AxisX tickCount={5} format={(d) => formatNumber(d as number)} />
 			<AxisY gridlines={false} />
 			<Bars fill={(d) => fillFn(d as { label: string })} radius={4} bandPadding={0.3} {hoveredIndex} />
 		</Svg>

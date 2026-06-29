@@ -2,6 +2,7 @@ import { requireAdmin } from '$lib/server/auth';
 import { getClerkClient } from '$lib/server/clerk';
 import { fail } from '@sveltejs/kit';
 import { logger } from '$lib/server/logger';
+import { getErrorMessage } from '$lib/utils/validation';
 import { z } from 'zod';
 
 const userRoleSchema = z.enum(['admin', 'user']);
@@ -39,7 +40,7 @@ export const load = async ({ platform, locals }: { platform?: App.Platform; loca
 		};
 	} catch (error) {
 		logger.error('admin.users.fetch_failed', {
-			error: error instanceof Error ? error.message : String(error)
+			error: getErrorMessage(error)
 		});
 		return { users: [], error: 'Failed to fetch users' };
 	}
@@ -78,7 +79,7 @@ export const actions = {
 			logger.error('admin.users.update_role_failed', {
 				userId,
 				role,
-				error: error instanceof Error ? error.message : String(error)
+				error: getErrorMessage(error)
 			});
 			return { success: false, error: 'Failed to update role' };
 		}
@@ -122,7 +123,7 @@ export const actions = {
 		} catch (error) {
 			logger.error('admin.users.remove_role_failed', {
 				userId,
-				error: error instanceof Error ? error.message : String(error)
+				error: getErrorMessage(error)
 			});
 			return { success: false, error: 'Failed to remove role' };
 		}
