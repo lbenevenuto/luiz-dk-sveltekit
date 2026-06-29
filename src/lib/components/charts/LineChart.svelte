@@ -6,6 +6,8 @@
 	import AxisX from './layercake/AxisX.svelte';
 	import AxisY from './layercake/AxisY.svelte';
 	import Tooltip from './layercake/Tooltip.svelte';
+	import { formatDateShort } from '$lib/utils/date';
+	import { formatNumber } from '$lib/utils/format';
 
 	interface DataPoint {
 		date: string;
@@ -24,14 +26,6 @@
 			value: d.count
 		}))
 	);
-
-	const formatDate = (d: unknown) => {
-		const date = d as Date;
-		const yyyy = date.getFullYear();
-		const mm = String(date.getMonth() + 1).padStart(2, '0');
-		const dd = String(date.getDate()).padStart(2, '0');
-		return `${yyyy}-${mm}-${dd}`;
-	};
 </script>
 
 <div class="h-full w-full">
@@ -45,13 +39,13 @@
 		yScale={scaleLinear()}
 	>
 		<Svg>
-			<AxisY tickCount={5} format={(d) => (d as number).toLocaleString()} />
-			<AxisX tickCount={10} format={formatDate} />
+			<AxisY tickCount={5} format={(d) => formatNumber(d as number)} />
+			<AxisX tickCount={10} format={(d) => formatDateShort(d as Date)} />
 			<Area fill="rgba(59, 130, 246, 0.2)" />
 			<Line stroke="#3b82f6" strokeWidth={2} showPoints />
 		</Svg>
 		<Html>
-			<Tooltip formatDate={(d) => formatDate(d)} />
+			<Tooltip formatDate={formatDateShort} />
 		</Html>
 	</LayerCake>
 </div>

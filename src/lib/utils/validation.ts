@@ -2,6 +2,25 @@
  * Common validation utilities
  */
 
+import { ALLOWED_DAYS, DEFAULT_DAYS } from './constants';
+
+/**
+ * Extract a human-readable message from an unknown thrown value.
+ * Replaces the `error instanceof Error ? error.message : String(error)` pattern.
+ */
+export function getErrorMessage(error: unknown): string {
+	return error instanceof Error ? error.message : String(error);
+}
+
+/**
+ * Parse a `days` search-param value, falling back to {@link DEFAULT_DAYS} when missing or invalid.
+ * For load functions that silently default rather than returning a validation error.
+ */
+export function parseDaysParam(value: string | null): number {
+	const days = value ? parseInt(value) : DEFAULT_DAYS;
+	return (ALLOWED_DAYS as readonly number[]).includes(days) ? days : DEFAULT_DAYS;
+}
+
 /**
  * Validate and sanitize URL protocol
  * @param url - URL string to validate

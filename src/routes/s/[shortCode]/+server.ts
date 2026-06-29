@@ -3,7 +3,7 @@ import type { RequestHandler } from './$types';
 import { getAnalyticsAdapter, getCacheAdapter } from '$lib/adapters/factory';
 import { getUrlByShortCode, deleteUrlById } from '$lib/server/db/queries/urls';
 import { logger } from '$lib/server/logger';
-import { sanitizeUrlForLog } from '$lib/utils/validation';
+import { getErrorMessage, sanitizeUrlForLog } from '$lib/utils/validation';
 
 function trackAnalytics(platform: App.Platform | undefined, request: Request, shortCode: string): void {
 	try {
@@ -24,7 +24,7 @@ function trackAnalytics(platform: App.Platform | undefined, request: Request, sh
 			);
 		}
 	} catch (err) {
-		logger.error('redirect.analytics_error', { shortCode, error: err instanceof Error ? err.message : String(err) });
+		logger.error('redirect.analytics_error', { shortCode, error: getErrorMessage(err) });
 	}
 }
 

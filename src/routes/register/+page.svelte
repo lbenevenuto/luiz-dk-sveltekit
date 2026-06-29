@@ -7,6 +7,8 @@
 	import FormInput from '$lib/components/FormInput.svelte';
 	import SubmitButton from '$lib/components/SubmitButton.svelte';
 	import SocialLoginButtons from '$lib/components/SocialLoginButtons.svelte';
+	import LoadingSpinner from '$lib/components/LoadingSpinner.svelte';
+	import ErrorAlert from '$lib/components/ErrorAlert.svelte';
 	import { waitForClerk } from '$lib/client/clerk';
 	import { getClerkErrorMessage } from '$lib/client/clerk-errors';
 	import SEO from '$lib/components/SEO.svelte';
@@ -202,7 +204,7 @@
 		<div class="rounded-2xl bg-gray-800 p-8 shadow-2xl">
 			{#if !clerkLoaded}
 				<div class="flex flex-col items-center space-y-4">
-					<div class="h-8 w-8 animate-spin rounded-full border-t-2 border-b-2 border-indigo-500"></div>
+					<LoadingSpinner class="border-t-2 border-b-2 border-indigo-500" />
 					<p class="text-sm text-gray-400">Loading authentication...</p>
 					{#if clerkError}
 						<p class="text-sm text-red-400">{clerkError}</p>
@@ -211,11 +213,7 @@
 			{:else if step === 'form'}
 				<form onsubmit={handleSignUp} class="space-y-6">
 					{#if error}
-						<div
-							class="rounded-lg border-2 border-red-200 bg-red-50 p-4 text-red-600 dark:border-red-900 dark:bg-red-900/20 dark:text-red-400"
-						>
-							{error}
-						</div>
+						<ErrorAlert message={error} />
 					{/if}
 
 					<FormInput
@@ -263,11 +261,7 @@
 						</div>
 					{/if}
 					{#if error}
-						<div
-							class="rounded-lg border-2 border-red-200 bg-red-50 p-4 text-red-600 dark:border-red-900 dark:bg-red-900/20 dark:text-red-400"
-						>
-							{error}
-						</div>
+						<ErrorAlert message={error} />
 					{/if}
 
 					<div class="rounded-lg bg-gray-900 p-4">

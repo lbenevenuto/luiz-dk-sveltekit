@@ -1,6 +1,7 @@
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import { requireAdmin } from '$lib/server/auth';
+import { parseJsonBody, validationError } from '$lib/server/responses';
 import { z } from 'zod';
 
 const resetSchema = z
@@ -17,16 +18,14 @@ export const POST: RequestHandler = async ({ request, platform, locals }) => {
 		return json({ count: 'Platform not available (Local Dev?)' });
 	}
 
-	let body: unknown;
-	try {
-		body = await request.json();
-	} catch {
-		return json({ error: 'Invalid JSON body' }, { status: 400 });
+	const parsedBody = await parseJsonBody(request);
+	if ('response' in parsedBody) {
+		return parsedBody.response;
 	}
 
-	const parsed = resetSchema.safeParse(body);
+	const parsed = resetSchema.safeParse(parsedBody.data);
 	if (!parsed.success) {
-		return json({ error: 'Validation failed', details: z.prettifyError(parsed.error) }, { status: 400 });
+		return validationError(parsed.error);
 	}
 
 	const { value } = parsed.data;

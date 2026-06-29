@@ -1,30 +1,21 @@
-import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
+import { json } from '@sveltejs/kit';
 import { fetchAnalyticsLog } from '$lib/server/analytics';
 import { getUserUrls } from '$lib/server/db/queries/urls';
+import { jsonError } from '$lib/server/responses';
+import { daysSchema, pageSizeSchema } from '$lib/server/validation-schemas';
 import { z } from 'zod';
 
-const ALLOWED_DAYS = [7, 30, 90, 180];
-const ALLOWED_PAGE_SIZES = [5, 10, 50, 100];
-
 const querySchema = z.object({
-	days: z.coerce
-		.number()
-		.int()
-		.refine((v) => ALLOWED_DAYS.includes(v))
-		.default(7),
+	days: daysSchema,
 	page: z.coerce.number().int().positive().default(1),
-	pageSize: z.coerce
-		.number()
-		.int()
-		.refine((v) => ALLOWED_PAGE_SIZES.includes(v))
-		.default(10),
+	pageSize: pageSizeSchema,
 	userId: z.string().optional()
 });
 
 export const GET: RequestHandler = async ({ platform, url, locals }) => {
 	if (!locals.auth.userId) {
-		return json({ error: 'Unauthorized' }, { status: 401 });
+		return jsonError('Unauthorized', 401);
 	}
 
 	const parsed = querySchema.safeParse({
@@ -35,7 +26,7 @@ export const GET: RequestHandler = async ({ platform, url, locals }) => {
 	});
 
 	if (!parsed.success) {
-		return json({ error: 'Invalid parameters' }, { status: 400 });
+		return jsonError('Invalid parameters', 400);
 	}
 
 	const { days, page, pageSize, userId } = parsed.data;
