@@ -11,6 +11,8 @@
 	import ErrorAlert from '$lib/components/ErrorAlert.svelte';
 	import { waitForClerk } from '$lib/client/clerk';
 	import { normalizeRedirectPath, withBase } from '$lib/client/redirect';
+	import { getClerkErrorMessage } from '$lib/client/clerk-errors';
+	import { createClientRateLimiter } from '$lib/client/rate-limit';
 	import SEO from '$lib/components/SEO.svelte';
 
 	type Step = 'credentials' | 'second-factor';
@@ -30,25 +32,7 @@
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	let signInAttempt = $state<any>(null);
 	let secondFactorStrategy = $state<string>('');
-	const ATTEMPT_LIMIT = 5;
-	const ATTEMPT_WINDOW_MS = 60_000;
-	let attemptTimestamps: number[] = [];
-
-	const errorMessages: Record<string, string> = {
-		form_identifier_not_found: 'No account found with this email',
-		form_password_incorrect: 'Incorrect password',
-		form_param_format_invalid: 'Invalid email format',
-		session_exists: 'You are already logged in',
-		form_code_incorrect: 'Incorrect verification code. Please try again.',
-		form_password_pwned: 'This password has been compromised in a data breach. Please choose a different one.'
-	};
-
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	function getErrorMessage(clerkErr: any): string {
-		const errorCode = clerkErr?.errors?.[0]?.code;
-		const errorMessage = clerkErr?.errors?.[0]?.message;
-		return errorMessages[errorCode] || errorMessage || 'An error occurred. Please try again.';
-	}
+	const rateLimiter = createClientRateLimiter();
 
 	function goToRedirect(path: string) {
 		return goto(withBase(path));
@@ -107,7 +91,7 @@
 			return;
 		}
 
-		if (browser && isRateLimited()) {
+		if (browser && rateLimiter.isRateLimited()) {
 			error = 'Too many attempts. Please wait 60 seconds and try again.';
 			return;
 		}
@@ -176,9 +160,9 @@
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		} catch (err: any) {
 			console.error('Sign in error:', err);
-			error = getErrorMessage(err);
+			error = getClerkErrorMessage(err);
 		} finally {
-			recordAttempt();
+			rateLimiter.recordAttempt();
 			loading = false;
 		}
 	}
@@ -197,7 +181,7 @@
 			return;
 		}
 
-		if (browser && isRateLimited()) {
+		if (browser && rateLimiter.isRateLimited()) {
 			error = 'Too many attempts. Please wait 60 seconds and try again.';
 			return;
 		}
@@ -224,9 +208,9 @@
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		} catch (err: any) {
 			console.error('Second factor error:', err);
-			error = getErrorMessage(err);
+			error = getClerkErrorMessage(err);
 		} finally {
-			recordAttempt();
+			rateLimiter.recordAttempt();
 			loading = false;
 		}
 	}
@@ -248,17 +232,6 @@
 			error = '';
 		}
 	});
-
-	function isRateLimited(): boolean {
-		const now = Date.now();
-		attemptTimestamps = attemptTimestamps.filter((ts) => now - ts < ATTEMPT_WINDOW_MS);
-		return attemptTimestamps.length >= ATTEMPT_LIMIT;
-	}
-
-	function recordAttempt() {
-		const now = Date.now();
-		attemptTimestamps = [...attemptTimestamps, now].filter((ts) => now - ts < ATTEMPT_WINDOW_MS);
-	}
 </script>
 
 <SEO title="Login" description="Sign in to your luiz.dk account" noindex />

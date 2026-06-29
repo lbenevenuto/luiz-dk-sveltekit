@@ -10,6 +10,7 @@
 	import LoadingSpinner from '$lib/components/LoadingSpinner.svelte';
 	import ErrorAlert from '$lib/components/ErrorAlert.svelte';
 	import { waitForClerk } from '$lib/client/clerk';
+	import { getClerkErrorMessage } from '$lib/client/clerk-errors';
 	import SEO from '$lib/components/SEO.svelte';
 
 	type Step = 'form' | 'verify';
@@ -27,20 +28,7 @@
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	let signUpAttempt = $state<any>(null);
 
-	const errorMessages: Record<string, string> = {
-		form_identifier_exists: 'An account with this email already exists',
-		form_password_pwned: 'This password has been compromised in a data breach. Please choose a different one.',
-		form_param_format_invalid: 'Invalid email format',
-		form_password_length_too_short: 'Password must be at least 8 characters',
-		form_code_incorrect: 'Incorrect verification code. Please try again.'
-	};
-
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	function getErrorMessage(clerkErr: any): string {
-		const errorCode = clerkErr?.errors?.[0]?.code;
-		const errorMessage = clerkErr?.errors?.[0]?.message;
-		return errorMessages[errorCode] || errorMessage || 'An error occurred. Please try again.';
-	}
+	const RESEND_SUCCESS_TIMEOUT_MS = 3000;
 
 	onMount(async () => {
 		if (browser) {
@@ -114,7 +102,7 @@
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		} catch (err: any) {
 			console.error('Sign up error:', err);
-			error = getErrorMessage(err);
+			error = getClerkErrorMessage(err);
 		} finally {
 			loading = false;
 		}
@@ -160,7 +148,7 @@
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		} catch (err: any) {
 			console.error('Verification error:', err);
-			error = getErrorMessage(err);
+			error = getClerkErrorMessage(err);
 		} finally {
 			loading = false;
 		}
@@ -181,11 +169,11 @@
 				if (successMessage === 'Verification code sent! Check your email.') {
 					successMessage = '';
 				}
-			}, 3000);
+			}, RESEND_SUCCESS_TIMEOUT_MS);
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		} catch (err: any) {
 			console.error('Resend code error:', err);
-			error = getErrorMessage(err);
+			error = getClerkErrorMessage(err);
 		} finally {
 			loading = false;
 		}
