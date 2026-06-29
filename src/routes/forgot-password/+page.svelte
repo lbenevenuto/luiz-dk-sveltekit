@@ -7,6 +7,8 @@
 	import FormInput from '$lib/components/FormInput.svelte';
 	import SubmitButton from '$lib/components/SubmitButton.svelte';
 	import { waitForClerk } from '$lib/client/clerk';
+	import { getClerkErrorMessage } from '$lib/client/clerk-errors';
+	import { createClientRateLimiter } from '$lib/client/rate-limit';
 	import SEO from '$lib/components/SEO.svelte';
 
 	type Step = 'email' | 'code' | 'password' | 'success';
@@ -22,24 +24,9 @@
 	let error = $state('');
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	let signInAttempt = $state<any>(null);
-	const ATTEMPT_LIMIT = 5;
-	const ATTEMPT_WINDOW_MS = 60_000;
-	let attemptTimestamps: number[] = [];
-
-	const errorMessages: Record<string, string> = {
-		form_identifier_not_found: 'No account found with this email',
-		form_param_format_invalid: 'Invalid email format',
-		form_code_incorrect: 'Incorrect reset code. Please try again.',
-		form_password_pwned: 'This password has been compromised in a data breach. Please choose a different one.',
-		form_password_length_too_short: 'Password must be at least 8 characters'
-	};
-
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	function getErrorMessage(clerkErr: any): string {
-		const errorCode = clerkErr?.errors?.[0]?.code;
-		const errorMessage = clerkErr?.errors?.[0]?.message;
-		return errorMessages[errorCode] || errorMessage || 'An error occurred. Please try again.';
-	}
+	const rateLimiter = createClientRateLimiter();
+	const PASSWORD_RESET_REDIRECT_MS = 2000;
+	const CLERK_CODE_OVERRIDES = { form_code_incorrect: 'Incorrect reset code. Please try again.' };
 
 	// Clear error when user types
 	$effect(() => {
@@ -47,17 +34,6 @@
 			error = '';
 		}
 	});
-
-	function isRateLimited(): boolean {
-		const now = Date.now();
-		attemptTimestamps = attemptTimestamps.filter((ts) => now - ts < ATTEMPT_WINDOW_MS);
-		return attemptTimestamps.length >= ATTEMPT_LIMIT;
-	}
-
-	function recordAttempt() {
-		const now = Date.now();
-		attemptTimestamps = [...attemptTimestamps, now].filter((ts) => now - ts < ATTEMPT_WINDOW_MS);
-	}
 
 	onMount(async () => {
 		if (browser) {
@@ -90,7 +66,7 @@
 			return;
 		}
 
-		if (browser && isRateLimited()) {
+		if (browser && rateLimiter.isRateLimited()) {
 			error = 'Too many attempts. Please wait 60 seconds and try again.';
 			return;
 		}
@@ -124,9 +100,9 @@
 			signInAttempt = signIn;
 			step = 'code';
 		} catch (err) {
-			error = getErrorMessage(err);
+			error = getClerkErrorMessage(err, CLERK_CODE_OVERRIDES);
 		} finally {
-			recordAttempt();
+			rateLimiter.recordAttempt();
 			loading = false;
 		}
 	}
@@ -164,7 +140,7 @@
 			return;
 		}
 
-		if (browser && isRateLimited()) {
+		if (browser && rateLimiter.isRateLimited()) {
 			error = 'Too many attempts. Please wait 60 seconds and try again.';
 			return;
 		}
@@ -192,14 +168,14 @@
 				// Redirect after 2 seconds
 				setTimeout(() => {
 					goto(resolve('/'));
-				}, 2000);
+				}, PASSWORD_RESET_REDIRECT_MS);
 			} else {
 				error = 'Password reset incomplete. Please try again.';
 			}
 		} catch (err) {
-			error = getErrorMessage(err);
+			error = getClerkErrorMessage(err, CLERK_CODE_OVERRIDES);
 		} finally {
-			recordAttempt();
+			rateLimiter.recordAttempt();
 			loading = false;
 		}
 	}
@@ -227,7 +203,7 @@
 			});
 			// Show success feedback (you could add a success message state)
 		} catch (err) {
-			error = getErrorMessage(err);
+			error = getClerkErrorMessage(err, CLERK_CODE_OVERRIDES);
 		} finally {
 			loading = false;
 		}
