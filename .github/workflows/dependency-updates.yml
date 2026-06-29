@@ -29,18 +29,21 @@ jobs:
         with:
           bun-version: latest
 
-      # Trusted dependency: the prompt is sourced from spiriidk/ai-standards (org-owned)
-      # at the default-branch tip so it always reflects the current standard. This couples
-      # the workflow's behaviour to that repo — keep it on the trusted-repos list.
+      # The prompt is sourced from spiriidk/ai-standards (org-owned) and pinned to a
+      # reviewed commit via ?ref=<sha>. Pinning prevents an unreviewed or compromised
+      # commit on that repo's default branch from driving this run, which holds a write
+      # token and unrestricted Bash. To adopt a newer prompt, review the change there and
+      # bump PROMPT_REF to the new commit SHA.
       - name: Fetch dependency-update prompt
         id: prompt
         env:
           GH_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+          PROMPT_REF: c5749f586b5712c00229d8154e5e713ce92b576a
         run: |
           set -eo pipefail
           # Write outside the workspace so Claude (running here with contents: write)
           # can't accidentally commit the prompt into the dependency-update branch.
-          gh api repos/spiriidk/ai-standards/contents/prompts/stewardship-dependency-updates-node-repos.md \
+          gh api "repos/spiriidk/ai-standards/contents/prompts/stewardship-dependency-updates-node-repos.md?ref=${PROMPT_REF}" \
             --jq '.content' | base64 -d | sed -n '/^## The prompt/,$p' > "$RUNNER_TEMP/prompt.md"
           if [ ! -s "$RUNNER_TEMP/prompt.md" ]; then
             echo "::error::Fetched dependency-update prompt is empty" >&2
@@ -51,7 +54,7 @@ jobs:
             echo "REPO: ${{ github.repository }}"
             echo
             cat "$RUNNER_TEMP/prompt.md"
-            echo            # guarantee a newline so the closing delimiter is on its own line
+            echo ''         # trailing newline so the closing delimiter is on its own line
             echo '__PROMPT_EOF__'
           } >> "$GITHUB_OUTPUT"
 
@@ -63,4 +66,4 @@ jobs:
           github_token: ${{ secrets.RELEASE_TOKEN }}
           prompt: ${{ steps.prompt.outputs.value }}
           claude_args: |
-            --allowedTools "Bash,Edit,MultiEdit,Write,Read,Glob,Grep"
+            --allowedTools "Bash,Edit,MultiEdit,Read,Glob,Grep"
