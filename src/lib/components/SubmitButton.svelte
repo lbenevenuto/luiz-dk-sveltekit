@@ -1,4 +1,6 @@
 <script lang="ts">
+	import LoadingSpinner from './LoadingSpinner.svelte';
+
 	let {
 		loading = false,
 		disabled = false,
@@ -21,7 +23,7 @@
 >
 	{#if loading}
 		<span class="flex items-center justify-center space-x-2">
-			<div class="h-5 w-5 animate-spin rounded-full border-t-2 border-b-2 border-white"></div>
+			<LoadingSpinner size="sm" class="border-t-2 border-b-2 border-white" />
 			<span>{loadingText}</span>
 		</span>
 	{:else}

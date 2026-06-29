@@ -1,5 +1,6 @@
 <script lang="ts">
 	import UserProfile from '$lib/components/UserProfile.svelte';
+	import LoadingSpinner from '$lib/components/LoadingSpinner.svelte';
 	import SEO from '$lib/components/SEO.svelte';
 	import { resolve } from '$app/paths';
 	import { onMount } from 'svelte';
@@ -38,7 +39,7 @@
 
 		{#if loading}
 			<div class="flex justify-center">
-				<div class="h-8 w-8 animate-spin rounded-full border-t-2 border-b-2 border-indigo-500"></div>
+				<LoadingSpinner class="border-t-2 border-b-2 border-indigo-500" />
 			</div>
 		{:else}
 			<UserProfile />

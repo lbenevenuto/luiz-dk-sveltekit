@@ -2,6 +2,7 @@
 	import LineChart from '$lib/components/charts/LineChart.svelte';
 	import BarChart from '$lib/components/charts/BarChart.svelte';
 	import DoughnutChart from '$lib/components/charts/DoughnutChart.svelte';
+	import LoadingSpinner from '$lib/components/LoadingSpinner.svelte';
 	import { formatDate } from '$lib/utils/date';
 	import {
 		createTable,
@@ -171,7 +172,7 @@
 			class="flex h-64 items-center justify-center rounded-lg border border-gray-200 bg-white shadow dark:border-gray-700 dark:bg-gray-800"
 		>
 			<div class="flex flex-col items-center space-y-4">
-				<div class="h-12 w-12 animate-spin rounded-full border-4 border-gray-200 border-t-blue-600"></div>
+				<LoadingSpinner size="xl" class="border-4 border-gray-200 border-t-blue-600" />
 				<p class="text-gray-500 dark:text-gray-400">Loading analytics...</p>
 			</div>
 		</div>
@@ -255,7 +256,7 @@
 				class="flex h-32 items-center justify-center rounded-lg border border-gray-200 bg-white shadow dark:border-gray-700 dark:bg-gray-800"
 			>
 				<div class="flex items-center gap-3">
-					<div class="h-6 w-6 animate-spin rounded-full border-2 border-gray-300 border-t-blue-600"></div>
+					<LoadingSpinner size="md" class="border-2 border-gray-300 border-t-blue-600" />
 					<p class="text-sm text-gray-500 dark:text-gray-400">Loading activity log...</p>
 				</div>
 			</div>

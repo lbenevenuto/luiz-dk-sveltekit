@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { toast } from '$lib/stores/toast.svelte';
 	import SEO from '$lib/components/SEO.svelte';
+	import ErrorAlert from '$lib/components/ErrorAlert.svelte';
 
 	let url = '';
 	let customCode = '';
@@ -165,12 +166,10 @@
 		</div>
 
 		{#if error}
-			<div
-				class="mb-8 rounded-lg border-2 border-red-200 bg-red-50 p-6 text-red-600 dark:border-red-900 dark:bg-red-900/20 dark:text-red-400"
-			>
+			<ErrorAlert padding="p-6" class="mb-8">
 				<strong>Error:</strong>
 				{error}
-			</div>
+			</ErrorAlert>
 		{/if}
 
 		{#if result}

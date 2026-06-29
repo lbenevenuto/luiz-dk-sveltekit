@@ -6,6 +6,8 @@
 	import { resolve } from '$app/paths';
 	import FormInput from '$lib/components/FormInput.svelte';
 	import SubmitButton from '$lib/components/SubmitButton.svelte';
+	import LoadingSpinner from '$lib/components/LoadingSpinner.svelte';
+	import ErrorAlert from '$lib/components/ErrorAlert.svelte';
 	import { waitForClerk } from '$lib/client/clerk';
 	import SEO from '$lib/components/SEO.svelte';
 
@@ -267,7 +269,7 @@
 			{#if !clerkLoaded}
 				<!-- Loading state -->
 				<div class="flex flex-col items-center space-y-4">
-					<div class="h-8 w-8 animate-spin rounded-full border-t-2 border-b-2 border-indigo-500"></div>
+					<LoadingSpinner class="border-t-2 border-b-2 border-indigo-500" />
 					<p class="text-sm text-gray-400">Loading...</p>
 					{#if clerkError}
 						<p class="text-sm text-red-400">{clerkError}</p>
@@ -359,11 +361,7 @@
 			{/if}
 
 			{#if error}
-				<div
-					class="mt-6 rounded-lg border-2 border-red-200 bg-red-50 p-4 text-sm text-red-600 dark:border-red-900 dark:bg-red-900/20 dark:text-red-400"
-				>
-					{error}
-				</div>
+				<ErrorAlert message={error} class="mt-6 text-sm" />
 			{/if}
 		</div>
 
