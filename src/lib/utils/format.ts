@@ -7,7 +7,7 @@ export function formatNumber(value: number): string {
 	return value.toLocaleString();
 }
 
-/** Truncate a string to `max` characters, appending an ellipsis when shortened. */
+/** Keep the first `max` characters, appending an ellipsis when the string is longer. */
 export function truncateString(value: string, max = 60): string {
 	return value.length > max ? value.slice(0, max) + '...' : value;
 }
