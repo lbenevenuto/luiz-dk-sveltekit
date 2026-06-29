@@ -4,6 +4,7 @@
 	import { goto } from '$app/navigation';
 	import { waitForClerk } from '$lib/client/clerk';
 	import { normalizeRedirectPath, withBase } from '$lib/client/redirect';
+	import LoadingSpinner from '$lib/components/LoadingSpinner.svelte';
 
 	let error = $state('');
 	let redirectTo = $state('/');
@@ -90,7 +91,7 @@
 			</div>
 		{:else}
 			<div class="mb-4 flex justify-center">
-				<div class="h-12 w-12 animate-spin rounded-full border-4 border-indigo-500 border-t-transparent"></div>
+				<LoadingSpinner size="xl" class="border-4 border-indigo-500 border-t-transparent" />
 			</div>
 			<h2 class="text-xl font-semibold text-white">Completing sign in...</h2>
 		{/if}
