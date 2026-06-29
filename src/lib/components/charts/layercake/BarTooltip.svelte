@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { getContext } from 'svelte';
+	import { formatNumber } from '$lib/utils/format';
 
 	interface ChartDataPoint {
 		label: string;
@@ -63,7 +64,7 @@
 			<div class="mb-1 font-semibold">{item.label}</div>
 			<div class="flex items-center gap-1.5">
 				<span class="inline-block h-2.5 w-2.5 rounded-sm" style="background-color: {itemColor}"></span>
-				Clicks: {item.value.toLocaleString()}
+				Clicks: {formatNumber(item.value)}
 			</div>
 		</div>
 	{/if}
