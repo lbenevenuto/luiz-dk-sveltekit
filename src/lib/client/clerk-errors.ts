@@ -25,6 +25,6 @@ export const DEFAULT_CLERK_ERROR_MESSAGES: Record<string, string> = {
 export function getClerkErrorMessage(clerkErr: unknown, overrides?: Record<string, string>): string {
 	const firstError = (clerkErr as ClerkErrorLike | null | undefined)?.errors?.[0];
 	const code = firstError?.code ?? '';
-	const messages = overrides ? { ...DEFAULT_CLERK_ERROR_MESSAGES, ...overrides } : DEFAULT_CLERK_ERROR_MESSAGES;
-	return messages[code] || firstError?.message || 'An error occurred. Please try again.';
+	const mapped = overrides?.[code] ?? DEFAULT_CLERK_ERROR_MESSAGES[code];
+	return mapped || firstError?.message || 'An error occurred. Please try again.';
 }
