@@ -27,7 +27,7 @@
 		</div>
 
 		<div class="mx-auto mt-16 max-w-2xl sm:mt-20 lg:mt-24 lg:max-w-none">
-			<dl class="grid max-w-xl grid-cols-1 gap-x-8 gap-y-16 lg:max-w-none lg:grid-cols-3">
+			<dl class="max-w-xl lg:max-w-none">
 				<div class="flex flex-col">
 					<dt class="flex items-center gap-x-3 text-base leading-7 font-semibold text-white">
 						<div class="flex h-10 w-10 items-center justify-center rounded-lg bg-indigo-500">
@@ -48,31 +48,6 @@
 								Start shortening <span aria-hidden="true">→</span>
 							</a>
 						</p>
-					</dd>
-				</div>
-
-				<!-- Placeholder for future services -->
-				<div class="flex flex-col opacity-50">
-					<dt class="flex items-center gap-x-3 text-base leading-7 font-semibold text-white">
-						<div class="flex h-10 w-10 items-center justify-center rounded-lg bg-slate-700">
-							<span class="text-2xl">🚧</span>
-						</div>
-						Coming Soon
-					</dt>
-					<dd class="mt-4 flex flex-auto flex-col text-base leading-7 text-gray-300">
-						<p class="flex-auto">More tools are currently in development. Stay tuned for updates.</p>
-					</dd>
-				</div>
-
-				<div class="flex flex-col opacity-50">
-					<dt class="flex items-center gap-x-3 text-base leading-7 font-semibold text-white">
-						<div class="flex h-10 w-10 items-center justify-center rounded-lg bg-slate-700">
-							<span class="text-2xl">🧪</span>
-						</div>
-						Labs
-					</dt>
-					<dd class="mt-4 flex flex-auto flex-col text-base leading-7 text-gray-300">
-						<p class="flex-auto">Experimental projects and proof-of-concepts testing new frameworks.</p>
 					</dd>
 				</div>
 			</dl>

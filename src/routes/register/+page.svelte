@@ -56,19 +56,6 @@
 		e.preventDefault();
 		error = '';
 
-		// Client-side validation
-		if (!email || !password || !confirmPassword) {
-			error = 'Please fill in all fields';
-			return;
-		}
-
-		// Basic email validation
-		const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-		if (!emailRegex.test(email)) {
-			error = 'Please enter a valid email address';
-			return;
-		}
-
 		// Password validation
 		if (password.length < 8) {
 			error = 'Password must be at least 8 characters';

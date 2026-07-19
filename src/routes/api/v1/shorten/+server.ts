@@ -47,9 +47,7 @@ export const POST: RequestHandler = async ({ platform, request, locals }) => {
 		const trustForwardedFor = platform?.env?.TRUST_X_FORWARDED_FOR === 'true';
 		const ip = getClientIdentifierForRateLimit(request.headers, { trustForwardedFor });
 
-		const rateLimitResult = await checkAnonymousRateLimit(ip, platform);
-
-		if (!rateLimitResult.success) {
+		if (!(await checkAnonymousRateLimit(ip, platform))) {
 			logger.warn('rate_limit.shortener', { ip });
 			return json(
 				{

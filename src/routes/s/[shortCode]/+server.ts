@@ -1,28 +1,26 @@
 import { redirect } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
-import { getAnalyticsAdapter, getCacheAdapter } from '$lib/adapters/factory';
+import { getCacheAdapter } from '$lib/adapters/factory';
+import { trackRedirect } from '$lib/adapters/analytics';
 import { getUrlByShortCode, deleteUrlById } from '$lib/server/db/queries/urls';
 import { logger } from '$lib/server/logger';
 import { getErrorMessage, sanitizeUrlForLog } from '$lib/utils/validation';
 
 function trackAnalytics(platform: App.Platform | undefined, request: Request, shortCode: string): void {
 	try {
-		const analytics = getAnalyticsAdapter(platform);
-		if (analytics) {
-			const userAgent = request.headers.get('user-agent') || 'unknown';
-			const referrer = request.headers.get('referer') || 'direct';
-			const country = platform?.cf?.country || 'unknown';
-			const ipHash = platform?.cf?.colo || 'unknown'; // Using colo as proxy for IP hash for privacy
+		const userAgent = request.headers.get('user-agent') || 'unknown';
+		const referrer = request.headers.get('referer') || 'direct';
+		const country = platform?.cf?.country || 'unknown';
+		const ipHash = platform?.cf?.colo || 'unknown'; // Using colo as proxy for IP hash for privacy
 
-			platform?.ctx.waitUntil(
-				analytics.trackRedirect(shortCode, {
-					ipHash,
-					userAgent,
-					referrer,
-					country
-				})
-			);
-		}
+		platform?.ctx.waitUntil(
+			trackRedirect(platform, shortCode, {
+				ipHash,
+				userAgent,
+				referrer,
+				country
+			})
+		);
 	} catch (err) {
 		logger.error('redirect.analytics_error', { shortCode, error: getErrorMessage(err) });
 	}

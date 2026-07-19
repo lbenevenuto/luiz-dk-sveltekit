@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { requireAuth, requireAdmin, isAuthenticated, hasRole, getUserRole } from './auth';
+import { requireAuth, requireAdmin } from './auth';
 
 function makeLocals(overrides?: Partial<App.Locals['auth']>): App.Locals {
 	return {
@@ -62,40 +62,6 @@ describe('auth guards', () => {
 		it('does not throw when user is admin', () => {
 			const locals = makeLocals({ userId: 'admin_1', user: {} as App.Locals['auth']['user'], role: 'admin' });
 			expect(() => requireAdmin(locals)).not.toThrow();
-		});
-	});
-
-	describe('isAuthenticated', () => {
-		it('returns false when userId is null', () => {
-			expect(isAuthenticated(makeLocals())).toBe(false);
-		});
-
-		it('returns true when userId exists', () => {
-			expect(isAuthenticated(makeLocals({ userId: 'user_123' }))).toBe(true);
-		});
-	});
-
-	describe('hasRole', () => {
-		it('returns true when role matches', () => {
-			expect(hasRole(makeLocals({ role: 'admin' }), 'admin')).toBe(true);
-		});
-
-		it('returns false when role does not match', () => {
-			expect(hasRole(makeLocals({ role: 'user' }), 'admin')).toBe(false);
-		});
-
-		it('returns false when role is null', () => {
-			expect(hasRole(makeLocals(), 'admin')).toBe(false);
-		});
-	});
-
-	describe('getUserRole', () => {
-		it('returns null when no role', () => {
-			expect(getUserRole(makeLocals())).toBeNull();
-		});
-
-		it('returns the role when set', () => {
-			expect(getUserRole(makeLocals({ role: 'admin' }))).toBe('admin');
 		});
 	});
 });

@@ -13,9 +13,7 @@ interface AnalyticsRow {
 }
 
 interface SqlApiResponse {
-	meta: { name: string; type: string }[];
 	data: AnalyticsRow[];
-	rows: number;
 }
 
 export type ChartData = {
@@ -31,7 +29,7 @@ export type ChartResult = {
 };
 
 export type LogResult = {
-	rows: Array<AnalyticsRow & { id: string }>;
+	rows: AnalyticsRow[];
 	totalRows: number;
 	page: number;
 	pageSize: number;
@@ -70,7 +68,7 @@ export function parseBrowser(ua: string): string {
 	return 'Other';
 }
 
-function aggregateAnalytics(analytics: Array<AnalyticsRow & { id: string }>, days: number): ChartData {
+function aggregateAnalytics(analytics: AnalyticsRow[], days: number): ChartData {
 	const dailyClicks = new Map<string, number>();
 	const countryStats = new Map<string, number>();
 	const browserStats = new Map<string, number>();
@@ -205,7 +203,6 @@ export async function fetchChartAnalytics(
 		const chartResult = await queryAnalyticsEngine(platform, chartSql);
 		const chartRows = chartResult.data.map((row) => ({
 			...row,
-			id: crypto.randomUUID(),
 			timestamp: new Date(row.timestamp).toISOString()
 		}));
 
@@ -274,7 +271,6 @@ export async function fetchAnalyticsLog(
 
 		const rows = logResult.data.map((row) => ({
 			...row,
-			id: crypto.randomUUID(),
 			timestamp: new Date(row.timestamp).toISOString()
 		}));
 

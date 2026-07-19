@@ -27,13 +27,13 @@ describe('checkAnonymousRateLimit', () => {
 
 	it('should allow requests when no platform is provided (local dev)', async () => {
 		const result = await checkAnonymousRateLimit('127.0.0.1', undefined);
-		expect(result.success).toBe(true);
+		expect(result).toBe(true);
 	});
 
 	it('should allow requests when KV cache is not available', async () => {
 		const platform = { env: {} } as unknown as App.Platform;
 		const result = await checkAnonymousRateLimit('127.0.0.1', platform);
-		expect(result.success).toBe(true);
+		expect(result).toBe(true);
 	});
 
 	it('should allow first request and store it in KV', async () => {
@@ -42,8 +42,7 @@ describe('checkAnonymousRateLimit', () => {
 
 		const result = await checkAnonymousRateLimit('127.0.0.1', mockPlatform);
 
-		expect(result.success).toBe(true);
-		expect(result.remaining).toBe(2); // 3 max - 1 used
+		expect(result).toBe(true);
 		expect(mockKV.put).toHaveBeenCalledOnce();
 		expect(mockKV.get).toHaveBeenCalledWith('ratelimit:anon:127.0.0.1', 'json');
 	});
@@ -56,9 +55,7 @@ describe('checkAnonymousRateLimit', () => {
 
 		const result = await checkAnonymousRateLimit('127.0.0.1', mockPlatform);
 
-		expect(result.success).toBe(false);
-		expect(result.remaining).toBe(0);
-		expect(result.resetAt).toBeDefined();
+		expect(result).toBe(false);
 		// Should NOT store a new request when rate limited
 		expect(mockKV.put).not.toHaveBeenCalled();
 	});
@@ -72,9 +69,7 @@ describe('checkAnonymousRateLimit', () => {
 
 		const result = await checkAnonymousRateLimit('127.0.0.1', mockPlatform);
 
-		expect(result.success).toBe(true);
-		// Only 1 old request + 1 new = 2 total, so remaining = 1
-		expect(result.remaining).toBe(1);
+		expect(result).toBe(true);
 	});
 
 	it('should fail open if KV throws an error', async () => {
@@ -82,7 +77,7 @@ describe('checkAnonymousRateLimit', () => {
 
 		const result = await checkAnonymousRateLimit('127.0.0.1', mockPlatform);
 
-		expect(result.success).toBe(true);
+		expect(result).toBe(true);
 	});
 
 	it('should use correct KV key format', async () => {
@@ -107,8 +102,6 @@ describe('checkAnonymousRateLimit', () => {
 
 		const result = await checkAnonymousRateLimit('127.0.0.1', platform);
 
-		expect(result.success).toBe(true);
-		// Default is 10 max requests, so remaining = 9
-		expect(result.remaining).toBe(9);
+		expect(result).toBe(true);
 	});
 });

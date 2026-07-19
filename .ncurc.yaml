@@ -1,3 +1,0 @@
-# npm-check-updates configuration.
-# No packages are currently held back. The previous wrangler hold (Node >=22)
-# no longer applies: CI runs scripts under Bun, whose node-compat satisfies it.

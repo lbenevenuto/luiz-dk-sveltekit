@@ -1,21 +1,21 @@
 <script lang="ts">
-	import { toast } from '$lib/stores/toast.svelte';
 	import SEO from '$lib/components/SEO.svelte';
 	import ErrorAlert from '$lib/components/ErrorAlert.svelte';
 	import { truncateString } from '$lib/utils/format';
 
-	let url = '';
-	let customCode = '';
-	let expiresIn = '';
-	let result: {
+	let url = $state('');
+	let customCode = $state('');
+	let expiresIn = $state('');
+	let result = $state<{
 		shortUrl: string;
 		originalUrl: string;
 		shortCode: string;
 		expiresAt: string;
 		isExisting?: boolean;
-	} | null = null;
-	let error: string | null = null;
-	let loading = false;
+	} | null>(null);
+	let error = $state<string | null>(null);
+	let loading = $state(false);
+	let copied = $state(false);
 
 	async function shortenUrl() {
 		if (!url) {
@@ -92,10 +92,11 @@
 		}
 	}
 
-	function copyToClipboard() {
+	async function copyToClipboard() {
 		if (result?.shortUrl) {
-			navigator.clipboard.writeText(result.shortUrl);
-			toast.success('Copied to clipboard!');
+			await navigator.clipboard.writeText(result.shortUrl);
+			copied = true;
+			setTimeout(() => (copied = false), 2000);
 		}
 	}
 </script>
@@ -195,7 +196,7 @@
 						class="rounded-lg bg-indigo-500 px-6 py-3 font-medium whitespace-nowrap text-white shadow-md transition-colors hover:bg-indigo-600"
 						onclick={copyToClipboard}
 					>
-						📋 Copy
+						{copied ? 'Copied!' : '📋 Copy'}
 					</button>
 				</div>
 				<p class="text-sm text-slate-500 dark:text-slate-400">
