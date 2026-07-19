@@ -1,10 +1,5 @@
 import { logger } from '$lib/server/logger';
 
-/**
- * Analytics Adapters
- * Cloudflare Analytics Engine for production, console for local
- */
-
 export interface ClickData {
 	ipHash: string;
 	userAgent: string;
@@ -12,19 +7,14 @@ export interface ClickData {
 	country: string;
 }
 
-export interface AnalyticsAdapter {
-	trackRedirect(shortCode: string, data: ClickData): Promise<void>;
-}
-
-/**
- * Cloudflare Analytics Engine Adapter (Production)
- */
-export class CloudflareAnalyticsAdapter implements AnalyticsAdapter {
-	constructor(private analytics: AnalyticsEngineDataset) {}
-
-	async trackRedirect(shortCode: string, data: ClickData): Promise<void> {
+export async function trackRedirect(
+	platform: Readonly<App.Platform> | undefined,
+	shortCode: string,
+	data: ClickData
+): Promise<void> {
+	if (platform?.env.ANALYTICS) {
 		try {
-			this.analytics.writeDataPoint({
+			platform.env.ANALYTICS.writeDataPoint({
 				blobs: [shortCode, data.country, data.userAgent, data.referrer],
 				doubles: [Date.now()],
 				indexes: [data.ipHash]
@@ -35,20 +25,14 @@ export class CloudflareAnalyticsAdapter implements AnalyticsAdapter {
 				error: error instanceof Error ? error.message : String(error)
 			});
 		}
+		return;
 	}
-}
 
-/**
- * Console Analytics Adapter (Local Development)
- */
-export class ConsoleAnalyticsAdapter implements AnalyticsAdapter {
-	async trackRedirect(shortCode: string, data: ClickData): Promise<void> {
-		logger.info('analytics.track_local', {
-			shortCode,
-			country: data.country,
-			userAgent: data.userAgent,
-			referrer: data.referrer,
-			timestamp: new Date().toISOString()
-		});
-	}
+	logger.info('analytics.track_local', {
+		shortCode,
+		country: data.country,
+		userAgent: data.userAgent,
+		referrer: data.referrer,
+		timestamp: new Date().toISOString()
+	});
 }

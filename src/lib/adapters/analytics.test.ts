@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import { CloudflareAnalyticsAdapter, ConsoleAnalyticsAdapter, type ClickData } from './analytics';
+import { trackRedirect, type ClickData } from './analytics';
 
 vi.mock('$lib/server/logger', () => ({
 	logger: {
@@ -11,13 +11,11 @@ vi.mock('$lib/server/logger', () => ({
 
 import { logger } from '$lib/server/logger';
 
-describe('CloudflareAnalyticsAdapter', () => {
+describe('trackRedirect', () => {
 	it('should write data point to analytics engine', async () => {
 		const mockAnalytics = {
 			writeDataPoint: vi.fn()
 		};
-
-		const adapter = new CloudflareAnalyticsAdapter(mockAnalytics);
 
 		const data: ClickData = {
 			ipHash: 'hash123',
@@ -26,7 +24,7 @@ describe('CloudflareAnalyticsAdapter', () => {
 			country: 'DK'
 		};
 
-		await adapter.trackRedirect('abc', data);
+		await trackRedirect({ env: { ANALYTICS: mockAnalytics } } as unknown as App.Platform, 'abc', data);
 
 		expect(mockAnalytics.writeDataPoint).toHaveBeenCalledWith(
 			expect.objectContaining({
@@ -43,21 +41,15 @@ describe('CloudflareAnalyticsAdapter', () => {
 			})
 		};
 
-		const adapter = new CloudflareAnalyticsAdapter(mockAnalytics);
-
-		await adapter.trackRedirect('abc', {} as ClickData);
+		await trackRedirect({ env: { ANALYTICS: mockAnalytics } } as unknown as App.Platform, 'abc', {} as ClickData);
 
 		expect(logger.error).toHaveBeenCalledWith(
 			'analytics.track_failed',
 			expect.objectContaining({ shortCode: 'abc', error: 'Analytics error' })
 		);
 	});
-});
 
-describe('ConsoleAnalyticsAdapter', () => {
 	it('should log through the structured logger', async () => {
-		const adapter = new ConsoleAnalyticsAdapter();
-
 		const data: ClickData = {
 			ipHash: 'hash',
 			userAgent: 'ua',
@@ -65,7 +57,7 @@ describe('ConsoleAnalyticsAdapter', () => {
 			country: 'US'
 		};
 
-		await adapter.trackRedirect('abc', data);
+		await trackRedirect(undefined, 'abc', data);
 
 		expect(logger.info).toHaveBeenCalledWith(
 			'analytics.track_local',

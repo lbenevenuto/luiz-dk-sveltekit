@@ -16,19 +16,23 @@ vi.mock('$lib/server/db/queries/urls', () => ({
 }));
 
 vi.mock('$lib/adapters/factory', () => ({
-	getCacheAdapter: vi.fn(),
-	getAnalyticsAdapter: vi.fn()
+	getCacheAdapter: vi.fn()
+}));
+
+vi.mock('$lib/adapters/analytics', () => ({
+	trackRedirect: vi.fn()
 }));
 
 import { logger } from '$lib/server/logger';
 import { getUrlByShortCode } from '$lib/server/db/queries/urls';
-import { getCacheAdapter, getAnalyticsAdapter } from '$lib/adapters/factory';
+import { getCacheAdapter } from '$lib/adapters/factory';
+import { trackRedirect } from '$lib/adapters/analytics';
 
 describe('GET /s/[shortCode]', () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
 		vi.mocked(getCacheAdapter).mockResolvedValue(null);
-		vi.mocked(getAnalyticsAdapter).mockReturnValue({ trackRedirect: vi.fn().mockResolvedValue(undefined) });
+		vi.mocked(trackRedirect).mockResolvedValue(undefined);
 	});
 
 	it('sanitizes logged redirect target by removing query and hash', async () => {
@@ -122,9 +126,6 @@ describe('GET /s/[shortCode]', () => {
 		});
 
 		const mockWaitUntil = vi.fn();
-		const mockTrackRedirect = vi.fn().mockResolvedValue(undefined);
-		vi.mocked(getAnalyticsAdapter).mockReturnValue({ trackRedirect: mockTrackRedirect });
-
 		const event = {
 			params: { shortCode: 'trackme' },
 			request: new Request('http://localhost/s/trackme'),
@@ -141,6 +142,7 @@ describe('GET /s/[shortCode]', () => {
 		});
 
 		expect(mockWaitUntil).toHaveBeenCalled();
+		expect(trackRedirect).toHaveBeenCalledWith(event.platform, 'trackme', expect.objectContaining({ country: 'JP' }));
 	});
 
 	it('serves from cache without querying DB for permanent URLs', async () => {

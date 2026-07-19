@@ -61,7 +61,6 @@ Uses [semantic-release](https://semantic-release.gitbook.io/semantic-release/) â
 - **Validation:** Zod v4
 - **Monitoring:** Sentry (`@sentry/sveltekit`)
 - **Cloudflare Bindings:** D1 (DB), KV (CACHE), Analytics Engine, Durable Objects
-- **Optional:** Redis (`ioredis` â€” local cache + ID generation fallback, see `.env.example`)
 
 ---
 

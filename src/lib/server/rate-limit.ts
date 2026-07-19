@@ -1,27 +1,21 @@
 import { sanitizeIdentifier } from '$lib/utils/validation';
 import { logger } from '$lib/server/logger';
 
-interface RateLimitResult {
-	success: boolean;
-	remaining?: number;
-	resetAt?: number;
-}
-
 /**
  * Check rate limit for anonymous users using Cloudflare KV
  * Uses a sliding window algorithm with KV storage
  * @param identifier - Unique identifier (IP address, fingerprint, etc.)
  * @param platform - SvelteKit platform object
- * @returns Promise<RateLimitResult> - Success status and remaining requests
+ * @returns Whether the request is allowed
  */
 export async function checkAnonymousRateLimit(
 	identifier: string,
 	platform: App.Platform | undefined
-): Promise<RateLimitResult> {
+): Promise<boolean> {
 	// Local dev: Allow all requests
 	if (!platform?.env.CACHE) {
 		logger.warn('rate_limit.cache_unavailable');
-		return { success: true };
+		return true;
 	}
 
 	const maxRequests = parseInt(platform.env.RATE_LIMIT_MAX_REQUESTS || '10');
@@ -43,14 +37,7 @@ export async function checkAnonymousRateLimit(
 
 		// Check if limit exceeded
 		if (requests.length >= maxRequests) {
-			const oldestRequest = Math.min(...requests);
-			const resetAt = oldestRequest + windowSeconds * 1000;
-
-			return {
-				success: false,
-				remaining: 0,
-				resetAt
-			};
+			return false;
 		}
 
 		// Add current request
@@ -61,16 +48,12 @@ export async function checkAnonymousRateLimit(
 			expirationTtl: windowSeconds
 		});
 
-		return {
-			success: true,
-			remaining: maxRequests - requests.length,
-			resetAt: now + windowSeconds * 1000
-		};
+		return true;
 	} catch (error) {
 		logger.error('rate_limit.check_failed', {
 			error: error instanceof Error ? error.message : String(error)
 		});
 		// Fail open: allow the request if rate limiter fails
-		return { success: true };
+		return true;
 	}
 }

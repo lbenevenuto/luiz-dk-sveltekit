@@ -4,33 +4,13 @@
  */
 
 import { createD1Client, createSQLiteClient } from '$lib/server/db/client';
-import {
-	DurableObjectIdGenerator,
-	InMemoryIdGenerator,
-	type IdGeneratorAdapter,
-	RedisIdGenerator
-} from './id-generator';
-import { InMemoryCacheAdapter, type CacheAdapter, KVAdapter, RedisAdapter } from './cache';
-import { type AnalyticsAdapter, CloudflareAnalyticsAdapter, ConsoleAnalyticsAdapter } from './analytics';
+import { DurableObjectIdGenerator, InMemoryIdGenerator, type IdGeneratorAdapter } from './id-generator';
+import { InMemoryCacheAdapter, type CacheAdapter, KVAdapter } from './cache';
 import { dev } from '$app/environment';
-import type Redis from 'ioredis';
-import { logger } from '$lib/server/logger';
-import { getErrorMessage } from '$lib/utils/validation';
 
 let devIdGeneratorAdapter: IdGeneratorAdapter | null = null;
 let devCacheAdapter: CacheAdapter | null = null;
 let devDatabaseAdapterPromise: ReturnType<typeof createSQLiteClient> | null = null;
-let devRedisClient: Redis | null = null;
-
-async function getOrCreateDevRedis(): Promise<Redis> {
-	if (!devRedisClient) {
-		const { default: Redis } = await import('ioredis');
-		const redisUrl = process.env.REDIS_URL || 'redis://localhost:6379';
-		devRedisClient = new Redis(redisUrl);
-	}
-
-	return devRedisClient;
-}
 
 /**
  * Get ID generator adapter
@@ -41,14 +21,7 @@ export async function getIdGeneratorAdapter(platform: Readonly<App.Platform> | u
 			return devIdGeneratorAdapter;
 		}
 
-		try {
-			devIdGeneratorAdapter = new RedisIdGenerator(await getOrCreateDevRedis());
-		} catch (err) {
-			logger.warn('adapter.id_generator.redis_unavailable', {
-				error: getErrorMessage(err)
-			});
-			devIdGeneratorAdapter = new InMemoryIdGenerator();
-		}
+		devIdGeneratorAdapter = new InMemoryIdGenerator();
 
 		return devIdGeneratorAdapter;
 	}
@@ -93,14 +66,7 @@ export async function getCacheAdapter(platform: Readonly<App.Platform> | undefin
 			return devCacheAdapter;
 		}
 
-		try {
-			devCacheAdapter = new RedisAdapter(await getOrCreateDevRedis());
-		} catch (err) {
-			logger.warn('adapter.cache.redis_unavailable', {
-				error: getErrorMessage(err)
-			});
-			devCacheAdapter = new InMemoryCacheAdapter();
-		}
+		devCacheAdapter = new InMemoryCacheAdapter();
 
 		return devCacheAdapter;
 	}
@@ -109,26 +75,4 @@ export async function getCacheAdapter(platform: Readonly<App.Platform> | undefin
 		throw new Error('Platform not found');
 	}
 	return new KVAdapter(platform.env.CACHE);
-}
-
-/**
- * Get analytics adapter
- */
-export function getAnalyticsAdapter(platform: Readonly<App.Platform> | undefined): AnalyticsAdapter {
-	if (dev) {
-		// Local: Use console
-		return new ConsoleAnalyticsAdapter();
-	}
-
-	if (!platform) {
-		throw new Error('Platform not found');
-	}
-
-	// Production: Use Cloudflare Analytics Engine
-	if (platform.env.ANALYTICS) {
-		return new CloudflareAnalyticsAdapter(platform.env.ANALYTICS);
-	}
-
-	// Fallback if analytics binding is missing
-	return new ConsoleAnalyticsAdapter();
 }

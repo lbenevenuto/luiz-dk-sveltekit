@@ -12,10 +12,6 @@ const setRoleSchema = z.object({
 	role: userRoleSchema
 });
 
-const removeRoleSchema = z.object({
-	userId: z.string().min(1)
-});
-
 export const load = async ({ platform, locals }: { platform?: App.Platform; locals: App.Locals }) => {
 	requireAdmin(locals);
 
@@ -82,50 +78,6 @@ export const actions = {
 				error: getErrorMessage(error)
 			});
 			return { success: false, error: 'Failed to update role' };
-		}
-	},
-
-	removeRole: async ({
-		request,
-		platform,
-		locals
-	}: {
-		request: Request;
-		platform?: App.Platform;
-		locals: App.Locals;
-	}) => {
-		requireAdmin(locals);
-
-		if (!platform) {
-			return { success: false, error: 'Platform not available' };
-		}
-
-		const formData = await request.formData();
-		const parsed = removeRoleSchema.safeParse({
-			userId: formData.get('userId')
-		});
-		if (!parsed.success) {
-			return fail(400, {
-				success: false,
-				error: 'Invalid role removal request'
-			});
-		}
-
-		const { userId } = parsed.data;
-
-		try {
-			const clerkClient = getClerkClient(platform.env);
-			await clerkClient.users.updateUserMetadata(userId, {
-				publicMetadata: { role: 'user' } // Default to 'user'
-			});
-
-			return { success: true };
-		} catch (error) {
-			logger.error('admin.users.remove_role_failed', {
-				userId,
-				error: getErrorMessage(error)
-			});
-			return { success: false, error: 'Failed to remove role' };
 		}
 	}
 };

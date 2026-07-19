@@ -1,7 +1,6 @@
 <script lang="ts">
 	import './layout.css';
 	import favicon from '$lib/assets/favicon.svg';
-	import Toast from '$lib/components/Toast.svelte';
 	import { page } from '$app/state';
 	import { resolve } from '$app/paths';
 	import { onMount } from 'svelte';
@@ -9,7 +8,6 @@
 	import { dark } from '@clerk/themes';
 	import type { User } from '@clerk/backend';
 	import { getClerkUser, initializeClerk, subscribeToClerkState, waitForClerk } from '$lib/client/clerk';
-	import { isPublicRoute } from '$lib/routes/public';
 
 	interface LayoutData {
 		clerkPublishableKey: string;
@@ -26,14 +24,11 @@
 
 	let isMobileMenuOpen = $state(false);
 	let user = $state<User | null>(null);
-	const RAW_NAV_LINKS = [
-		{ path: '/', label: 'Home' },
-		{ path: '/shortener', label: 'Shortener' },
-		{ path: '/about', label: 'About' }
-	] as const;
-	const NAV_LINKS = RAW_NAV_LINKS.filter((link): link is (typeof RAW_NAV_LINKS)[number] =>
-		isPublicRoute(link.path)
-	).map((link) => ({ ...link, href: resolve(link.path) }));
+	const NAV_LINKS = [
+		{ href: resolve('/'), label: 'Home' },
+		{ href: resolve('/shortener'), label: 'Shortener' },
+		{ href: resolve('/about'), label: 'About' }
+	];
 
 	function toggleMobileMenu() {
 		isMobileMenuOpen = !isMobileMenuOpen;
@@ -76,10 +71,6 @@
 			window.location.href = '/';
 		}
 	}
-
-	$effect(() => {
-		// Check if user is admin
-	});
 
 	function linkClasses(href: string, mobile = false) {
 		const active = page.url.pathname === href || page.url.pathname.startsWith(`${href}/`);
@@ -304,5 +295,3 @@
 		</div>
 	</footer>
 </div>
-
-<Toast />

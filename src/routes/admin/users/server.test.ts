@@ -126,24 +126,4 @@ describe('admin users page server', () => {
 			publicMetadata: { role: 'admin' }
 		});
 	});
-
-	it('rejects invalid role removal requests before calling clerk', async () => {
-		const response = (await actions.removeRole({
-			request: new Request('https://luiz.dk/admin/users', {
-				method: 'POST',
-				body: new URLSearchParams()
-			}),
-			platform: {
-				env: {} as App.Platform['env']
-			} as App.Platform,
-			locals: createLocals()
-		})) as ActionFailure<{ success: boolean; error: string }>;
-
-		expect(response.status).toBe(400);
-		expect(response.data).toEqual({
-			success: false,
-			error: 'Invalid role removal request'
-		});
-		expect(mockUpdateUserMetadata).not.toHaveBeenCalled();
-	});
 });

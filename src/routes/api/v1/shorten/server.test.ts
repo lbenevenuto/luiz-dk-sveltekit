@@ -69,7 +69,7 @@ describe('POST /api/v1/shorten', () => {
 	});
 
 	it('should return 429 if rate limit exceeded for anonymous user', async () => {
-		vi.mocked(checkAnonymousRateLimit).mockResolvedValue({ success: false });
+		vi.mocked(checkAnonymousRateLimit).mockResolvedValue(false);
 
 		const response = await POST(mockEvent as Parameters<typeof POST>[0]);
 		const json = await response.json();
@@ -83,7 +83,7 @@ describe('POST /api/v1/shorten', () => {
 	});
 
 	it('should create short URL for anonymous user if rate limit allows', async () => {
-		vi.mocked(checkAnonymousRateLimit).mockResolvedValue({ success: true });
+		vi.mocked(checkAnonymousRateLimit).mockResolvedValue(true);
 		vi.mocked(createShortUrl).mockResolvedValue({ shortCode: 'abc', isExisting: false, expiresAt: null });
 
 		const response = await POST(mockEvent as Parameters<typeof POST>[0]);
@@ -133,7 +133,7 @@ describe('POST /api/v1/shorten', () => {
 		const now = new Date('2024-01-01T00:00:00Z');
 		vi.setSystemTime(now);
 
-		vi.mocked(checkAnonymousRateLimit).mockResolvedValue({ success: true });
+		vi.mocked(checkAnonymousRateLimit).mockResolvedValue(true);
 
 		const expiresInSeconds = 3600;
 		const expectedExpiresAt = Math.floor(now.getTime() / 1000) + expiresInSeconds;
@@ -177,7 +177,7 @@ describe('POST /api/v1/shorten', () => {
 	});
 
 	it('should reject invalid URLs', async () => {
-		vi.mocked(checkAnonymousRateLimit).mockResolvedValue({ success: true });
+		vi.mocked(checkAnonymousRateLimit).mockResolvedValue(true);
 
 		const badEvent: Partial<RequestEvent> = {
 			platform: mockPlatform,
@@ -202,7 +202,7 @@ describe('POST /api/v1/shorten', () => {
 	});
 
 	it('should reject non-http/https URLs', async () => {
-		vi.mocked(checkAnonymousRateLimit).mockResolvedValue({ success: true });
+		vi.mocked(checkAnonymousRateLimit).mockResolvedValue(true);
 
 		const badEvent: Partial<RequestEvent> = {
 			platform: mockPlatform,
@@ -354,7 +354,7 @@ describe('POST /api/v1/shorten', () => {
 	});
 
 	it('should sanitize URL in logs by removing query and hash', async () => {
-		vi.mocked(checkAnonymousRateLimit).mockResolvedValue({ success: true });
+		vi.mocked(checkAnonymousRateLimit).mockResolvedValue(true);
 		vi.mocked(createShortUrl).mockResolvedValue({ shortCode: 'abc', isExisting: false, expiresAt: null });
 
 		const event: Partial<RequestEvent> = {
@@ -379,7 +379,7 @@ describe('POST /api/v1/shorten', () => {
 	});
 
 	it('should trust X-Forwarded-For only when explicitly enabled', async () => {
-		vi.mocked(checkAnonymousRateLimit).mockResolvedValue({ success: true });
+		vi.mocked(checkAnonymousRateLimit).mockResolvedValue(true);
 		vi.mocked(createShortUrl).mockResolvedValue({ shortCode: 'abc', isExisting: false, expiresAt: null });
 
 		const trustedPlatform = {

@@ -78,19 +78,6 @@
 		e.preventDefault();
 		error = '';
 
-		// Client-side validation
-		if (!email || !password) {
-			error = 'Please fill in all fields';
-			return;
-		}
-
-		// Basic email validation
-		const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-		if (!emailRegex.test(email)) {
-			error = 'Please enter a valid email address';
-			return;
-		}
-
 		if (browser && rateLimiter.isRateLimited()) {
 			error = 'Too many attempts. Please wait 60 seconds and try again.';
 			return;

@@ -78,8 +78,7 @@ const mockUrl = (overrides: Partial<Url> = {}): Url => ({
 vi.mock('$lib/adapters/factory', () => ({
 	getDatabaseAdapter: vi.fn(),
 	getCacheAdapter: vi.fn(),
-	getIdGeneratorAdapter: vi.fn(),
-	getAnalyticsAdapter: vi.fn()
+	getIdGeneratorAdapter: vi.fn()
 }));
 
 vi.mock('$lib/server/db/queries/urls', () => ({
