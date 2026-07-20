@@ -1,3 +1,7 @@
 # npm-check-updates configuration.
-# No packages are currently held back. The previous wrangler hold (Node >=22)
-# no longer applies: CI runs scripts under Bun, whose node-compat satisfies it.
+# The previous wrangler hold (Node >=22) no longer applies: CI runs scripts
+# under Bun, whose node-compat satisfies it.
+reject:
+  # Major bump (6.0.3 -> 7.0.2). Needs migration-notes review (tsconfig /
+  # compiler changes) before applying; deferred to a dedicated follow-up pass.
+  - typescript
