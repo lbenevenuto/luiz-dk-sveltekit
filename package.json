@@ -30,13 +30,13 @@
 		]
 	},
 	"devDependencies": {
-		"@clerk/backend": "^3.13.0",
+		"@clerk/backend": "^3.13.1",
 		"@clerk/themes": "^2.4.62",
 		"@eslint/compat": "^2.1.0",
 		"@eslint/js": "^10.0.1",
 		"@semantic-release/changelog": "^7.0.0",
-		"@semantic-release/git": "^11.0.0",
-		"@sentry/sveltekit": "^10.67.0",
+		"@semantic-release/git": "^11.0.1",
+		"@sentry/sveltekit": "^10.68.0",
 		"@sveltejs/adapter-cloudflare": "^7.2.9",
 		"@sveltejs/kit": "^2.70.1",
 		"@sveltejs/vite-plugin-svelte": "^7.2.0",
@@ -50,10 +50,10 @@
 		"conventional-changelog-conventionalcommits": "^10.2.1",
 		"drizzle-kit": "^0.31.10",
 		"drizzle-orm": "^0.45.2",
-		"eslint": "^10.7.0",
+		"eslint": "^10.8.0",
 		"eslint-config-prettier": "^10.1.8",
 		"eslint-plugin-svelte": "^3.22.0",
-		"globals": "^17.7.0",
+		"globals": "^17.8.0",
 		"hashids": "^2.3.0",
 		"husky": "^9.1.7",
 		"ioredis": "^5.11.1",
@@ -62,7 +62,7 @@
 		"prettier-plugin-svelte": "^4.1.1",
 		"prettier-plugin-tailwindcss": "^0.8.1",
 		"semantic-release": "^25.0.8",
-		"svelte": "^5.56.7",
+		"svelte": "^5.56.8",
 		"svelte-check": "^4.7.3",
 		"svix": "^1.99.1",
 		"tailwindcss": "^4.3.3",
@@ -78,5 +78,10 @@
 		"d3-scale": "^4.0.2",
 		"d3-shape": "^3.2.0",
 		"layercake": "^10.0.3"
+	},
+	"overrides": {
+		"tar": "^7.5.21",
+		"brace-expansion": "^5.0.8",
+		"postcss": "^8.5.18"
 	}
 }
