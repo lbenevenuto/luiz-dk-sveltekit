@@ -3,7 +3,9 @@
  * Creates appropriate adapters based on environment
  */
 
+import { max } from 'drizzle-orm';
 import { createD1Client, createSQLiteClient, type DrizzleClient } from '$lib/server/db/client';
+import { urls } from '$lib/server/db/schemas';
 import { DurableObjectIdGenerator, SqliteIdGenerator, type IdGeneratorAdapter } from './id-generator';
 import { InMemoryCacheAdapter, type CacheAdapter, KVAdapter } from './cache';
 import { type AnalyticsAdapter, CloudflareAnalyticsAdapter, ConsoleAnalyticsAdapter } from './analytics';
@@ -20,7 +22,10 @@ export async function getIdGeneratorAdapter(
 	db: DrizzleClient
 ): Promise<IdGeneratorAdapter> {
 	if (dev) {
-		return new SqliteIdGenerator(db);
+		return new SqliteIdGenerator(async () => {
+			const [row] = await db.select({ maxId: max(urls.id) }).from(urls);
+			return row?.maxId ?? null;
+		});
 	}
 
 	if (!platform) {

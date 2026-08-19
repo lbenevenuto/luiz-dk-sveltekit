@@ -2,31 +2,24 @@ import { describe, it, expect, vi } from 'vitest';
 import { SqliteIdGenerator, DurableObjectIdGenerator } from './id-generator';
 
 describe('SqliteIdGenerator', () => {
-	function mockDb(rows: Array<{ maxId: number | null }>) {
-		return { select: vi.fn(() => ({ from: vi.fn(async () => rows) })) };
-	}
-
 	it('should start at 1 on an empty table', async () => {
-		// @ts-expect-error - partial mock
-		const generator = new SqliteIdGenerator(mockDb([{ maxId: null }]));
+		const generator = new SqliteIdGenerator(async () => null);
 		expect(await generator.getNextId()).toBe(1);
 	});
 
 	it('should continue after the highest existing id', async () => {
-		// @ts-expect-error - partial mock
-		const generator = new SqliteIdGenerator(mockDb([{ maxId: 41 }]));
+		const generator = new SqliteIdGenerator(async () => 41);
 		expect(await generator.getNextId()).toBe(42);
 	});
 });
 
 describe('DurableObjectIdGenerator', () => {
-	it('should call nextValue on the stub', async () => {
-		const mockStub = { nextValue: vi.fn().mockResolvedValue(123) };
+	it('should call nextValue on the counter', async () => {
+		const counter = { nextValue: vi.fn().mockResolvedValue(123) };
 
-		// @ts-expect-error - partial mock
-		const generator = new DurableObjectIdGenerator(mockStub);
+		const generator = new DurableObjectIdGenerator(counter);
 
 		expect(await generator.getNextId()).toBe(123);
-		expect(mockStub.nextValue).toHaveBeenCalled();
+		expect(counter.nextValue).toHaveBeenCalled();
 	});
 });

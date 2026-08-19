@@ -3,9 +3,6 @@
  * Provides unique, sequential IDs starting at 1
  */
 
-import { max } from 'drizzle-orm';
-import { urls } from '$lib/server/db/schemas';
-import type { DrizzleClient } from '$lib/server/db/client';
 import type { GlobalCounterDurableObject } from '../../app';
 
 export interface IdGeneratorAdapter {
@@ -13,24 +10,26 @@ export interface IdGeneratorAdapter {
 }
 
 export class DurableObjectIdGenerator implements IdGeneratorAdapter {
-	constructor(private idGeneratorStub: DurableObjectStub<GlobalCounterDurableObject>) {}
+	constructor(private counter: Pick<GlobalCounterDurableObject, 'nextValue'>) {}
 
 	async getNextId(): Promise<number> {
-		return this.idGeneratorStub.nextValue();
+		return this.counter.nextValue();
 	}
 }
 
 /**
  * SQLite ID Generator (Local Development)
  *
- * ponytail: derives the next id from `max(urls.id)`, so deleting the newest row reuses its id
- * and the insert then fails on the unique short code. Dev-only; add a counter table if it bites.
+ * Takes a reader for the highest id currently stored rather than the database itself,
+ * so the arithmetic is testable without standing up a Drizzle client.
+ *
+ * ponytail: deleting the newest row frees its id for reuse, and the following insert then
+ * collides on the unique short code. Dev-only; add a counter table if it bites.
  */
 export class SqliteIdGenerator implements IdGeneratorAdapter {
-	constructor(private db: DrizzleClient) {}
+	constructor(private readMaxId: () => Promise<number | null>) {}
 
 	async getNextId(): Promise<number> {
-		const [row] = await this.db.select({ maxId: max(urls.id) }).from(urls);
-		return (row?.maxId ?? 0) + 1;
+		return ((await this.readMaxId()) ?? 0) + 1;
 	}
 }
