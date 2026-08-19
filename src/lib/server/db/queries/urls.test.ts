@@ -1,16 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import type { DrizzleClient } from '../client';
-import {
-	getUserUrls,
-	getUrlByShortCode,
-	deleteUrlById,
-	insertUrl,
-	findExistingUserUrlPermanent,
-	findExistingUserUrlExpiring,
-	findExistingGlobalUrlPermanent,
-	findExistingGlobalUrlExpiring,
-	searchUrls
-} from './urls';
+import { getUserUrls, getUrlByShortCode, deleteUrlById, insertUrl, findExistingUrl, searchUrls } from './urls';
 
 function createChainableMock(resolvedValue?: unknown) {
 	const chain = {
@@ -103,36 +93,14 @@ describe('URL Queries DAL', () => {
 		expect(result).toEqual([{ id: 1, ...newUrl }]);
 	});
 
-	it('findExistingUserUrlPermanent queries with url and userId', async () => {
+	it.each([
+		['user + permanent', { userId: 'user1', expiring: false }],
+		['user + expiring', { userId: 'user1', expiring: true }],
+		['global + permanent', { expiring: false }],
+		['global + expiring', { expiring: true }]
+	])('findExistingUrl queries for %s', async (_label, options) => {
 		mockChain.where.mockResolvedValueOnce([{ id: 1 }]);
-		const result = await findExistingUserUrlPermanent(mockDb, 'https://test.com', 'user1');
-
-		expect(mockChain.select).toHaveBeenCalled();
-		expect(mockChain.where).toHaveBeenCalled();
-		expect(result).toEqual({ id: 1 });
-	});
-
-	it('findExistingUserUrlExpiring queries with url and userId', async () => {
-		mockChain.where.mockResolvedValueOnce([{ id: 1 }]);
-		const result = await findExistingUserUrlExpiring(mockDb, 'https://test.com', 'user1');
-
-		expect(mockChain.select).toHaveBeenCalled();
-		expect(mockChain.where).toHaveBeenCalled();
-		expect(result).toEqual({ id: 1 });
-	});
-
-	it('findExistingGlobalUrlPermanent queries with url', async () => {
-		mockChain.where.mockResolvedValueOnce([{ id: 1 }]);
-		const result = await findExistingGlobalUrlPermanent(mockDb, 'https://test.com');
-
-		expect(mockChain.select).toHaveBeenCalled();
-		expect(mockChain.where).toHaveBeenCalled();
-		expect(result).toEqual({ id: 1 });
-	});
-
-	it('findExistingGlobalUrlExpiring queries with url', async () => {
-		mockChain.where.mockResolvedValueOnce([{ id: 1 }]);
-		const result = await findExistingGlobalUrlExpiring(mockDb, 'https://test.com');
+		const result = await findExistingUrl(mockDb, 'https://test.com', options);
 
 		expect(mockChain.select).toHaveBeenCalled();
 		expect(mockChain.where).toHaveBeenCalled();

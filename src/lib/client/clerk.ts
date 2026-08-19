@@ -1,9 +1,11 @@
 import { browser } from '$app/environment';
 import type { User } from '@clerk/backend';
 
+type ClerkInstance = NonNullable<Window['Clerk']>;
+
 const DEFAULT_TIMEOUT_MS = 10_000;
-let clerkScriptPromise: Promise<NonNullable<Window['Clerk']>> | null = null;
-let clerkReadyPromise: Promise<NonNullable<Window['Clerk']>> | null = null;
+let clerkScriptPromise: Promise<ClerkInstance> | null = null;
+let clerkReadyPromise: Promise<ClerkInstance> | null = null;
 
 function getClerkInstance() {
 	if (!browser) return null;
@@ -34,7 +36,26 @@ function withTimeout<T>(promise: Promise<T>, timeoutMs: number, message: string)
 	});
 }
 
-export function waitForClerkScript(timeoutMs = DEFAULT_TIMEOUT_MS): Promise<NonNullable<Window['Clerk']>> {
+/** Poll `get` every 50ms until it yields a Clerk instance, rejecting with `message` after `timeoutMs`. */
+function pollForClerk(get: () => ClerkInstance | null, timeoutMs: number, message: string): Promise<ClerkInstance> {
+	return new Promise((resolve, reject) => {
+		const intervalId = setInterval(() => {
+			const clerk = get();
+			if (clerk) {
+				clearInterval(intervalId);
+				clearTimeout(timeoutId);
+				resolve(clerk);
+			}
+		}, 50);
+
+		const timeoutId = setTimeout(() => {
+			clearInterval(intervalId);
+			reject(new Error(message));
+		}, timeoutMs);
+	});
+}
+
+function waitForClerkScript(timeoutMs: number): Promise<ClerkInstance> {
 	const existing = getClerkInstance();
 	if (existing) return Promise.resolve(existing);
 
@@ -42,32 +63,18 @@ export function waitForClerkScript(timeoutMs = DEFAULT_TIMEOUT_MS): Promise<NonN
 		return Promise.reject(new Error('Clerk is only available in the browser'));
 	}
 
-	if (!clerkScriptPromise) {
-		clerkScriptPromise = new Promise((resolve, reject) => {
-			const intervalId = setInterval(() => {
-				const clerk = getClerkInstance();
-				if (clerk) {
-					clearInterval(intervalId);
-					clearTimeout(timeoutId);
-					resolve(clerk);
-				}
-			}, 50);
-
-			const timeoutId = setTimeout(() => {
-				clearInterval(intervalId);
-				clerkScriptPromise = null;
-				reject(new Error('Clerk script failed to load'));
-			}, timeoutMs);
-		});
-	}
+	clerkScriptPromise ??= pollForClerk(getClerkInstance, timeoutMs, 'Clerk script failed to load').catch((error) => {
+		clerkScriptPromise = null;
+		throw error;
+	});
 
 	return clerkScriptPromise;
 }
 
 export function initializeClerk(
-	options: Parameters<NonNullable<Window['Clerk']>['load']>[0],
+	options: Parameters<ClerkInstance['load']>[0],
 	timeoutMs = DEFAULT_TIMEOUT_MS
-): Promise<NonNullable<Window['Clerk']>> {
+): Promise<ClerkInstance> {
 	const existing = getClerkClient();
 	if (existing) return Promise.resolve(existing);
 
@@ -89,7 +96,7 @@ export function initializeClerk(
 	return clerkReadyPromise;
 }
 
-export function waitForClerk(timeoutMs = DEFAULT_TIMEOUT_MS): Promise<NonNullable<Window['Clerk']>> {
+export function waitForClerk(timeoutMs = DEFAULT_TIMEOUT_MS): Promise<ClerkInstance> {
 	const existing = getClerkClient();
 	if (existing) return Promise.resolve(existing);
 
@@ -97,25 +104,7 @@ export function waitForClerk(timeoutMs = DEFAULT_TIMEOUT_MS): Promise<NonNullabl
 		return Promise.reject(new Error('Clerk is only available in the browser'));
 	}
 
-	if (clerkReadyPromise) {
-		return clerkReadyPromise;
-	}
-
-	return new Promise((resolve, reject) => {
-		const intervalId = setInterval(() => {
-			const clerk = getClerkClient();
-			if (clerk) {
-				clearInterval(intervalId);
-				clearTimeout(timeoutId);
-				resolve(clerk);
-			}
-		}, 50);
-
-		const timeoutId = setTimeout(() => {
-			clearInterval(intervalId);
-			reject(new Error('Clerk failed to initialize'));
-		}, timeoutMs);
-	});
+	return clerkReadyPromise ?? pollForClerk(getClerkClient, timeoutMs, 'Clerk failed to initialize');
 }
 
 export function getClerkUser(): User | null {

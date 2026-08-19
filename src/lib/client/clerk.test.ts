@@ -47,17 +47,17 @@ describe('clerk client helpers', () => {
 	});
 
 	it('waits for the script global before resolving', async () => {
-		const { waitForClerkScript } = await loadClerkModule();
-		const promise = waitForClerkScript(5000);
+		const { initializeClerk } = await loadClerkModule();
+		const promise = initializeClerk({ publishableKey: 'pk_test' }, 5000);
 
 		// Simulate the Clerk script appearing on window
-		getTestWindow().Clerk = createClerkStub();
+		const stub = createClerkStub();
+		getTestWindow().Clerk = stub;
 
 		// Advance past one polling interval (50ms) so the setInterval callback detects it
 		await vi.advanceTimersByTimeAsync(50);
 
-		const clerk = await promise;
-		expect(clerk).toBe(getTestWindow().Clerk);
+		await expect(promise).resolves.toBe(stub);
 	});
 
 	it('loads Clerk before exposing the ready client', async () => {

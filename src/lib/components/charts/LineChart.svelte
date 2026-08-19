@@ -40,7 +40,7 @@
 	>
 		<Svg>
 			<AxisY tickCount={5} format={(d) => formatNumber(d as number)} />
-			<AxisX tickCount={10} format={(d) => formatDateShort(d as Date)} />
+			<AxisX tickCount={10} rotated format={(d) => formatDateShort(d as Date)} />
 			<Area fill="rgba(59, 130, 246, 0.2)" />
 			<Line stroke="#3b82f6" strokeWidth={2} showPoints />
 		</Svg>

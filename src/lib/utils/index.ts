@@ -2,14 +2,7 @@ import { getCacheAdapter, getIdGeneratorAdapter } from '$lib/adapters/factory';
 import { generateShortCode } from './hashids';
 import type { DrizzleClient } from '$lib/server/db/client';
 
-import {
-	getUrlByShortCode,
-	insertUrl,
-	findExistingUserUrlExpiring,
-	findExistingUserUrlPermanent,
-	findExistingGlobalUrlExpiring,
-	findExistingGlobalUrlPermanent
-} from '$lib/server/db/queries/urls';
+import { getUrlByShortCode, insertUrl, findExistingUrl } from '$lib/server/db/queries/urls';
 
 interface CreateShortUrlResult {
 	shortCode: string;
@@ -85,16 +78,12 @@ export const createShortUrl = async (
 
 	let existingForUser;
 	if (userId) {
-		existingForUser = wantsExpiry
-			? await findExistingUserUrlExpiring(db, normalizedUrl, userId)
-			: await findExistingUserUrlPermanent(db, normalizedUrl, userId);
+		existingForUser = await findExistingUrl(db, normalizedUrl, { userId, expiring: wantsExpiry });
 	}
 
 	let existingGlobal;
 	if (existingForUser === undefined) {
-		existingGlobal = wantsExpiry
-			? await findExistingGlobalUrlExpiring(db, normalizedUrl)
-			: await findExistingGlobalUrlPermanent(db, normalizedUrl);
+		existingGlobal = await findExistingUrl(db, normalizedUrl, { expiring: wantsExpiry });
 	}
 
 	const existing = existingForUser || existingGlobal;
@@ -113,7 +102,7 @@ export const createShortUrl = async (
 		}
 	}
 
-	const idGeneratorAdapter = await getIdGeneratorAdapter(platform);
+	const idGeneratorAdapter = await getIdGeneratorAdapter(platform, db);
 	const newCount = await idGeneratorAdapter.getNextId();
 	const shortCode = generateShortCode(newCount, hashSalt);
 

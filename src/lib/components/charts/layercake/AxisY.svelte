@@ -1,21 +1,7 @@
 <script lang="ts">
-	import { getContext } from 'svelte';
-	interface LayerCakeContext {
-		yScale: {
-			subscribe: (
-				fn: (v: {
-					ticks?: (n: number) => unknown[];
-					domain: () => unknown[];
-					bandwidth?: () => number;
-					(d: unknown): number;
-				}) => void
-			) => () => void;
-		};
-		width: { subscribe: (fn: (v: number) => void) => () => void };
-		height: { subscribe: (fn: (v: number) => void) => () => void };
-	}
+	import { layerCake } from './context';
 
-	const { yScale, width, height } = getContext('LayerCake') as LayerCakeContext;
+	const { yScale, width, height } = layerCake<unknown>();
 
 	interface Props {
 		gridlines?: boolean;

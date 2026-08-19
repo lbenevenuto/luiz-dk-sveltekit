@@ -85,10 +85,7 @@ vi.mock('$lib/adapters/factory', () => ({
 vi.mock('$lib/server/db/queries/urls', () => ({
 	getUrlByShortCode: vi.fn(),
 	insertUrl: vi.fn(),
-	findExistingUserUrlExpiring: vi.fn(),
-	findExistingUserUrlPermanent: vi.fn(),
-	findExistingGlobalUrlExpiring: vi.fn(),
-	findExistingGlobalUrlPermanent: vi.fn()
+	findExistingUrl: vi.fn()
 }));
 
 vi.mock('./hashids', () => ({
@@ -135,18 +132,21 @@ describe('createShortUrl', () => {
 			expect(mockCache.get).toHaveBeenCalledWith('url:https://example.com:permanent');
 			expect(result).toEqual({ shortCode: 'cachehit', isExisting: true, expiresAt: null });
 			// Ensure DB was not queried
-			expect(queries.findExistingGlobalUrlPermanent).not.toHaveBeenCalled();
+			expect(queries.findExistingUrl).not.toHaveBeenCalled();
 		});
 
 		it('caches and returns existing non-expired DB entry (user)', async () => {
 			const mockCache = { get: vi.fn().mockResolvedValue(null), set: vi.fn(), delete: vi.fn() };
 			vi.mocked(factory.getCacheAdapter).mockResolvedValue(mockCache);
 
-			vi.mocked(queries.findExistingUserUrlPermanent).mockResolvedValue(mockUrl({ shortCode: 'dbhit' }));
+			vi.mocked(queries.findExistingUrl).mockResolvedValue(mockUrl({ shortCode: 'dbhit' }));
 
 			const result = await createShortUrl('https://example.com', null, mockPlatform, mockDb, 'user123');
 
-			expect(queries.findExistingUserUrlPermanent).toHaveBeenCalledWith(mockDb, 'https://example.com', 'user123');
+			expect(queries.findExistingUrl).toHaveBeenCalledWith(mockDb, 'https://example.com', {
+				userId: 'user123',
+				expiring: false
+			});
 			expect(mockCache.set).toHaveBeenCalledWith('url:https://example.com:permanent', 'dbhit', 604800);
 			expect(result).toEqual({ shortCode: 'dbhit', isExisting: true, expiresAt: null });
 		});
@@ -155,13 +155,19 @@ describe('createShortUrl', () => {
 			const mockCache = { get: vi.fn().mockResolvedValue(null), set: vi.fn(), delete: vi.fn() };
 			vi.mocked(factory.getCacheAdapter).mockResolvedValue(mockCache);
 
-			vi.mocked(queries.findExistingUserUrlPermanent).mockResolvedValue(undefined);
-			vi.mocked(queries.findExistingGlobalUrlPermanent).mockResolvedValue(mockUrl({ shortCode: 'globalhit' }));
+			vi.mocked(queries.findExistingUrl)
+				.mockResolvedValueOnce(undefined)
+				.mockResolvedValueOnce(mockUrl({ shortCode: 'globalhit' }));
 
 			const result = await createShortUrl('https://example.com', null, mockPlatform, mockDb, 'user123');
 
-			expect(queries.findExistingUserUrlPermanent).toHaveBeenCalledWith(mockDb, 'https://example.com', 'user123');
-			expect(queries.findExistingGlobalUrlPermanent).toHaveBeenCalledWith(mockDb, 'https://example.com');
+			expect(queries.findExistingUrl).toHaveBeenNthCalledWith(1, mockDb, 'https://example.com', {
+				userId: 'user123',
+				expiring: false
+			});
+			expect(queries.findExistingUrl).toHaveBeenNthCalledWith(2, mockDb, 'https://example.com', {
+				expiring: false
+			});
 			expect(mockCache.set).toHaveBeenCalledWith('url:https://example.com:permanent', 'globalhit', 604800);
 			expect(result).toEqual({ shortCode: 'globalhit', isExisting: true, expiresAt: null });
 		});
@@ -172,7 +178,7 @@ describe('createShortUrl', () => {
 			vi.mocked(factory.getCacheAdapter).mockResolvedValue(mockCache);
 			vi.mocked(factory.getIdGeneratorAdapter).mockResolvedValue(mockIdGen);
 
-			vi.mocked(queries.findExistingGlobalUrlPermanent).mockResolvedValue(undefined);
+			vi.mocked(queries.findExistingUrl).mockResolvedValue(undefined);
 			vi.mocked(generateShortCode).mockReturnValue('newgen');
 
 			const result = await createShortUrl('https://example.com', null, mockPlatform, mockDb);
@@ -191,7 +197,7 @@ describe('createShortUrl', () => {
 			const mockIdGen = { getNextId: vi.fn().mockResolvedValue(43) };
 			vi.mocked(factory.getIdGeneratorAdapter).mockResolvedValue(mockIdGen);
 
-			vi.mocked(queries.findExistingGlobalUrlExpiring).mockResolvedValue(undefined);
+			vi.mocked(queries.findExistingUrl).mockResolvedValue(undefined);
 			vi.mocked(generateShortCode).mockReturnValue('expirecode');
 
 			// Using a fixed timestamp for reproducibility testing could be done, but simply testing logic flows

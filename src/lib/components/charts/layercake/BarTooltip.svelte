@@ -1,18 +1,6 @@
 <script lang="ts">
-	import { getContext } from 'svelte';
 	import { formatNumber } from '$lib/utils/format';
-
-	interface ChartDataPoint {
-		label: string;
-		value: number;
-	}
-
-	interface LayerCakeContext {
-		data: { subscribe: (fn: (v: ChartDataPoint[]) => void) => () => void };
-		yGet: { subscribe: (fn: (v: (d: ChartDataPoint) => number) => void) => () => void };
-		yScale: { subscribe: (fn: (v: { bandwidth?: () => number }) => void) => () => void };
-		height: { subscribe: (fn: (v: number) => void) => () => void };
-	}
+	import { layerCake } from './context';
 
 	interface Props {
 		colors: string[];
@@ -22,7 +10,7 @@
 
 	let { colors, hoveredIndex = $bindable(null), onhover }: Props = $props();
 
-	const { data, yGet, yScale } = getContext('LayerCake') as LayerCakeContext;
+	const { data, yGet, yScale } = layerCake<{ label: string; value: number }>();
 
 	let mousePos = $state({ x: 0, y: 0 });
 

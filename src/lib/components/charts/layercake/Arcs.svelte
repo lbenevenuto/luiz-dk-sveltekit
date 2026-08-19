@@ -1,14 +1,8 @@
 <script lang="ts">
-	import { getContext } from 'svelte';
 	import { pie as d3Pie, arc as d3Arc } from 'd3-shape';
+	import { layerCake } from './context';
 
-	interface LayerCakeContext {
-		data: { subscribe: (fn: (v: Array<{ label: string; value: number }>) => void) => () => void };
-		width: { subscribe: (fn: (v: number) => void) => () => void };
-		height: { subscribe: (fn: (v: number) => void) => () => void };
-	}
-
-	const { data, width, height } = getContext('LayerCake') as LayerCakeContext;
+	const { data, width, height } = layerCake<{ label: string; value: number }>();
 
 	interface Props {
 		innerRadius?: number;

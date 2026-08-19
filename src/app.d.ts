@@ -50,7 +50,6 @@ declare global {
 				CLERK_WEBHOOK_SECRET?: string;
 				CLERK_FRONTEND_API: string;
 				SENTRY_DSN?: string;
-				ENABLE_TEST_ENDPOINT?: string;
 			};
 			ctx: ExecutionContext;
 			caches: CacheStorage;
@@ -58,26 +57,10 @@ declare global {
 		}
 	}
 
-	// Extend Clerk's CustomJwtSessionClaims
-	interface CustomJwtSessionClaims {
-		metadata: {
-			role?: UserRole;
-		};
-	}
-
 	type ClerkAppearance = {
 		baseTheme?: unknown;
 		variables?: Record<string, string>;
 		elements?: Record<string, string>;
-	};
-
-	type ClerkError = {
-		code?: string;
-		message?: string;
-	};
-
-	type ClerkApiError = {
-		errors?: ClerkError[];
 	};
 
 	type ClerkOAuthStrategy = 'oauth_google' | 'oauth_github';

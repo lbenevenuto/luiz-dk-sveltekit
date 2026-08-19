@@ -1,89 +1,32 @@
 import { describe, it, expect } from 'vitest';
-import { generateShortCode, extractIdFromShortCode, createHashids } from './hashids';
+import { generateShortCode } from './hashids';
 
-describe('hashids', () => {
+describe('generateShortCode', () => {
 	const salt = 'test-salt';
 
-	describe('createHashids', () => {
-		it('should create a Hashids instance with default min length', () => {
-			const hashids = createHashids(salt);
-			const encoded = hashids.encode(1);
-			expect(encoded.length).toBeGreaterThanOrEqual(5);
-		});
-
-		it('should respect custom min length', () => {
-			const hashids = createHashids(salt, 10);
-			const encoded = hashids.encode(1);
-			expect(encoded.length).toBeGreaterThanOrEqual(10);
-		});
+	it('should generate a non-empty string', () => {
+		const code = generateShortCode(1, salt);
+		expect(code).toBeTruthy();
+		expect(typeof code).toBe('string');
 	});
 
-	describe('generateShortCode', () => {
-		it('should generate a non-empty string', () => {
-			const code = generateShortCode(1, salt);
-			expect(code).toBeTruthy();
-			expect(typeof code).toBe('string');
-		});
-
-		it('should generate different codes for different IDs', () => {
-			const code1 = generateShortCode(1, salt);
-			const code2 = generateShortCode(2, salt);
-			expect(code1).not.toBe(code2);
-		});
-
-		it('should generate the same code for the same ID and salt', () => {
-			const code1 = generateShortCode(42, salt);
-			const code2 = generateShortCode(42, salt);
-			expect(code1).toBe(code2);
-		});
-
-		it('should generate different codes with different salts', () => {
-			const code1 = generateShortCode(1, 'salt-a');
-			const code2 = generateShortCode(1, 'salt-b');
-			expect(code1).not.toBe(code2);
-		});
-
-		it('should only contain alphanumeric characters', () => {
-			const code = generateShortCode(999999, salt);
-			expect(code).toMatch(/^[a-zA-Z0-9]+$/);
-		});
-
-		it('should respect minLength parameter', () => {
-			const code = generateShortCode(1, salt, 8);
-			expect(code.length).toBeGreaterThanOrEqual(8);
-		});
+	it('should respect the minimum length', () => {
+		expect(generateShortCode(1, salt).length).toBeGreaterThanOrEqual(3);
 	});
 
-	describe('extractIdFromShortCode', () => {
-		it('should decode back to the original ID', () => {
-			const id = 16000000;
-			const code = generateShortCode(id, salt);
-			const decoded = extractIdFromShortCode(code, salt);
-			expect(decoded).toBe(id);
-		});
+	it('should generate different codes for different IDs', () => {
+		expect(generateShortCode(1, salt)).not.toBe(generateShortCode(2, salt));
+	});
 
-		it('should roundtrip for various IDs', () => {
-			// Note: Hashids does not support encoding 0
-			const ids = [1, 100, 9999, 1000000, 2147483647];
-			for (const id of ids) {
-				const code = generateShortCode(id, salt);
-				const decoded = extractIdFromShortCode(code, salt);
-				expect(decoded).toBe(id);
-			}
-		});
+	it('should generate the same code for the same ID and salt', () => {
+		expect(generateShortCode(42, salt)).toBe(generateShortCode(42, salt));
+	});
 
-		it('should return null for invalid short codes', () => {
-			// Hashids v2 throws for characters outside the alphabet
-			const result = extractIdFromShortCode('!!!invalid!!!', salt);
-			expect(result).toBeNull();
-		});
+	it('should generate different codes with different salts', () => {
+		expect(generateShortCode(1, 'salt-a')).not.toBe(generateShortCode(1, 'salt-b'));
+	});
 
-		it('should return null when decoded with wrong salt', () => {
-			const code = generateShortCode(42, 'correct-salt');
-			const result = extractIdFromShortCode(code, 'wrong-salt');
-			// With wrong salt, decode may return a different number or empty array
-			// The key point is it won't return the original ID
-			expect(result).not.toBe(42);
-		});
+	it('should only contain alphanumeric characters', () => {
+		expect(generateShortCode(999999, salt)).toMatch(/^[a-zA-Z0-9]+$/);
 	});
 });

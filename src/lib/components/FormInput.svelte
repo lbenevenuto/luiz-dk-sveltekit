@@ -1,4 +1,6 @@
 <script lang="ts">
+	import type { FullAutoFill } from 'svelte/elements';
+
 	let {
 		type = 'text',
 		label,
@@ -17,11 +19,12 @@
 		required?: boolean;
 		error?: string;
 		disabled?: boolean;
-		autocomplete?: string;
+		autocomplete?: FullAutoFill;
 		id?: string;
 	} = $props();
 
-	const inputId = $derived(id || `input-${Math.random().toString(36).substr(2, 9)}`);
+	const uid = $props.id();
+	const inputId = $derived(id || `input-${uid}`);
 	const errorId = $derived(`${inputId}-error`);
 </script>
 
@@ -32,7 +35,6 @@
 			<span class="text-red-500">*</span>
 		{/if}
 	</label>
-	<!-- eslint-disable @typescript-eslint/no-explicit-any -->
 	<input
 		id={inputId}
 		{type}
@@ -40,7 +42,7 @@
 		{placeholder}
 		{required}
 		{disabled}
-		autocomplete={autocomplete as any}
+		{autocomplete}
 		aria-invalid={error ? 'true' : 'false'}
 		aria-describedby={error ? errorId : undefined}
 		class="w-full rounded-lg border-2 bg-transparent px-4 py-3 text-white transition-all placeholder:text-gray-400 focus:outline-none {error
@@ -49,7 +51,6 @@
 			? 'cursor-not-allowed opacity-50'
 			: ''}"
 	/>
-	<!-- eslint-enable @typescript-eslint/no-explicit-any -->
 	{#if error}
 		<p id={errorId} class="text-sm text-red-400">
 			{error}

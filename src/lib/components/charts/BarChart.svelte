@@ -2,7 +2,7 @@
 	import { LayerCake, Svg, Html } from 'layercake';
 	import { scaleBand } from 'd3-scale';
 	import Bars from './layercake/Bars.svelte';
-	import AxisX from './layercake/AxisXHorizontal.svelte';
+	import AxisX from './layercake/AxisX.svelte';
 	import AxisY from './layercake/AxisY.svelte';
 	import BarTooltip from './layercake/BarTooltip.svelte';
 	import { formatNumber } from '$lib/utils/format';

@@ -179,7 +179,6 @@ src/
 - `src/lib/server/db/schemas/urls.ts` - Added `userId` field
 - `src/lib/utils/index.ts` - Updated `createShortUrl` to accept `userId`
 - `src/routes/api/v1/shorten/+server.ts` - Rate limiting + user tracking
-- `src/routes/api/v1/test/+server.ts` - User tracking
 - `src/routes/api/v1/reset/+server.ts` - Admin-only protection
 - `wrangler.jsonc` - Rate limiter binding + Clerk vars
 - `.env` - Clerk environment variables

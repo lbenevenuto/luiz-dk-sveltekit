@@ -14,7 +14,7 @@ export function getToasts(): Toast[] {
 	return toasts;
 }
 
-export function addToast(message: string, type: ToastType = 'info', duration = 3000): number {
+function addToast(message: string, type: ToastType = 'info', duration = 3000): number {
 	const id = nextId++;
 	toasts.push({ id, message, type, duration });
 

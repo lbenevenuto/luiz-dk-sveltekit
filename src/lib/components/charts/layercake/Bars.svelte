@@ -1,15 +1,7 @@
 <script lang="ts">
-	import { getContext } from 'svelte';
+	import { layerCake } from './context';
 
-	interface LayerCakeContext {
-		data: { subscribe: (fn: (v: Array<{ label: string; value: number }>) => void) => () => void };
-		xGet: { subscribe: (fn: (v: (d: { label: string; value: number }) => number) => void) => () => void };
-		yGet: { subscribe: (fn: (v: (d: { label: string; value: number }) => number) => void) => () => void };
-		yScale: { subscribe: (fn: (v: { bandwidth?: () => number; (d: unknown): number }) => void) => () => void };
-		xScale: { subscribe: (fn: (v: (n: number) => number) => void) => () => void };
-	}
-
-	const { data, xGet, yGet, yScale, xScale } = getContext('LayerCake') as LayerCakeContext;
+	const { data, xGet, yGet, yScale, xScale } = layerCake<{ label: string; value: number }>();
 
 	interface Props {
 		fill?: string | ((d: unknown) => string);

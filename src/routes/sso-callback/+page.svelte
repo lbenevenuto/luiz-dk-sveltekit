@@ -5,6 +5,7 @@
 	import { waitForClerk } from '$lib/client/clerk';
 	import { normalizeRedirectPath, withBase } from '$lib/client/redirect';
 	import LoadingSpinner from '$lib/components/LoadingSpinner.svelte';
+	import { getErrorMessage } from '$lib/utils/validation';
 
 	let error = $state('');
 	let redirectTo = $state('/');
@@ -76,7 +77,7 @@
 				// ignore secondary failure and show original error
 			}
 
-			error = `Error: ${err instanceof Error ? err.message : String(err)}`;
+			error = `Error: ${getErrorMessage(err)}`;
 			setTimeout(() => redirectNow('/login'), 3000);
 		}
 	});
