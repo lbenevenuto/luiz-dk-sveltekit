@@ -1,3 +1,7 @@
+## [1.6.14](https://github.com/lbenevenuto/luiz-dk-sveltekit/compare/v1.6.13...v1.6.14) (2026-08-19)
+
+**Full Changelog**: https://github.com/lbenevenuto/luiz-dk-sveltekit/compare/v1.6.13...v1.6.14
+
 ## [1.6.13](https://github.com/lbenevenuto/luiz-dk-sveltekit/compare/v1.6.12...v1.6.13) (2026-08-19)
 
 **Full Changelog**: https://github.com/lbenevenuto/luiz-dk-sveltekit/compare/v1.6.12...v1.6.13
