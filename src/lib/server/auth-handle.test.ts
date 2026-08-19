@@ -1,18 +1,15 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-const { mockAuthenticateRequest, mockGetUser, mockIsPublicRoute, mockGetAuthorizedParties, mockLogger } = vi.hoisted(
-	() => ({
-		mockAuthenticateRequest: vi.fn(),
-		mockGetUser: vi.fn(),
-		mockIsPublicRoute: vi.fn(),
-		mockGetAuthorizedParties: vi.fn(),
-		mockLogger: {
-			info: vi.fn(),
-			warn: vi.fn(),
-			error: vi.fn()
-		}
-	})
-);
+const { mockAuthenticateRequest, mockGetUser, mockIsPublicRoute, mockLogger } = vi.hoisted(() => ({
+	mockAuthenticateRequest: vi.fn(),
+	mockGetUser: vi.fn(),
+	mockIsPublicRoute: vi.fn(),
+	mockLogger: {
+		info: vi.fn(),
+		warn: vi.fn(),
+		error: vi.fn()
+	}
+}));
 
 vi.mock('$lib/server/clerk', () => ({
 	getClerkClient: vi.fn(() => ({
@@ -23,9 +20,8 @@ vi.mock('$lib/server/clerk', () => ({
 	}))
 }));
 
-vi.mock('$lib/server/routes', () => ({
-	isPublicRoute: mockIsPublicRoute,
-	getAuthorizedParties: mockGetAuthorizedParties
+vi.mock('$lib/routes/public', () => ({
+	isPublicRoute: mockIsPublicRoute
 }));
 
 vi.mock('$lib/server/logger', () => ({
@@ -61,7 +57,6 @@ describe('authHandle', () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
 		mockIsPublicRoute.mockReturnValue(false);
-		mockGetAuthorizedParties.mockReturnValue(['https://luiz.dk']);
 	});
 
 	it('appends clerk headers on public routes', async () => {

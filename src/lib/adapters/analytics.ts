@@ -1,4 +1,5 @@
 import { logger } from '$lib/server/logger';
+import { getErrorMessage } from '$lib/utils/validation';
 
 /**
  * Analytics Adapters
@@ -32,7 +33,7 @@ export class CloudflareAnalyticsAdapter implements AnalyticsAdapter {
 		} catch (error) {
 			logger.error('analytics.track_failed', {
 				shortCode,
-				error: error instanceof Error ? error.message : String(error)
+				error: getErrorMessage(error)
 			});
 		}
 	}

@@ -3,54 +3,24 @@
  * Creates appropriate adapters based on environment
  */
 
-import { createD1Client, createSQLiteClient } from '$lib/server/db/client';
-import {
-	DurableObjectIdGenerator,
-	InMemoryIdGenerator,
-	type IdGeneratorAdapter,
-	RedisIdGenerator
-} from './id-generator';
-import { InMemoryCacheAdapter, type CacheAdapter, KVAdapter, RedisAdapter } from './cache';
+import { createD1Client, createSQLiteClient, type DrizzleClient } from '$lib/server/db/client';
+import { DurableObjectIdGenerator, SqliteIdGenerator, type IdGeneratorAdapter } from './id-generator';
+import { InMemoryCacheAdapter, type CacheAdapter, KVAdapter } from './cache';
 import { type AnalyticsAdapter, CloudflareAnalyticsAdapter, ConsoleAnalyticsAdapter } from './analytics';
 import { dev } from '$app/environment';
-import type Redis from 'ioredis';
-import { logger } from '$lib/server/logger';
-import { getErrorMessage } from '$lib/utils/validation';
 
-let devIdGeneratorAdapter: IdGeneratorAdapter | null = null;
 let devCacheAdapter: CacheAdapter | null = null;
 let devDatabaseAdapterPromise: ReturnType<typeof createSQLiteClient> | null = null;
-let devRedisClient: Redis | null = null;
-
-async function getOrCreateDevRedis(): Promise<Redis> {
-	if (!devRedisClient) {
-		const { default: Redis } = await import('ioredis');
-		const redisUrl = process.env.REDIS_URL || 'redis://localhost:6379';
-		devRedisClient = new Redis(redisUrl);
-	}
-
-	return devRedisClient;
-}
 
 /**
  * Get ID generator adapter
  */
-export async function getIdGeneratorAdapter(platform: Readonly<App.Platform> | undefined): Promise<IdGeneratorAdapter> {
+export async function getIdGeneratorAdapter(
+	platform: Readonly<App.Platform> | undefined,
+	db: DrizzleClient
+): Promise<IdGeneratorAdapter> {
 	if (dev) {
-		if (devIdGeneratorAdapter) {
-			return devIdGeneratorAdapter;
-		}
-
-		try {
-			devIdGeneratorAdapter = new RedisIdGenerator(await getOrCreateDevRedis());
-		} catch (err) {
-			logger.warn('adapter.id_generator.redis_unavailable', {
-				error: getErrorMessage(err)
-			});
-			devIdGeneratorAdapter = new InMemoryIdGenerator();
-		}
-
-		return devIdGeneratorAdapter;
+		return new SqliteIdGenerator(db);
 	}
 
 	if (!platform) {
@@ -69,8 +39,7 @@ export async function getIdGeneratorAdapter(platform: Readonly<App.Platform> | u
 export async function getDatabaseAdapter(platform: Readonly<App.Platform> | undefined) {
 	if (dev) {
 		if (!devDatabaseAdapterPromise) {
-			const sqlitePath = './data/local.db';
-			devDatabaseAdapterPromise = createSQLiteClient(sqlitePath);
+			devDatabaseAdapterPromise = createSQLiteClient('./data/local.db');
 		}
 
 		return devDatabaseAdapterPromise;
@@ -89,19 +58,7 @@ export async function getDatabaseAdapter(platform: Readonly<App.Platform> | unde
  */
 export async function getCacheAdapter(platform: Readonly<App.Platform> | undefined): Promise<CacheAdapter | null> {
 	if (dev) {
-		if (devCacheAdapter) {
-			return devCacheAdapter;
-		}
-
-		try {
-			devCacheAdapter = new RedisAdapter(await getOrCreateDevRedis());
-		} catch (err) {
-			logger.warn('adapter.cache.redis_unavailable', {
-				error: getErrorMessage(err)
-			});
-			devCacheAdapter = new InMemoryCacheAdapter();
-		}
-
+		devCacheAdapter ??= new InMemoryCacheAdapter();
 		return devCacheAdapter;
 	}
 

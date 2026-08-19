@@ -3,20 +3,13 @@
  * Provides unique, sequential IDs starting at 1
  */
 
-import type Redis from 'ioredis';
+import { max } from 'drizzle-orm';
+import { urls } from '$lib/server/db/schemas';
+import type { DrizzleClient } from '$lib/server/db/client';
 import type { GlobalCounterDurableObject } from '../../app';
 
 export interface IdGeneratorAdapter {
 	getNextId(): Promise<number>;
-}
-
-export class InMemoryIdGenerator implements IdGeneratorAdapter {
-	private counter = 0;
-
-	async getNextId(): Promise<number> {
-		this.counter += 1;
-		return this.counter;
-	}
 }
 
 export class DurableObjectIdGenerator implements IdGeneratorAdapter {
@@ -28,29 +21,16 @@ export class DurableObjectIdGenerator implements IdGeneratorAdapter {
 }
 
 /**
- * Redis ID Generator (Local Development)
+ * SQLite ID Generator (Local Development)
+ *
+ * ponytail: derives the next id from `max(urls.id)`, so deleting the newest row reuses its id
+ * and the insert then fails on the unique short code. Dev-only; add a counter table if it bites.
  */
-export class RedisIdGenerator implements IdGeneratorAdapter {
-	private initialized = false;
-	private redis: Redis;
-
-	constructor(redis: Redis) {
-		this.redis = redis;
-	}
+export class SqliteIdGenerator implements IdGeneratorAdapter {
+	constructor(private db: DrizzleClient) {}
 
 	async getNextId(): Promise<number> {
-		// Initialize counter to 0 on first use (first INCR = 1)
-		const key = 'url_shortener:id_counter';
-		if (!this.initialized) {
-			const exists = await this.redis.exists(key);
-			if (!exists) {
-				await this.redis.set(key, 0);
-			}
-			this.initialized = true;
-		}
-
-		// Increment and return
-		const id = await this.redis.incr(key);
-		return id;
+		const [row] = await this.db.select({ maxId: max(urls.id) }).from(urls);
+		return (row?.maxId ?? 0) + 1;
 	}
 }

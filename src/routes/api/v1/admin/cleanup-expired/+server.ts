@@ -4,10 +4,10 @@ import { requireAdmin } from '$lib/server/auth';
 import { cleanupExpiredUrls } from '$lib/server/url-maintenance';
 import { logger } from '$lib/server/logger';
 
-export const POST: RequestHandler = async ({ locals, platform }) => {
+export const POST: RequestHandler = async ({ locals }) => {
 	requireAdmin(locals);
 
-	await cleanupExpiredUrls(platform);
+	await cleanupExpiredUrls(locals.db);
 	logger.info('maintenance.cleanup_expired_urls');
 
 	return json({ ok: true });

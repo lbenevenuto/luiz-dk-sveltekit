@@ -1,20 +1,7 @@
 <script lang="ts">
-	import { getContext } from 'svelte';
 	import { formatDateShort } from '$lib/utils/date';
 	import { formatNumber } from '$lib/utils/format';
-
-	interface ChartDataPoint {
-		date: Date;
-		value: number;
-	}
-
-	interface LayerCakeContext {
-		data: { subscribe: (fn: (v: ChartDataPoint[]) => void) => () => void };
-		xGet: { subscribe: (fn: (v: (d: ChartDataPoint) => number) => void) => () => void };
-		yGet: { subscribe: (fn: (v: (d: ChartDataPoint) => number) => void) => () => void };
-		width: { subscribe: (fn: (v: number) => void) => () => void };
-		height: { subscribe: (fn: (v: number) => void) => () => void };
-	}
+	import { layerCake } from './context';
 
 	interface Props {
 		formatDate?: (d: Date) => string;
@@ -30,7 +17,7 @@
 		color = '#3b82f6'
 	}: Props = $props();
 
-	const { data, xGet, yGet, width } = getContext('LayerCake') as LayerCakeContext;
+	const { data, xGet, yGet, width } = layerCake<{ date: Date; value: number }>();
 
 	let hoveredIndex: number | null = $state(null);
 

@@ -4,7 +4,7 @@ import { sequence } from '@sveltejs/kit/hooks';
 import * as Sentry from '@sentry/sveltekit';
 import { authHandle } from '$lib/server/auth-handle';
 import { logger, requestContext } from '$lib/server/logger';
-import { getDb } from '$lib/server/db';
+import { getDatabaseAdapter } from '$lib/adapters/factory';
 
 let envValidated = false;
 let sentryInitialized = false;
@@ -116,7 +116,7 @@ export const initialHook: Handle = async ({ event, resolve }) => {
 };
 
 export const dbHandle: Handle = async ({ event, resolve }) => {
-	event.locals.db = await getDb(event.platform);
+	event.locals.db = await getDatabaseAdapter(event.platform);
 	return resolve(event);
 };
 

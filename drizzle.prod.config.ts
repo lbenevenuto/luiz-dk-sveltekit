@@ -1,20 +1,11 @@
 import { defineConfig } from 'drizzle-kit';
 
-// Read from env or use known project values
-const accountId = process.env.CLOUDFLARE_ACCOUNT_ID;
-const databaseId = process.env.CLOUDFLARE_D1_DATABASE_ID;
-const token = process.env.CLOUDFLARE_API_TOKEN;
-
-if (!accountId) {
-	throw new Error('CLOUDFLARE_ACCOUNT_ID environment variable is required for production migrations.');
-}
-
-if (!databaseId) {
-	throw new Error('CLOUDFLARE_D1_DATABASE_ID environment variable is required for production migrations.');
-}
-
-if (!token) {
-	throw new Error('CLOUDFLARE_API_TOKEN environment variable is required for production migrations.');
+function required(name: string): string {
+	const value = process.env[name];
+	if (!value) {
+		throw new Error(`${name} environment variable is required for production migrations.`);
+	}
+	return value;
 }
 
 export default defineConfig({
@@ -23,9 +14,9 @@ export default defineConfig({
 	dialect: 'sqlite',
 	driver: 'd1-http',
 	dbCredentials: {
-		accountId,
-		databaseId,
-		token
+		accountId: required('CLOUDFLARE_ACCOUNT_ID'),
+		databaseId: required('CLOUDFLARE_D1_DATABASE_ID'),
+		token: required('CLOUDFLARE_API_TOKEN')
 	},
 	verbose: true,
 	strict: true

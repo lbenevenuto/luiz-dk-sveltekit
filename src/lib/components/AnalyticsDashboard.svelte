@@ -4,14 +4,7 @@
 	import DoughnutChart from '$lib/components/charts/DoughnutChart.svelte';
 	import LoadingSpinner from '$lib/components/LoadingSpinner.svelte';
 	import { formatDate } from '$lib/utils/date';
-	import {
-		createTable,
-		FlexRender,
-		getCoreRowModel,
-		type ColumnDef,
-		type PaginationState,
-		type Updater
-	} from '@tanstack/svelte-table';
+	import { ALLOWED_PAGE_SIZES, DEFAULT_PAGE_SIZE } from '$lib/utils/constants';
 
 	interface Props {
 		data: {
@@ -49,63 +42,19 @@
 		error?: string;
 	}
 
-	const PAGE_SIZES = [5, 10, 50, 100] as const;
-
 	let { data }: Props = $props();
 
 	let logData = $state<LogData | null>(null);
 	let logLoading = $state(false);
-	let pagination = $state<PaginationState>({ pageIndex: 0, pageSize: 10 });
+	let page = $state(1);
+	let pageSize = $state<number>(DEFAULT_PAGE_SIZE);
 
-	const columns: ColumnDef<LogRow>[] = [
-		{
-			accessorKey: 'timestamp',
-			header: 'Time',
-			cell: (info) => formatDate(info.getValue<string>())
-		},
-		{
-			accessorKey: 'shortCode',
-			header: 'Short Code'
-		},
-		{
-			accessorKey: 'country',
-			header: 'Country',
-			cell: (info) => info.getValue<string>() || 'Unknown'
-		},
-		{
-			accessorKey: 'referrer',
-			header: 'Referrer',
-			cell: (info) => info.getValue<string>() || '-'
-		},
-		{
-			accessorKey: 'userAgent',
-			header: 'User Agent',
-			cell: (info) => info.getValue<string>() || '-'
-		}
-	];
+	const totalPages = $derived(logData ? Math.ceil(logData.totalRows / pageSize) : 0);
 
-	function setPagination(updater: Updater<PaginationState>) {
-		pagination = updater instanceof Function ? updater(pagination) : updater;
+	function goToPage(next: number) {
+		page = next;
 		fetchLog();
 	}
-
-	const table = createTable({
-		get data() {
-			return logData?.rows ?? [];
-		},
-		columns,
-		getCoreRowModel: getCoreRowModel(),
-		manualPagination: true,
-		get rowCount() {
-			return logData?.totalRows ?? 0;
-		},
-		state: {
-			get pagination() {
-				return pagination;
-			}
-		},
-		onPaginationChange: setPagination
-	});
 
 	let fetchId = 0;
 
@@ -115,8 +64,8 @@
 		try {
 			const entries: [string, string][] = [
 				['days', String(data.days)],
-				['page', String(pagination.pageIndex + 1)],
-				['pageSize', String(pagination.pageSize)]
+				['page', String(page)],
+				['pageSize', String(pageSize)]
 			];
 			const userId = data.filterUser?.id;
 			if (userId) entries.push(['userId', userId]);
@@ -127,25 +76,11 @@
 			if (res.ok) {
 				logData = await res.json();
 			} else {
-				logData = {
-					rows: [],
-					totalRows: 0,
-					page: 1,
-					pageSize: pagination.pageSize,
-					totalPages: 0,
-					error: 'Failed to load'
-				};
+				logData = { rows: [], totalRows: 0, page: 1, pageSize, totalPages: 0, error: 'Failed to load' };
 			}
 		} catch {
 			if (currentFetchId !== fetchId) return;
-			logData = {
-				rows: [],
-				totalRows: 0,
-				page: 1,
-				pageSize: pagination.pageSize,
-				totalPages: 0,
-				error: 'Failed to load'
-			};
+			logData = { rows: [], totalRows: 0, page: 1, pageSize, totalPages: 0, error: 'Failed to load' };
 		} finally {
 			if (currentFetchId === fetchId) {
 				logLoading = false;
@@ -160,7 +95,7 @@
 	$effect(() => {
 		if (fetchKey !== lastFetchKey) {
 			lastFetchKey = fetchKey;
-			pagination = { pageIndex: 0, pageSize: pagination.pageSize };
+			page = 1;
 			fetchLog();
 		}
 	});
@@ -274,48 +209,40 @@
 				<div class="overflow-x-auto">
 					<table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
 						<thead class="bg-gray-50 dark:bg-gray-700/50">
-							{#each table.getHeaderGroups() as headerGroup (headerGroup.id)}
-								<tr>
-									{#each headerGroup.headers as header (header.id)}
-										<th
-											scope="col"
-											class="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase dark:text-gray-400"
-										>
-											{#if !header.isPlaceholder}
-												<FlexRender content={header.column.columnDef.header} context={header.getContext()} />
-											{/if}
-										</th>
-									{/each}
-								</tr>
-							{/each}
+							<tr>
+								{#each ['Time', 'Short Code', 'Country', 'Referrer', 'User Agent'] as heading (heading)}
+									<th
+										scope="col"
+										class="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase dark:text-gray-400"
+									>
+										{heading}
+									</th>
+								{/each}
+							</tr>
 						</thead>
 						<tbody class="divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-gray-800">
-							{#each table.getRowModel().rows as row (row.id)}
+							{#each logData.rows as row (row.id)}
 								<tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50">
-									{#each row.getVisibleCells() as cell (cell.id)}
-										{@const colId = cell.column.id}
-										<td
-											class="{colId === 'referrer' || colId === 'userAgent'
-												? 'max-w-xs truncate'
-												: 'whitespace-nowrap'} px-6 py-4 text-sm {colId === 'shortCode'
-												? 'font-medium text-blue-600 dark:text-blue-400'
-												: colId === 'country'
-													? 'text-gray-900 dark:text-white'
-													: 'text-gray-500 dark:text-gray-400'}"
-											title={colId === 'referrer' || colId === 'userAgent' ? String(cell.getValue() ?? '') : undefined}
-										>
-											{#if colId === 'shortCode'}
-												<a
-													href={`/s/${cell.getValue()}`}
-													target="_blank"
-													rel="noopener noreferrer"
-													class="hover:underline">{cell.getValue()}</a
-												>
-											{:else}
-												<FlexRender content={cell.column.columnDef.cell} context={cell.getContext()} />
-											{/if}
-										</td>
-									{/each}
+									<td class="px-6 py-4 text-sm whitespace-nowrap text-gray-500 dark:text-gray-400">
+										{formatDate(row.timestamp)}
+									</td>
+									<td class="px-6 py-4 text-sm font-medium whitespace-nowrap text-blue-600 dark:text-blue-400">
+										<a href={`/s/${row.shortCode}`} target="_blank" rel="noopener noreferrer" class="hover:underline">
+											{row.shortCode}
+										</a>
+									</td>
+									<td class="px-6 py-4 text-sm whitespace-nowrap text-gray-900 dark:text-white">
+										{row.country || 'Unknown'}
+									</td>
+									<td class="max-w-xs truncate px-6 py-4 text-sm text-gray-500 dark:text-gray-400" title={row.referrer}>
+										{row.referrer || '-'}
+									</td>
+									<td
+										class="max-w-xs truncate px-6 py-4 text-sm text-gray-500 dark:text-gray-400"
+										title={row.userAgent}
+									>
+										{row.userAgent || '-'}
+									</td>
 								</tr>
 							{/each}
 						</tbody>
@@ -325,32 +252,34 @@
 			<div class="mt-4 flex items-center justify-between">
 				<div class="flex items-center gap-3">
 					<p class="text-sm text-gray-500 dark:text-gray-400">
-						Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()} ({logData.totalRows}
-						entries)
+						Page {page} of {totalPages} ({logData.totalRows} entries)
 					</p>
 					<select
-						value={table.getState().pagination.pageSize}
-						onchange={(e) => table.setPageSize(Number(e.currentTarget.value))}
+						value={pageSize}
+						onchange={(e) => {
+							pageSize = Number(e.currentTarget.value);
+							goToPage(1);
+						}}
 						class="rounded-md border border-gray-600 bg-gray-700 px-2 py-1 text-sm text-white focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 focus:outline-none"
 					>
-						{#each PAGE_SIZES as size (size)}
+						{#each ALLOWED_PAGE_SIZES as size (size)}
 							<option value={size}>{size} / page</option>
 						{/each}
 					</select>
 				</div>
 				<div class="flex gap-2">
-					{#if table.getCanPreviousPage()}
+					{#if page > 1}
 						<button
-							onclick={() => table.previousPage()}
+							onclick={() => goToPage(page - 1)}
 							disabled={logLoading}
 							class="rounded-md bg-gray-700 px-3 py-2 text-sm font-medium text-gray-200 hover:bg-gray-600 disabled:opacity-50 dark:bg-gray-600 dark:hover:bg-gray-500"
 						>
 							Previous
 						</button>
 					{/if}
-					{#if table.getCanNextPage()}
+					{#if page < totalPages}
 						<button
-							onclick={() => table.nextPage()}
+							onclick={() => goToPage(page + 1)}
 							disabled={logLoading}
 							class="rounded-md bg-gray-700 px-3 py-2 text-sm font-medium text-gray-200 hover:bg-gray-600 disabled:opacity-50 dark:bg-gray-600 dark:hover:bg-gray-500"
 						>

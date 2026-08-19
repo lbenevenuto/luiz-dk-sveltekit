@@ -14,6 +14,9 @@ export const daysSchema = z.coerce
 	.refine((v) => (ALLOWED_DAYS as readonly number[]).includes(v))
 	.default(DEFAULT_DAYS);
 
+/** Same day range, but silently falling back instead of failing — for loads that must not 400. */
+export const lenientDaysSchema = daysSchema.catch(DEFAULT_DAYS);
+
 /** Zod schema coercing/validating a page size, defaulting to {@link DEFAULT_PAGE_SIZE}. */
 export const pageSizeSchema = z.coerce
 	.number()

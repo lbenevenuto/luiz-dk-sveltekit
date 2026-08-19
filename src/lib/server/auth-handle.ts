@@ -1,9 +1,16 @@
 import type { Handle } from '@sveltejs/kit';
 import { redirect } from '@sveltejs/kit';
 import { getClerkClient } from '$lib/server/clerk';
-import { getAuthorizedParties, isPublicRoute } from '$lib/server/routes';
+import { isPublicRoute } from '$lib/routes/public';
 import type { UserRole } from '../../app';
 import { logger } from '$lib/server/logger';
+
+/** Clerk authorized parties: dev, preview, and the deployed base URL. */
+function getAuthorizedParties(baseUrl?: string): string[] {
+	const parties = ['http://localhost:5173', 'http://localhost:4173'];
+	if (baseUrl) parties.push(baseUrl);
+	return parties;
+}
 
 export const authHandle: Handle = async ({ event, resolve }) => {
 	const { platform, url } = event;

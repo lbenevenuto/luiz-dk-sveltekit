@@ -1,4 +1,4 @@
-import { sanitizeIdentifier } from '$lib/utils/validation';
+import { getErrorMessage, sanitizeIdentifier } from '$lib/utils/validation';
 import { logger } from '$lib/server/logger';
 
 interface RateLimitResult {
@@ -68,7 +68,7 @@ export async function checkAnonymousRateLimit(
 		};
 	} catch (error) {
 		logger.error('rate_limit.check_failed', {
-			error: error instanceof Error ? error.message : String(error)
+			error: getErrorMessage(error)
 		});
 		// Fail open: allow the request if rate limiter fails
 		return { success: true };

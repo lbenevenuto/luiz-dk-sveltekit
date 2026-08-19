@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { daysSchema, pageSizeSchema } from './validation-schemas';
+import { daysSchema, lenientDaysSchema, pageSizeSchema } from './validation-schemas';
 
 describe('daysSchema', () => {
 	it('coerces and accepts allowed values', () => {
@@ -12,6 +12,18 @@ describe('daysSchema', () => {
 
 	it('rejects values outside the allowed list', () => {
 		expect(() => daysSchema.parse(15)).toThrow();
+	});
+});
+
+describe('lenientDaysSchema', () => {
+	it('accepts allowed values', () => {
+		expect(lenientDaysSchema.parse('30')).toBe(30);
+	});
+
+	it('falls back to the default when missing, invalid, or not allowed', () => {
+		expect(lenientDaysSchema.parse(null)).toBe(7);
+		expect(lenientDaysSchema.parse('abc')).toBe(7);
+		expect(lenientDaysSchema.parse('15')).toBe(7);
 	});
 });
 

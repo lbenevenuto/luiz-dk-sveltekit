@@ -1,9 +1,8 @@
 /**
  * Cache Adapters
- * KV for production, Redis for local development
+ * KV for production, in-memory for local development
  */
 
-import type Redis from 'ioredis';
 import { logger } from '$lib/server/logger';
 import { getErrorMessage } from '$lib/utils/validation';
 
@@ -14,7 +13,7 @@ export interface CacheAdapter {
 }
 
 /**
- * In-memory Cache Adapter (Local Development Fallback)
+ * In-memory Cache Adapter (Local Development)
  */
 export class InMemoryCacheAdapter implements CacheAdapter {
 	private store = new Map<string, { value: string; expiresAt: number | null }>();
@@ -70,38 +69,6 @@ export class KVAdapter implements CacheAdapter {
 			await this.kv.delete(key);
 		} catch (error) {
 			logger.error('cache.kv.delete_failed', { key, error: getErrorMessage(error) });
-		}
-	}
-}
-
-/**
- * Redis Cache Adapter (Local Development)
- */
-export class RedisAdapter implements CacheAdapter {
-	constructor(private redis: Redis) {}
-
-	async get(key: string): Promise<string | null> {
-		try {
-			return await this.redis.get(key);
-		} catch (error) {
-			logger.error('cache.redis.get_failed', { key, error: getErrorMessage(error) });
-			return null;
-		}
-	}
-
-	async set(key: string, value: string, ttl: number = 86400): Promise<void> {
-		try {
-			await this.redis.setex(key, ttl, value);
-		} catch (error) {
-			logger.error('cache.redis.set_failed', { key, error: getErrorMessage(error) });
-		}
-	}
-
-	async delete(key: string): Promise<void> {
-		try {
-			await this.redis.del(key);
-		} catch (error) {
-			logger.error('cache.redis.delete_failed', { key, error: getErrorMessage(error) });
 		}
 	}
 }

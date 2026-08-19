@@ -77,42 +77,20 @@ export async function insertUrl(
 	return db.insert(urls).values(values);
 }
 
-export async function findExistingUserUrlExpiring(
+export async function findExistingUrl(
 	db: DrizzleClient,
 	originalUrl: string,
-	userId: string
+	options: { userId?: string; expiring: boolean }
 ): Promise<Url | undefined> {
 	const res = await db
 		.select()
 		.from(urls)
-		.where(and(eq(urls.originalUrl, originalUrl), isNotNull(urls.expiresAt), eq(urls.userId, userId)));
-	return res[0] ?? undefined;
-}
-
-export async function findExistingUserUrlPermanent(
-	db: DrizzleClient,
-	originalUrl: string,
-	userId: string
-): Promise<Url | undefined> {
-	const res = await db
-		.select()
-		.from(urls)
-		.where(and(eq(urls.originalUrl, originalUrl), isNull(urls.expiresAt), eq(urls.userId, userId)));
-	return res[0] ?? undefined;
-}
-
-export async function findExistingGlobalUrlExpiring(db: DrizzleClient, originalUrl: string): Promise<Url | undefined> {
-	const res = await db
-		.select()
-		.from(urls)
-		.where(and(eq(urls.originalUrl, originalUrl), isNotNull(urls.expiresAt), isNull(urls.userId)));
-	return res[0] ?? undefined;
-}
-
-export async function findExistingGlobalUrlPermanent(db: DrizzleClient, originalUrl: string): Promise<Url | undefined> {
-	const res = await db
-		.select()
-		.from(urls)
-		.where(and(eq(urls.originalUrl, originalUrl), isNull(urls.expiresAt), isNull(urls.userId)));
+		.where(
+			and(
+				eq(urls.originalUrl, originalUrl),
+				options.expiring ? isNotNull(urls.expiresAt) : isNull(urls.expiresAt),
+				options.userId ? eq(urls.userId, options.userId) : isNull(urls.userId)
+			)
+		);
 	return res[0] ?? undefined;
 }

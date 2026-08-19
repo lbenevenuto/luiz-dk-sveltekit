@@ -3,14 +3,15 @@ import { redirect } from '@sveltejs/kit';
 import { fetchChartAnalytics } from '$lib/server/analytics';
 import { getUserUrls } from '$lib/server/db/queries/urls';
 import { logger } from '$lib/server/logger';
-import { getErrorMessage, parseDaysParam } from '$lib/utils/validation';
+import { getErrorMessage } from '$lib/utils/validation';
+import { lenientDaysSchema } from '$lib/server/validation-schemas';
 
 export const load: PageServerLoad = async ({ platform, url, locals }) => {
 	if (!locals.auth.userId) {
 		throw redirect(302, '/login');
 	}
 
-	const days = parseDaysParam(url.searchParams.get('days'));
+	const days = lenientDaysSchema.parse(url.searchParams.get('days'));
 
 	let userShortCodes: string[] = [];
 	try {

@@ -1,14 +1,8 @@
 <script lang="ts">
-	import { getContext } from 'svelte';
 	import { area as d3Area, curveMonotoneX } from 'd3-shape';
-	interface LayerCakeContext {
-		data: { subscribe: (fn: (v: Array<{ date: Date; value: number }>) => void) => () => void };
-		xGet: { subscribe: (fn: (v: (d: { date: Date; value: number }) => number) => void) => () => void };
-		yGet: { subscribe: (fn: (v: (d: { date: Date; value: number }) => number) => void) => () => void };
-		yScale: { subscribe: (fn: (v: (n: number) => number) => void) => () => void };
-	}
+	import { layerCake } from './context';
 
-	const { data, xGet, yGet, yScale } = getContext('LayerCake') as LayerCakeContext;
+	const { data, xGet, yGet, yScale } = layerCake<{ date: Date; value: number }>();
 
 	interface Props {
 		fill?: string;

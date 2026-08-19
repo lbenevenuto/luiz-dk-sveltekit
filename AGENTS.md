@@ -61,7 +61,6 @@ Uses [semantic-release](https://semantic-release.gitbook.io/semantic-release/) â
 - **Validation:** Zod v4
 - **Monitoring:** Sentry (`@sentry/sveltekit`)
 - **Cloudflare Bindings:** D1 (DB), KV (CACHE), Analytics Engine, Durable Objects
-- **Optional:** Redis (`ioredis` â€” local cache + ID generation fallback, see `.env.example`)
 
 ---
 
@@ -178,7 +177,7 @@ Export typed load: `export const load: PageServerLoad = async ({ platform, local
 
 ### Database Access
 
-Get DB via `getDb(platform)` from `$lib/server/db` or `getDatabaseAdapter(platform)` from `$lib/adapters/factory`. Drizzle query builder: `db.select().from(urls).where(eq(urls.shortCode, code))`. Schemas in `src/lib/server/db/schemas/` with barrel export from `index.ts`.
+Get DB via `getDatabaseAdapter(platform)` from `$lib/adapters/factory` (already resolved onto `locals.db` by `dbHandle`). Drizzle query builder: `db.select().from(urls).where(eq(urls.shortCode, code))`. Schemas in `src/lib/server/db/schemas/` with barrel export from `index.ts`.
 
 ### Logging
 
