@@ -6,3 +6,10 @@ reject:
   # TS 7.0.2 would break linting via ERESOLVE until typescript-eslint adds
   # TS 7 support. Revisit once typescript-eslint raises its typescript range.
   - typescript
+  # @tanstack/svelte-table 9.1.2 (stable) redesigns table creation: row-model
+  # getters like getCoreRowModel/getPaginationRowModel passed directly to
+  # createTable are replaced by a required `features: tableFeatures({...})`
+  # composition object. Our code (AnalyticsDashboard.svelte, admin/urls
+  # +page.svelte) still uses the old alpha.10 pattern and would break.
+  # Revisit as a dedicated migration task.
+  - '@tanstack/svelte-table'
