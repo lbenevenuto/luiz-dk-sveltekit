@@ -6,3 +6,16 @@ reject:
   # TS 7.0.2 would break linting via ERESOLVE until typescript-eslint adds
   # TS 7 support. Revisit once typescript-eslint raises its typescript range.
   - typescript
+  # layercake@11 rewrote the core library to use runes and removed the
+  # Svelte store API (getContext('LayerCake') returning Readable stores).
+  # Our chart layers (src/lib/components/charts/layercake/*.svelte) read
+  # $width/$height/$xScale/$yScale/$xGet/$yGet/$data via that store API, so
+  # this bump would break every chart component and needs a real migration,
+  # not a dependency-pass version bump. Revisit when doing that migration.
+  - layercake
+  # svix@2 is ESM-only (fine, project is "type": "module") but also changes
+  # Webhook.verify() to return undefined instead of the parsed payload
+  # (dist/src/webhook.ts now calls inner.verify(payload, headers, { jsonParse:
+  # false })). src/routes/api/webhooks/clerk/+server.ts relies on the
+  # returned parsed event, so this needs a code change, not just a bump.
+  - svix
