@@ -6,3 +6,9 @@ reject:
   # TS 7.0.2 would break linting via ERESOLVE until typescript-eslint adds
   # TS 7 support. Revisit once typescript-eslint raises its typescript range.
   - typescript
+  # layercake@11 rewrites the core library to use Svelte 5 runes and removes
+  # the store API for components. Our chart wrappers (src/lib/components/charts/layercake/*)
+  # consume LayerCake context via Svelte `Readable` stores ($xScale, $width, $height, ...),
+  # which v11 no longer provides. Upgrading requires rewriting those components -
+  # out of scope for a routine dependency-update pass.
+  - layercake
