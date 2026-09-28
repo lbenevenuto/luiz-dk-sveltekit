@@ -3,8 +3,7 @@ import * as Sentry from '@sentry/sveltekit';
 import type { HandleClientError } from '@sveltejs/kit';
 
 Sentry.init({
-	dsn: PUBLIC_SENTRY_DSN,
-	sendDefaultPii: true
+	dsn: PUBLIC_SENTRY_DSN
 });
 
 const myErrorHandler: HandleClientError = ({ error }) => {
