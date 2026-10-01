@@ -14,3 +14,8 @@ reject:
   # ...). Upgrading needs a full rewrite of those layers — out of scope for
   # a routine update pass.
   - layercake
+  # conventional-changelog-conventionalcommits@10.4.0 requires
+  # conventional-changelog-writer@9, but @semantic-release/release-notes-generator
+  # (14.1.x) still depends on writer ^8, so the release job fails in generateNotes.
+  # Revisit once release-notes-generator moves to writer 9.
+  - conventional-changelog-conventionalcommits
