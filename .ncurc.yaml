@@ -6,3 +6,11 @@ reject:
   # TS 7.0.2 would break linting via ERESOLVE until typescript-eslint adds
   # TS 7 support. Revisit once typescript-eslint raises its typescript range.
   - typescript
+  # layercake@11 ("The No More Stores Edition") rewrites the core to Svelte 5
+  # runes and removes the store-based component context API with no shim.
+  # src/lib/components/charts/layercake/context.ts and every chart layer
+  # (AxisX, AxisY, Bars, Area, Arcs, Line, Tooltip, BarTooltip) read
+  # `getContext('LayerCake')` as Readable stores ($xScale, $width, $height,
+  # ...). Upgrading needs a full rewrite of those layers — out of scope for
+  # a routine update pass.
+  - layercake
