@@ -19,3 +19,11 @@ reject:
   # (14.1.x) still depends on writer ^8, so the release job fails in generateNotes.
   # Revisit once release-notes-generator moves to writer 9.
   - conventional-changelog-conventionalcommits
+  # wrangler is intentionally exact-pinned (4.142.0); not auto-upgraded.
+  - wrangler
+  # @sveltejs/kit@3 drops svelte.config.js (config_file_unsupported: must be
+  # passed via the sveltekit(...) vite plugin) and @sveltejs/adapter-cloudflare@8
+  # is its companion. Needs a coordinated config migration — out of scope for a
+  # routine update pass.
+  - '@sveltejs/kit'
+  - '@sveltejs/adapter-cloudflare'
