@@ -1,0 +1,144 @@
+schema_version: 1.0.0
+unit_id: engineering
+reviewer: OS bootstrap source inspection
+reviewed_on: '2026-10-12'
+sources:
+  scripts/engineering_quality/__init__.py: 3414f94e94028825bc9c290d57a9eb1ae4567058b8cf8ec338990781006646db
+  scripts/engineering_quality/change_scope.py: 73307f9812a184ab483eb06ae4a57d6d1e281f7466a589bdc305962c76da2705
+  scripts/engineering_quality/change_validation.py: efc7d590735d92077ed3f96f41a8c4f19fa97bc92d50343b7183f18b09eae879
+  scripts/engineering_quality/checkpoint.py: 6c9b7cd7843807029e6e2f247b7d8997624affb912ee352a03eb30ff38764ece
+  scripts/engineering_quality/cli.py: d31d6a6da1ab5b7007c20d512a210f3b6966639e95cb6f1896d03fa446ba7464
+  scripts/engineering_quality/continuity.py: 6c3cea4660297139188d107eaf6aa09a0efed56c074b3871808e17f559c66434
+  scripts/engineering_quality/continuity_history.py: 9a6102abcf9a9223969a41979152b5531b614673a24e5a284fe7598ff7ca06b4
+  scripts/engineering_quality/coverage.py: 6c22fd746589ce06e50cd54f834fe2b4f77f9988f8921191e5df3798307177d7
+  scripts/engineering_quality/duplication.py: 6d62704da8d47c8de7b13abae94bffccf2efaa1f6a743aff57877d5ff76afe23
+  scripts/engineering_quality/evidence.py: d9fa4fa8ffd1c256e50e7a7e297d147db2e776bf6dc5ed399168f873d3a66761
+  scripts/engineering_quality/legacy.py: 9b4f2c4b3b50fdf23996d853bc6ff0829b66c2041ccc323078fe5da77e1b1029
+  scripts/engineering_quality/policies.py: 5b6aa09a07af86abb2a2a44f5fc2b5e8cb8fa871b163b4bfce4e48b6c19a022c
+  scripts/engineering_quality/python_clones.py: ad9bcd6c153d60426dd6097e29391683016e443542b2702440683e300f42b93f
+  scripts/engineering_quality/recovery.py: a2fd8b76e6ed804d6b6ac11003a7839205d7ac0b8e5c6d213194fd324dd106d5
+  scripts/engineering_quality/sources.py: 7b99381080e8498f1d9ba476f21031a255cd46d8fba0434daa605bf102cac59b
+  scripts/engineering_quality/stack.py: 6bc617b547bfde9fc5fc15e2b61043e6eb987936223a0dbc742e2b7f41c7ee19
+  scripts/engineering_quality/structure.py: f8fe1861896f1646b80873eaf06797a602d3f07e08739dc4510a1c1416ce8301
+  scripts/validate_engineering_quality.py: c39f237e048121377aa6fdc5f513ff2b9f20b8387e1f5d00119badf7f2f601d8
+  scripts/validate_file_size_policy.py: 2e3e2a00039e0265febd4bfb59d163d92686d5c68cb6e33ae8b4409d9ce71b84
+artifacts:
+  docs/evidence/canonical-engineering-decisions.yml: 353498f0fa43cc4c293989863e4325aa5cdd1fdbe10659dabad9c5382d0e80f7
+  docs/evidence/engineering-source-inspection.jsonl: a2794d294541b002914d9751a9edf6977cca943ae74f1d47d4a1e870c7ea5539
+investigation:
+  context: Review the actual OS-owned engineering component, its public definitions
+    and consumer boundary; preserve unchanged inherited debt while enforcing evidence
+    for changed implementation.
+  searches:
+  - command: &id001
+    - /private/tmp/claude-501/-Users-luiz-Projects-Personal-agentic-delivery-os/beef953a-1025-4848-8464-f8a1fbc3a814/scratchpad/venv/bin/python3
+    - -c
+    - "import ast, hashlib, json, pathlib, sys\nfor name in json.loads(sys.argv[1]):\n\
+      \ p = pathlib.Path(name)\n item = {\"path\": name, \"sha256\": hashlib.sha256(p.read_bytes()).hexdigest()}\n\
+      \ if p.suffix == \".py\":\n  tree = ast.parse(p.read_text())\n  item[\"definitions\"\
+      ] = [n.name for n in tree.body if isinstance(n, (ast.FunctionDef, ast.ClassDef))]\n\
+      \ print(json.dumps(item, sort_keys=True))\n"
+    - '["scripts/engineering_quality/__init__.py", "scripts/engineering_quality/change_scope.py",
+      "scripts/engineering_quality/change_validation.py", "scripts/engineering_quality/checkpoint.py",
+      "scripts/engineering_quality/cli.py", "scripts/engineering_quality/continuity.py",
+      "scripts/engineering_quality/continuity_history.py", "scripts/engineering_quality/coverage.py",
+      "scripts/engineering_quality/duplication.py", "scripts/engineering_quality/evidence.py",
+      "scripts/engineering_quality/legacy.py", "scripts/engineering_quality/policies.py",
+      "scripts/engineering_quality/python_clones.py", "scripts/engineering_quality/recovery.py",
+      "scripts/engineering_quality/sources.py", "scripts/engineering_quality/stack.py",
+      "scripts/engineering_quality/structure.py", "scripts/validate_engineering_quality.py",
+      "scripts/validate_file_size_policy.py"]'
+    scope: Enumerate public definitions of the selected OS-owned modules; consumer
+      files are not enrolled.
+    result: Source inventory and Python syntax inspected successfully; canonical component
+      responsibility reviewed in the linked decision catalog.
+    artifact: docs/evidence/engineering-source-inspection.jsonl
+  references:
+  - docs/evidence/canonical-engineering-decisions.yml
+  - scripts/engineering_quality/__init__.py
+  - scripts/engineering_quality/change_scope.py
+  - scripts/engineering_quality/change_validation.py
+  - scripts/engineering_quality/checkpoint.py
+  - scripts/engineering_quality/cli.py
+  - scripts/engineering_quality/continuity.py
+  - scripts/engineering_quality/continuity_history.py
+  - scripts/engineering_quality/coverage.py
+  - scripts/engineering_quality/duplication.py
+  - scripts/engineering_quality/evidence.py
+  - scripts/engineering_quality/legacy.py
+  - scripts/engineering_quality/policies.py
+  - scripts/engineering_quality/python_clones.py
+  - scripts/engineering_quality/recovery.py
+  - scripts/engineering_quality/sources.py
+  - scripts/engineering_quality/stack.py
+  - scripts/engineering_quality/structure.py
+  - scripts/validate_engineering_quality.py
+  - scripts/validate_file_size_policy.py
+reuse:
+  decision: reuse
+  rationale: Extend coverage with one evidence validator, shared by working-tree,
+    index and commit gates; use one policy inventory for inheritance checks and export.
+  alternatives: Separate copies of validators and policy names were rejected because
+    they drift. A new class hierarchy was rejected where the operation has no state,
+    invariant or lifecycle requiring a class.
+  candidates:
+  - scripts/engineering_quality/__init__.py
+  - scripts/engineering_quality/change_scope.py
+  - scripts/engineering_quality/change_validation.py
+  - scripts/engineering_quality/checkpoint.py
+  - scripts/engineering_quality/cli.py
+  - scripts/engineering_quality/continuity.py
+  - scripts/engineering_quality/continuity_history.py
+  - scripts/engineering_quality/coverage.py
+  - scripts/engineering_quality/duplication.py
+  - scripts/engineering_quality/evidence.py
+  - scripts/engineering_quality/legacy.py
+  - scripts/engineering_quality/policies.py
+  - scripts/engineering_quality/python_clones.py
+  - scripts/engineering_quality/recovery.py
+  - scripts/engineering_quality/sources.py
+  - scripts/engineering_quality/stack.py
+  - scripts/engineering_quality/structure.py
+  - scripts/validate_engineering_quality.py
+  - scripts/validate_file_size_policy.py
+architecture:
+  responsibilities: One source inventory supplies structural and documentary gates.
+    Continuity validates facts; history validates archives and the Git base; checkpoint
+    records explicit supplied facts; recovery only reconciles files and Git.
+  boundaries: Read-only validators never write state or stage files. The explicit
+    recorder owns canonical state and revision writes. Git snapshot selection is shared
+    with commit gates; hDS supplies YAML and Markdown parsing only.
+  abstraction: Small pure functions validate facts and references. The explicit recorder
+    manages a bounded file-write lifecycle; test fixture classes own setup/cleanup
+    state. No additional inheritance hierarchy is required.
+  rationale: Reuse selected(), snapshot(), local(), digest() and hDS parsing. Separate
+    history, current consistency and recording so commit and restart do not duplicate
+    implementations or invent state.
+  duplication_review: Canonical inventory, parsing and snapshot helpers are shared.
+    Lexical and Python-clone sensors supplement review; semantic duplication is not
+    automatically proven absent.
+  risks: Saved facts can be incomplete or dishonest. Abrupt failures can occur between
+    file writes and are detected as inconsistent; preserve the request and reconcile.
+    Directory loss requires committed/pushed backup. No automatic capture of unsaved
+    chat.
+  cohesion_review: Inspect modules above 300 lines for coherent orchestration or declarative
+    capsule templates; the hard 500-line limit still applies and no size waiver is
+    introduced.
+resolution:
+  kind: canonical_export
+  cause_or_need: Review the actual OS-owned engineering component, its public definitions
+    and consumer boundary; preserve unchanged inherited debt while enforcing evidence
+    for changed implementation.
+  official_mechanisms: Use the canonical OS modules and hDS public validation entrypoints,
+    keeping index and commit checks on the same implementation.
+  solution: Extend coverage with one evidence validator, shared by working-tree, index
+    and commit gates; use one policy inventory for inheritance checks and export.
+  regression: Source inspection below checks syntax and records hashes. Full release
+    regressions are separate release evidence; consumer readiness is not certified.
+  workaround: false
+validation:
+- command: *id001
+  exit_code: 0
+  result: Executed source inspection produced the attached path/hash/public-definition
+    inventory. This is structural evidence, not a claim of product correctness.
+  artifact: docs/evidence/engineering-source-inspection.jsonl

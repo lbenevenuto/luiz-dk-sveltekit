@@ -1,0 +1,109 @@
+schema_version: 1.0.0
+unit_id: documentation
+reviewer: OS bootstrap source inspection
+reviewed_on: '2026-10-12'
+sources:
+  scripts/hds_gate.py: 82cc2fc2fd0bda73c9eee48d2549b6531187b35c1ab16fb684b37e5b5a365c69
+  scripts/hds_validation/__init__.py: 3c3dc2279f863ac000a129a7d48e5663a03bb863b068d8b79c5e6771122e64ad
+  scripts/hds_validation/common.py: 7204dadc493d0763de974c5d03fffe9c205b65e5d0080b5b7b9cfa394d5e2ea0
+  scripts/hds_validation/documents.py: 6a338afb8825ee380efbc6b3572bd0ddf11ead8642302322c80fe56ed9af216c
+  scripts/hds_validation/evolution.py: 494b279092d99927cdbf616c7b78a6047398b4edcc13ed7e16fcf67ca932632b
+  scripts/hds_validation/links.py: 721dfb77986ac24539f390ef5c46ca3c1a9b79e221892f356aa3636695412670
+  scripts/hds_validation/registries.py: e96d85b958ad055d91ff5ed152b72e4e8e1bfa9c718facfae64f18904063fec2
+  scripts/hds_validation/scope.py: a11eed044c3f025fc11ded32c7b1c87b94ab7080df1c88c3ec380bc66595732a
+  scripts/project_hds.py: 7ce40399ec97ffafe188fd891cf68f910296a558aaaf757dc3ce0ad56e449c12
+  scripts/validate_hds.py: 8d92461452ad480d145d2873ea476cb7e5c8aee0dde6da6c5c5c5a79732e614a
+  scripts/validate_project_hds.py: faefb12a2b5ae36fd1a73bb3b560e4a94789cdf73493369f9227a8f535083ebd
+artifacts:
+  docs/evidence/canonical-engineering-decisions.yml: 353498f0fa43cc4c293989863e4325aa5cdd1fdbe10659dabad9c5382d0e80f7
+  docs/evidence/documentation-source-inspection.jsonl: 1f1c824b9321d5da0fce73074a69bd54d8d9954d7aee8df5f569fc73bb302ad3
+investigation:
+  context: Review the actual OS-owned documentation component, its public definitions
+    and consumer boundary; preserve unchanged inherited debt while enforcing evidence
+    for changed implementation.
+  searches:
+  - command: &id001
+    - /private/tmp/claude-501/-Users-luiz-Projects-Personal-agentic-delivery-os/beef953a-1025-4848-8464-f8a1fbc3a814/scratchpad/venv/bin/python3
+    - -c
+    - "import ast, hashlib, json, pathlib, sys\nfor name in json.loads(sys.argv[1]):\n\
+      \ p = pathlib.Path(name)\n item = {\"path\": name, \"sha256\": hashlib.sha256(p.read_bytes()).hexdigest()}\n\
+      \ if p.suffix == \".py\":\n  tree = ast.parse(p.read_text())\n  item[\"definitions\"\
+      ] = [n.name for n in tree.body if isinstance(n, (ast.FunctionDef, ast.ClassDef))]\n\
+      \ print(json.dumps(item, sort_keys=True))\n"
+    - '["scripts/hds_gate.py", "scripts/hds_validation/__init__.py", "scripts/hds_validation/common.py",
+      "scripts/hds_validation/documents.py", "scripts/hds_validation/evolution.py",
+      "scripts/hds_validation/links.py", "scripts/hds_validation/registries.py", "scripts/hds_validation/scope.py",
+      "scripts/project_hds.py", "scripts/validate_hds.py", "scripts/validate_project_hds.py"]'
+    scope: Enumerate public definitions of the selected OS-owned modules; consumer
+      files are not enrolled.
+    result: Source inventory and Python syntax inspected successfully; canonical component
+      responsibility reviewed in the linked decision catalog.
+    artifact: docs/evidence/documentation-source-inspection.jsonl
+  references:
+  - docs/evidence/canonical-engineering-decisions.yml
+  - scripts/hds_gate.py
+  - scripts/hds_validation/__init__.py
+  - scripts/hds_validation/common.py
+  - scripts/hds_validation/documents.py
+  - scripts/hds_validation/evolution.py
+  - scripts/hds_validation/links.py
+  - scripts/hds_validation/registries.py
+  - scripts/hds_validation/scope.py
+  - scripts/project_hds.py
+  - scripts/validate_hds.py
+  - scripts/validate_project_hds.py
+reuse:
+  decision: reuse
+  rationale: Reuse hds_validation modules through project_hds and hds_gate. Preserve
+    hDS independence from source-code quality.
+  alternatives: Separate copies of validators and policy names were rejected because
+    they drift. A new class hierarchy was rejected where the operation has no state,
+    invariant or lifecycle requiring a class.
+  candidates:
+  - scripts/hds_gate.py
+  - scripts/hds_validation/__init__.py
+  - scripts/hds_validation/common.py
+  - scripts/hds_validation/documents.py
+  - scripts/hds_validation/evolution.py
+  - scripts/hds_validation/links.py
+  - scripts/hds_validation/registries.py
+  - scripts/hds_validation/scope.py
+  - scripts/project_hds.py
+  - scripts/validate_hds.py
+  - scripts/validate_project_hds.py
+architecture:
+  responsibilities: hDS owns document parsing, identities, reciprocal pairs, SemVer,
+    links and assets. The OS adapter owns project adoption and Git scope.
+  boundaries: hDS owns document parsing, identities, reciprocal pairs, SemVer, links
+    and assets. The OS adapter owns project adoption and Git scope.
+  abstraction: Small functions share hDS parsing and OS scope utilities. The adapter
+    does not inspect or repair product implementation.
+  rationale: Reuse hds_validation modules through project_hds and hds_gate. Preserve
+    hDS independence from source-code quality.
+  duplication_review: Canonical inventory, parsing and snapshot helpers are shared.
+    Lexical and Python-clone sensors supplement review; semantic duplication is not
+    automatically proven absent.
+  risks: Recorded evidence can be dishonest; hashes prove freshness, not truth. Human/agent
+    review and relevant behavior tests remain necessary. Product code is never enrolled
+    by infrastructure export.
+  cohesion_review: Inspect modules above 300 lines for coherent orchestration or declarative
+    capsule templates; the hard 500-line limit still applies and no size waiver is
+    introduced.
+resolution:
+  kind: canonical_export
+  cause_or_need: Review the actual OS-owned documentation component, its public definitions
+    and consumer boundary; preserve unchanged inherited debt while enforcing evidence
+    for changed implementation.
+  official_mechanisms: Use the canonical OS modules and hDS public validation entrypoints,
+    keeping index and commit checks on the same implementation.
+  solution: Reuse hds_validation modules through project_hds and hds_gate. Preserve
+    hDS independence from source-code quality.
+  regression: Source inspection below checks syntax and records hashes. Full release
+    regressions are separate release evidence; consumer readiness is not certified.
+  workaround: false
+validation:
+- command: *id001
+  exit_code: 0
+  result: Executed source inspection produced the attached path/hash/public-definition
+    inventory. This is structural evidence, not a claim of product correctness.
+  artifact: docs/evidence/documentation-source-inspection.jsonl

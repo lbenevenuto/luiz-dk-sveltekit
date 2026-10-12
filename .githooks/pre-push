@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+set -euo pipefail
+while read -r local_ref local_sha remote_ref remote_sha; do
+  [[ "$local_sha" =~ ^0+$ ]] && continue
+  if [[ "$remote_sha" =~ ^0+$ ]]; then
+    python3 scripts/validate_commit.py --target-ref "$local_sha"
+  else
+    python3 scripts/validate_commit.py --target-ref "$local_sha" --base-ref "$remote_sha"
+  fi
+done

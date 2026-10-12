@@ -1,0 +1,19 @@
+{"definitions": [], "path": "scripts/audit_legacy.py", "sha256": "5dd8c96dcad3942456db0322d0e02b73456459ff87d8f5b16a17380d10f55307"}
+{"path": "scripts/finalize_bootstrap_commit.sh", "sha256": "c89136353b71aca7ae1462bf179590d09e558495034d0c889e55fc7f7fd28c8a"}
+{"path": "scripts/install-git-hooks.sh", "sha256": "9f3e2a5b356dc3dddd6a7dcb36ca776876e3a16fb033c431bf5ec6c69d436027"}
+{"definitions": ["main"], "path": "scripts/record_checkpoint.py", "sha256": "5516aa103fbd23a9caacbe178b88b37bf35e85817c84e87d87d175ba7be592e6"}
+{"definitions": ["main"], "path": "scripts/resume_project.py", "sha256": "1432bf62d60b54c9bb08f18a27103302ed4c9138c5d2e5788e6aa266722930b6"}
+{"path": "scripts/run_all_checks.sh", "sha256": "f1fc8f20de700f7aeb28f50204e5bdffb7a4e3cc776b72713ebb2891c9982256"}
+{"definitions": [], "path": "scripts/validate_baseline_commit.py", "sha256": "1495295e8546815284109687170d1585921e6acbc066e47d203b7d7ec27a81a7"}
+{"definitions": [], "path": "scripts/validate_briefing_bootstrap.py", "sha256": "84ac8adadba0c2e115a056a63418c3ed0ebfc7ea21c73c3b3f211b7de3dd1987"}
+{"definitions": ["main"], "path": "scripts/validate_commit.py", "sha256": "6b9a7260b6e559ec53156cd6696f9a2f526598614b8550602d18cbb218afb867"}
+{"definitions": ["main"], "path": "scripts/validate_continuity.py", "sha256": "6476951dae2e070605c591496945aab155ee48187b48fec4582238bf5156323e"}
+{"definitions": [], "path": "scripts/validate_engineering_guardrails.py", "sha256": "4cd83d1791e3453bd6c3874d4a05cfc2f4872b29376631fed729174a88940939"}
+{"definitions": [], "path": "scripts/validate_generated_metadata.py", "sha256": "7e5ac59331e1a40d52c21ecc6244ca7227722d244e38a271f8e200598497c4e3"}
+{"definitions": [], "path": "scripts/validate_git_repository.py", "sha256": "14d26cfe82c074613d68dcb7c7fd7269d65e4f0b09cb76e4f51adb3847d1086c"}
+{"definitions": [], "path": "scripts/validate_input_assets_scaffold.py", "sha256": "1c266284901d568c1356c9524017040107017b524db6a9a6cd33ccc493068a9e"}
+{"definitions": [], "path": "scripts/validate_next_agent_startup.py", "sha256": "2a751cdc4d70e2f09d6d80d736373623e4c4a0d354836c79bcaaf935147c35aa"}
+{"definitions": [], "path": "scripts/validate_project_capsule.py", "sha256": "efb72db4a920809fbb58458a4d3547dd07d6f7087c446707d402a9a4365e1b47"}
+{"definitions": ["main"], "path": "scripts/validate_staged.py", "sha256": "5f21386ece0cfbb7d92329292ab46b83c41c8d25e4dac1e032ab865342fdb66a"}
+{"definitions": [], "path": "scripts/validate_v154_project_policy.py", "sha256": "ab070f080159d0cd816aabee0978f534bd560af64d50141c431e42ffb82f6fd0"}
+{"definitions": [], "path": "scripts/validate_visual_review_policy.py", "sha256": "d69523cc42ca2cfb478c48370f2ff724eedcb19711769be9da187a58af6cf311"}

@@ -1,0 +1,18 @@
+---
+doc_id: OS-AGENT-PROGRESS-MD
+title: AGENT_PROGRESS.md
+owner: hyst
+lang: en
+audience: tech
+tags:
+- agentic-os
+document_type: guide
+pair_required: false
+status: review
+version: 0.1.0
+last_updated: '2026-10-12'
+---
+
+# AGENT_PROGRESS.md
+
+Project directory, Git repository, capsule, hDS discovery docs and validation scripts were created.

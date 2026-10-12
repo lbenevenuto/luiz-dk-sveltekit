@@ -1,0 +1,18 @@
+---
+doc_id: OS-AGENT-VALIDATION-MD
+title: AGENT_VALIDATION.md
+owner: hyst
+lang: en
+audience: tech
+tags:
+- agentic-os
+document_type: guide
+pair_required: false
+status: review
+version: 0.1.0
+last_updated: '2026-10-12'
+---
+
+# AGENT_VALIDATION.md
+
+Bootstrap validation must be run with `bash scripts/run_all_checks.sh`. Bootstrap finalization must be confirmed with `bash scripts/finalize_bootstrap_commit.sh` or `python3 scripts/validate_baseline_commit.py`.

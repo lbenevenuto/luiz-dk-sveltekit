@@ -1,0 +1,229 @@
+schema_version: 1.0.0
+units:
+- unit_id: documentation
+  sources:
+    scripts/hds_gate.py: 82cc2fc2fd0bda73c9eee48d2549b6531187b35c1ab16fb684b37e5b5a365c69
+    scripts/hds_validation/__init__.py: 3c3dc2279f863ac000a129a7d48e5663a03bb863b068d8b79c5e6771122e64ad
+    scripts/hds_validation/common.py: 7204dadc493d0763de974c5d03fffe9c205b65e5d0080b5b7b9cfa394d5e2ea0
+    scripts/hds_validation/documents.py: 6a338afb8825ee380efbc6b3572bd0ddf11ead8642302322c80fe56ed9af216c
+    scripts/hds_validation/evolution.py: 494b279092d99927cdbf616c7b78a6047398b4edcc13ed7e16fcf67ca932632b
+    scripts/hds_validation/links.py: 721dfb77986ac24539f390ef5c46ca3c1a9b79e221892f356aa3636695412670
+    scripts/hds_validation/registries.py: e96d85b958ad055d91ff5ed152b72e4e8e1bfa9c718facfae64f18904063fec2
+    scripts/hds_validation/scope.py: a11eed044c3f025fc11ded32c7b1c87b94ab7080df1c88c3ec380bc66595732a
+    scripts/project_hds.py: 7ce40399ec97ffafe188fd891cf68f910296a558aaaf757dc3ce0ad56e449c12
+    scripts/validate_hds.py: 8d92461452ad480d145d2873ea476cb7e5c8aee0dde6da6c5c5c5a79732e614a
+    scripts/validate_project_hds.py: faefb12a2b5ae36fd1a73bb3b560e4a94789cdf73493369f9227a8f535083ebd
+  human_doc: docs/tech/documentation-human.md
+  ai_doc: docs/tech/documentation-ai.md
+  review_evidence: docs/evidence/documentation-review.md
+  reviewed_by: OS bootstrap source inspection
+  reviewed_on: '2026-10-12'
+  business_rule_docs: []
+  no_business_rule_reason: Delivery infrastructure; consumer business rules require
+    separate domain documentation.
+  contracts: 'Input: an explicit project root, actual source files, YAML registries
+    and optional real Git base. Output: diagnostics and nonzero exit status on a blocking
+    error. Bootstrap writes only during an explicitly invoked creation operation.'
+  invariants: hDS is mandatory. Product and standard versions are independent. Technical
+    documents have reciprocal human/AI identities. Source changes invalidate their
+    stored coverage hashes. No critical violation is converted into success.
+  failure_modes: Malformed metadata, missing documents, broken links, stale source
+    hashes, absent review evidence, new or edited source over 500 lines and detected
+    duplicate blocks involving touched files fail completion. Untouched inherited
+    debt is queued. Runtime/tool errors also fail. A passing lexical detector does
+    not prove absence of semantic duplication.
+  validation: Run bash scripts/run_all_checks.sh. OS regression tests generate an
+    isolated capsule and inject violations to verify failures. Product lint, typecheck,
+    tests and build must run through declared stack checks once product implementation
+    exists.
+  business_impact: Infrastructure enforces delivery governance. Product rules must
+    be authored separately under docs/business, with human/AI pairs and references
+    from coverage units whenever implementation introduces or changes those rules.
+  responsibility: Validate hDS document metadata, human/AI pairs, revisions, local
+    links, assets and documentary exceptions. Parsing is deterministic and offline;
+    document truth and semantic equivalence require agent review. This module never
+    repairs product code.
+  engineering_evidence: docs/evidence/documentation-engineering.yml
+  document_hashes:
+    docs/tech/documentation-human.md: 1bec7b0c6095d4513361e86468da003a56fbce7ccecae56d0bed099a565e6401
+    docs/tech/documentation-ai.md: 4e970226251a8aa25addaba384953ebf81f0bcaaaabc68c200fbbc2a237618a7
+    docs/evidence/documentation-review.md: a92429d76b3646874cc4221d9b88d65cb345f8107db3a87c9e68c3fd3f27b731
+    docs/evidence/documentation-engineering.yml: 9a5977872d7ae66ae0084bd8e89543b7c0c8e64f4717d6a3a350d94ce50afcad
+- unit_id: engineering
+  sources:
+    scripts/engineering_quality/__init__.py: 3414f94e94028825bc9c290d57a9eb1ae4567058b8cf8ec338990781006646db
+    scripts/engineering_quality/change_scope.py: 73307f9812a184ab483eb06ae4a57d6d1e281f7466a589bdc305962c76da2705
+    scripts/engineering_quality/change_validation.py: efc7d590735d92077ed3f96f41a8c4f19fa97bc92d50343b7183f18b09eae879
+    scripts/engineering_quality/checkpoint.py: 6c9b7cd7843807029e6e2f247b7d8997624affb912ee352a03eb30ff38764ece
+    scripts/engineering_quality/cli.py: d31d6a6da1ab5b7007c20d512a210f3b6966639e95cb6f1896d03fa446ba7464
+    scripts/engineering_quality/continuity.py: 6c3cea4660297139188d107eaf6aa09a0efed56c074b3871808e17f559c66434
+    scripts/engineering_quality/continuity_history.py: 9a6102abcf9a9223969a41979152b5531b614673a24e5a284fe7598ff7ca06b4
+    scripts/engineering_quality/coverage.py: 6c22fd746589ce06e50cd54f834fe2b4f77f9988f8921191e5df3798307177d7
+    scripts/engineering_quality/duplication.py: 6d62704da8d47c8de7b13abae94bffccf2efaa1f6a743aff57877d5ff76afe23
+    scripts/engineering_quality/evidence.py: d9fa4fa8ffd1c256e50e7a7e297d147db2e776bf6dc5ed399168f873d3a66761
+    scripts/engineering_quality/legacy.py: 9b4f2c4b3b50fdf23996d853bc6ff0829b66c2041ccc323078fe5da77e1b1029
+    scripts/engineering_quality/policies.py: 5b6aa09a07af86abb2a2a44f5fc2b5e8cb8fa871b163b4bfce4e48b6c19a022c
+    scripts/engineering_quality/python_clones.py: ad9bcd6c153d60426dd6097e29391683016e443542b2702440683e300f42b93f
+    scripts/engineering_quality/recovery.py: a2fd8b76e6ed804d6b6ac11003a7839205d7ac0b8e5c6d213194fd324dd106d5
+    scripts/engineering_quality/sources.py: 7b99381080e8498f1d9ba476f21031a255cd46d8fba0434daa605bf102cac59b
+    scripts/engineering_quality/stack.py: 6bc617b547bfde9fc5fc15e2b61043e6eb987936223a0dbc742e2b7f41c7ee19
+    scripts/engineering_quality/structure.py: f8fe1861896f1646b80873eaf06797a602d3f07e08739dc4510a1c1416ce8301
+    scripts/validate_engineering_quality.py: c39f237e048121377aa6fdc5f513ff2b9f20b8387e1f5d00119badf7f2f601d8
+    scripts/validate_file_size_policy.py: 2e3e2a00039e0265febd4bfb59d163d92686d5c68cb6e33ae8b4409d9ce71b84
+  human_doc: docs/tech/engineering-human.md
+  ai_doc: docs/tech/engineering-ai.md
+  review_evidence: docs/evidence/engineering-review.md
+  reviewed_by: OS bootstrap source inspection
+  reviewed_on: '2026-10-12'
+  business_rule_docs: []
+  no_business_rule_reason: Delivery infrastructure; consumer business rules require
+    separate domain documentation.
+  contracts: 'Input: an explicit project root, actual source files, YAML registries
+    and optional real Git base. Output: diagnostics and nonzero exit status on a blocking
+    error. Bootstrap writes only during an explicitly invoked creation operation.'
+  invariants: hDS is mandatory. Product and standard versions are independent. Technical
+    documents have reciprocal human/AI identities. Source changes invalidate their
+    stored coverage hashes. No critical violation is converted into success.
+  failure_modes: Malformed metadata, missing documents, broken links, stale source
+    hashes, absent review evidence, new or edited source over 500 lines and detected
+    duplicate blocks involving touched files fail completion. Untouched inherited
+    debt is queued. Runtime/tool errors also fail. A passing lexical detector does
+    not prove absence of semantic duplication.
+  validation: Run bash scripts/run_all_checks.sh. OS regression tests generate an
+    isolated capsule and inject violations to verify failures. Product lint, typecheck,
+    tests and build must run through declared stack checks once product implementation
+    exists.
+  business_impact: Infrastructure enforces delivery governance. Product rules must
+    be authored separately under docs/business, with human/AI pairs and references
+    from coverage units whenever implementation introduces or changes those rules.
+  responsibility: Inspect source size and syntax, detect duplicate blocks and Python
+    function clones, require reviewed documentation coverage and explicit product-stack
+    checks. A blocking finding returns failure. This module does not automatically
+    refactor implementation.
+  engineering_evidence: docs/evidence/engineering-engineering.yml
+  document_hashes:
+    docs/tech/engineering-human.md: 9cbd42501c21de3c44507cd11fb5bb5e431fb831ac13bb5305d06205d0d8b2cc
+    docs/tech/engineering-ai.md: 39c5e7cfb8a38f078f32262b013e31c727cd0fc2dc6ebf0f1f2d774a9b6a2bb5
+    docs/evidence/engineering-review.md: 34ba4e9f5035a7e7e42dea3fd0e234e7755ba116952b9e69cd5869617fba4912
+    docs/evidence/engineering-engineering.yml: 63b7468e73ebe97ff1b3dfd3b95aee7ae01263fb1b40af319c97b9e95788a4e2
+- unit_id: visual-review
+  sources:
+    tooling/visual-review/bin/visual-review.mjs: 86b6f38b413bfd3b91793e1822f1b7f8014e6b451647d6e9d9c23af1b5bb6b97
+    tooling/visual-review/examples/visual-review.config.mjs: d29e874a18b070b3b2a8929b90c8b5e632c8090747aa519bd20356d9411f57e7
+    tooling/visual-review/src/browser-validation.mjs: bdb771363127651e404c3cb7e7f1ac071eb07664b1edb95a4f029eb651ab38e5
+    tooling/visual-review/src/capture-sequence.mjs: a441a92921eb84347f1b0aef15a888f698db1b5e04202ba2e63974ebe0e152fd
+    tooling/visual-review/src/capture.mjs: 14cdfb0cec775a7e0ba6eacc560e0a17974ba836a264f39687b6f31fa5f44034
+    tooling/visual-review/src/comparison.mjs: 25f160f235ba27e3772a2fc7a096038137ba50aeec19a13cb775e0f8cd3238db
+    tooling/visual-review/src/config.mjs: b113795275e5dad7732f9e2b47e8394b70bd1f7db210cf15b63b39f15d630781
+    tooling/visual-review/src/index.mjs: cbebdfb20606b531be58e9afaef4d85b9050fcc513e2171f0021935dda5743e6
+    tooling/visual-review/src/interactions.mjs: 98f97461fb3ccdbd89ab5444877aa2ee9aab4c0057dfa40e1e986540c926c6f2
+    tooling/visual-review/src/png-comparison.mjs: 5bfb60b765281e1114a90831ec49cfdbb050f202a67472aaa1e834bda3533442
+    tooling/visual-review/src/report.mjs: 0e645f850fbc6d14ea4c1067fb54f98a07636e5d145b07d3e963527e339226e2
+    tooling/visual-review/src/review.mjs: 3b55069fffdf502e44c6ea8dc50da4b1ea32b704196ef889ad66ed418d2f0b6c
+    tooling/visual-review/src/run.mjs: c2bb99b21155b29b3df1a2c066752679a814f5d79887c66311d4f95a1f641c0c
+    tooling/visual-review/src/util.mjs: b1d204a46df2e09430252f9fedaf3e193499e7342e0a3e87bc1a2ace3eca5bef
+    tooling/visual-review/src/validation.mjs: 6a1a5673772e4873fa3d6046b1ae5ba7d2e740a3f52bee0a6c8003bb60716cd2
+    tooling/visual-review/tests/browser-validation.test.mjs: f93502998f33bebe70538b0b48616a632d115802bbfddfa1f3cb90354ab1a501
+    tooling/visual-review/tests/config-contract.test.mjs: d1403521dcdfcf77c62a5cb0308bfb7963b97e3106c2b2730cbacc0adadefacd
+    tooling/visual-review/tests/helpers/fixtures.mjs: 5bb6fc760b48bba7231f904065e0e3d1c171b7ea88a226b611ee351299daa0d0
+    tooling/visual-review/tests/helpers/pngjs-shim/index.cjs: 6e63ceb64bf3720d60a792ae650f662b0a413166012f7647b76491db42ebe9b7
+    tooling/visual-review/tests/interactions-capture.test.mjs: d3389549f41cba83710e47d4079b61aaeae3c70b7234ffab3254b2ba81a98acb
+    tooling/visual-review/tests/path-safety.test.mjs: a4e9d3b48c7fc92c831b8d5fcb2b259e22728df27ec1aaee2d7128485116b115
+    tooling/visual-review/tests/pipeline-report-review.test.mjs: 7fe7d0dc6e0d15fac474159cffca2dc40e8a08be6a54696c36d7d30803ea1070
+    tooling/visual-review/tests/png-comparison.test.mjs: 35032683da4ae4fe9240cf435dfca3c05da3dc9b904a78efddba342262e0c25b
+    tooling/visual-review/tests/public-api.test.mjs: 05a4dfb48d36c60658395121704c90916f34cadcb7780ab76053dbb7193bc23c
+    tooling/visual-review/tests/run-paths-staleness.test.mjs: 568586f586a55bad53a0495e4b50a3bdc4f157859bc1aa68896411e8b4ee4316
+    tooling/visual-review/vendor/png-rgba-codec.mjs: b3ec12d67ec4779ff2571c8f59cdbee384faab9ed4488d25650cebd666568067
+  human_doc: docs/tech/visual-review-human.md
+  ai_doc: docs/tech/visual-review-ai.md
+  review_evidence: docs/evidence/visual-review-review.md
+  reviewed_by: OS bootstrap source inspection
+  reviewed_on: '2026-10-12'
+  business_rule_docs: []
+  no_business_rule_reason: Delivery infrastructure; consumer business rules require
+    separate domain documentation.
+  contracts: 'Input: an explicit project root, actual source files, YAML registries
+    and optional real Git base. Output: diagnostics and nonzero exit status on a blocking
+    error. Bootstrap writes only during an explicitly invoked creation operation.'
+  invariants: hDS is mandatory. Product and standard versions are independent. Technical
+    documents have reciprocal human/AI identities. Source changes invalidate their
+    stored coverage hashes. No critical violation is converted into success.
+  failure_modes: Malformed metadata, missing documents, broken links, stale source
+    hashes, absent review evidence, new or edited source over 500 lines and detected
+    duplicate blocks involving touched files fail completion. Untouched inherited
+    debt is queued. Runtime/tool errors also fail. A passing lexical detector does
+    not prove absence of semantic duplication.
+  validation: Run bash scripts/run_all_checks.sh. OS regression tests generate an
+    isolated capsule and inject violations to verify failures. Product lint, typecheck,
+    tests and build must run through declared stack checks once product implementation
+    exists.
+  business_impact: Infrastructure enforces delivery governance. Product rules must
+    be authored separately under docs/business, with human/AI pairs and references
+    from coverage units whenever implementation introduces or changes those rules.
+  responsibility: Capture executable-reference scenarios, compare image evidence,
+    validate paths and run identity, record reports and human parity decisions. Automated
+    comparison provides triage; explicit Human Visual Acceptance remains the parity
+    authority.
+  engineering_evidence: docs/evidence/visual-review-engineering.yml
+  document_hashes:
+    docs/tech/visual-review-human.md: b019709a87c32b26ce76d3a0c65e7c15fff7dd8c4c927dd05dcb6fd51f5657ad
+    docs/tech/visual-review-ai.md: 38e70a007c90297b3241156cf1ac1cd95d01ad5d6f5af6695a8ea6cc508ed57d
+    docs/evidence/visual-review-review.md: 709b5424e115099419daaafc0725dad678bde4bc06a11ad9114c92e375955ffe
+    docs/evidence/visual-review-engineering.yml: a630504f9a73096bfdee34ff0c5e75001bd729addc1aa594c806a08ec33d71f4
+- unit_id: governance
+  sources:
+    scripts/audit_legacy.py: 5dd8c96dcad3942456db0322d0e02b73456459ff87d8f5b16a17380d10f55307
+    scripts/finalize_bootstrap_commit.sh: c89136353b71aca7ae1462bf179590d09e558495034d0c889e55fc7f7fd28c8a
+    scripts/install-git-hooks.sh: 9f3e2a5b356dc3dddd6a7dcb36ca776876e3a16fb033c431bf5ec6c69d436027
+    scripts/record_checkpoint.py: 5516aa103fbd23a9caacbe178b88b37bf35e85817c84e87d87d175ba7be592e6
+    scripts/resume_project.py: 1432bf62d60b54c9bb08f18a27103302ed4c9138c5d2e5788e6aa266722930b6
+    scripts/run_all_checks.sh: f1fc8f20de700f7aeb28f50204e5bdffb7a4e3cc776b72713ebb2891c9982256
+    scripts/validate_baseline_commit.py: 1495295e8546815284109687170d1585921e6acbc066e47d203b7d7ec27a81a7
+    scripts/validate_briefing_bootstrap.py: 84ac8adadba0c2e115a056a63418c3ed0ebfc7ea21c73c3b3f211b7de3dd1987
+    scripts/validate_commit.py: 6b9a7260b6e559ec53156cd6696f9a2f526598614b8550602d18cbb218afb867
+    scripts/validate_continuity.py: 6476951dae2e070605c591496945aab155ee48187b48fec4582238bf5156323e
+    scripts/validate_engineering_guardrails.py: 4cd83d1791e3453bd6c3874d4a05cfc2f4872b29376631fed729174a88940939
+    scripts/validate_generated_metadata.py: 7e5ac59331e1a40d52c21ecc6244ca7227722d244e38a271f8e200598497c4e3
+    scripts/validate_git_repository.py: 14d26cfe82c074613d68dcb7c7fd7269d65e4f0b09cb76e4f51adb3847d1086c
+    scripts/validate_input_assets_scaffold.py: 1c266284901d568c1356c9524017040107017b524db6a9a6cd33ccc493068a9e
+    scripts/validate_next_agent_startup.py: 2a751cdc4d70e2f09d6d80d736373623e4c4a0d354836c79bcaaf935147c35aa
+    scripts/validate_project_capsule.py: efb72db4a920809fbb58458a4d3547dd07d6f7087c446707d402a9a4365e1b47
+    scripts/validate_staged.py: 5f21386ece0cfbb7d92329292ab46b83c41c8d25e4dac1e032ab865342fdb66a
+    scripts/validate_v154_project_policy.py: ab070f080159d0cd816aabee0978f534bd560af64d50141c431e42ffb82f6fd0
+    scripts/validate_visual_review_policy.py: d69523cc42ca2cfb478c48370f2ff724eedcb19711769be9da187a58af6cf311
+  human_doc: docs/tech/governance-human.md
+  ai_doc: docs/tech/governance-ai.md
+  review_evidence: docs/evidence/governance-review.md
+  reviewed_by: OS bootstrap source inspection
+  reviewed_on: '2026-10-12'
+  business_rule_docs: []
+  no_business_rule_reason: Delivery infrastructure; consumer business rules require
+    separate domain documentation.
+  contracts: 'Input: an explicit project root, actual source files, YAML registries
+    and optional real Git base. Output: diagnostics and nonzero exit status on a blocking
+    error. Bootstrap writes only during an explicitly invoked creation operation.'
+  invariants: hDS is mandatory. Product and standard versions are independent. Technical
+    documents have reciprocal human/AI identities. Source changes invalidate their
+    stored coverage hashes. No critical violation is converted into success.
+  failure_modes: Malformed metadata, missing documents, broken links, stale source
+    hashes, absent review evidence, new or edited source over 500 lines and detected
+    duplicate blocks involving touched files fail completion. Untouched inherited
+    debt is queued. Runtime/tool errors also fail. A passing lexical detector does
+    not prove absence of semantic duplication.
+  validation: Run bash scripts/run_all_checks.sh. OS regression tests generate an
+    isolated capsule and inject violations to verify failures. Product lint, typecheck,
+    tests and build must run through declared stack checks once product implementation
+    exists.
+  business_impact: Infrastructure enforces delivery governance. Product rules must
+    be authored separately under docs/business, with human/AI pairs and references
+    from coverage units whenever implementation introduces or changes those rules.
+  responsibility: Validate capsule completeness, engineering rules, portable skills,
+    boundaries, state and release metadata. Explicit skill/install/export commands
+    preserve their authorization boundaries. These utilities govern delivery infrastructure
+    rather than the consumer product domain.
+  engineering_evidence: docs/evidence/governance-engineering.yml
+  document_hashes:
+    docs/tech/governance-human.md: 7aee4ea61a6ca5b6164334745fab7d3c7b8830da390aedb0c71f9b06c214df77
+    docs/tech/governance-ai.md: 3ad8348fdac6cab60d35ea98f79243436c1f805e86bd6d4ed4727792094971db
+    docs/evidence/governance-review.md: b149bdef6e7ba916a15c3943a1a7a8bc168a9b6bb2345f9fec9ceb73991fe94c
+    docs/evidence/governance-engineering.yml: 85442eb5f0f50ba7e46f761e8399db60e6f68713dc9aca976254fc1948e0e759
