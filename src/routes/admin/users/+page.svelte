@@ -10,7 +10,7 @@
 		createdAt: number;
 	}
 
-	let { data } = $props<{ data: { users: User[]; error?: string } }>();
+	let { data }: { data: { users: User[]; error?: string } } = $props();
 </script>
 
 <div class="space-y-6">
