@@ -19,3 +19,8 @@ reject:
   # (14.1.x) still depends on writer ^8, so the release job fails in generateNotes.
   # Revisit once release-notes-generator moves to writer 9.
   - conventional-changelog-conventionalcommits
+  # @sveltejs/kit@3 drops svelte.config.js (config moves into the sveltekit(...)
+  # Vite plugin) and fails the build with config_file_unsupported. Migration is
+  # out of scope for a routine pass; adapter-cloudflare@8 goes with it.
+  - '@sveltejs/kit'
+  - '@sveltejs/adapter-cloudflare'
