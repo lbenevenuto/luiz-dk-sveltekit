@@ -1,0 +1,8 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "$id":"https://agentic-os.local/schemas/visual-review/run-1.0.0.json",
+  "title":"Visual Review Immutable Run",
+  "type":"object",
+  "required":["schemaVersion","runId","timestamp","scope","identity","reference","target","categories","viewports","scenarios","runtimeDriver"],
+  "properties":{"schemaVersion":{"const":"1.0.0"},"runId":{"type":"string"},"timestamp":{"type":"string"},"scope":{"type":"string"},"identity":{"type":"object","required":["referenceRevision","targetRevision","scenarioMatrixSha256","viewportMatrixSha256"]},"reference":{"type":"object"},"target":{"type":"object"},"categories":{"type":"array"},"viewports":{"type":"array"},"scenarios":{"type":"array"},"runtimeDriver":{"type":"object"}}
+}

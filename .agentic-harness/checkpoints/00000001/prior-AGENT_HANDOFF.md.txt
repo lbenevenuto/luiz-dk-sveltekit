@@ -1,0 +1,65 @@
+---
+doc_id: OS-AGENT-HANDOFF-MD
+title: Agent Handoff — luiz-dk-sveltekit
+owner: hyst
+lang: en
+audience: tech
+tags:
+- agentic-os
+document_type: guide
+pair_required: false
+status: review
+version: 0.1.0
+last_updated: '2026-10-12'
+---
+
+# Agent Handoff — luiz-dk-sveltekit
+
+## Bootstrap status
+
+Project directory and project-specific harness capsule were generated. Product implementation has not started.
+
+## Baseline commit requirement
+
+A clean bootstrap baseline commit must exist before product implementation starts. If the bootstrap agent could not create it, the next agent must run `bash scripts/finalize_bootstrap_commit.sh` and confirm `python3 scripts/validate_baseline_commit.py` passes before implementation.
+
+## Briefing source and status
+
+- Raw briefing folder expected: `briefing/`
+- Raw briefing ignored by default: false
+- Manual capsule generation fallback used: false
+- Normalized brief: `PROJECT_BRIEF.md`
+- hDS brief: `docs/hds/discovery/PROJECT_BRIEF.md`
+
+## Briefing files read
+
+- No readable briefing files were found.
+
+## Briefing files not read or preserved raw
+
+- No unreadable briefing files were recorded.
+
+## Project summary
+
+Personal SvelteKit site on Cloudflare Pages (luiz.dk)
+
+## Next agent instructions
+
+1. Read `00-NEXT_AGENT_STARTUP.md`.
+2. Read `START_HERE_FOR_AGENTS.md`.
+3. Read `PROJECT_BRIEF.md` completely.
+4. Read local policies in `.agentic-harness/`.
+5. Run `bash scripts/run_all_checks.sh`.
+6. Confirm a clean bootstrap baseline commit exists. If not, run `bash scripts/finalize_bootstrap_commit.sh`.
+7. Record assumptions and open questions.
+8. Create specs/ADR/implementation contract before coding.
+9. Do not access or request private OS internals unless the human explicitly provides them.
+
+## Do not change without human approval
+
+- Security posture.
+- Data classification.
+- Architecture distribution decision.
+- Export/private method boundary.
+- Release policy.
+- Raw briefing versioning policy.

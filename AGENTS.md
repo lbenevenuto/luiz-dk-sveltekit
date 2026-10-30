@@ -1,3 +1,18 @@
+---
+doc_id: OS-AGENTS-MD
+title: Agent Rules — luiz-dk-sveltekit
+owner: hyst
+lang: en
+audience: tech
+tags:
+  - agentic-os
+document_type: guide
+pair_required: false
+status: review
+version: 0.1.0
+last_updated: '2026-10-12'
+---
+
 # AGENTS.md
 
 > Guidelines for AI coding agents operating in this repository.
@@ -216,3 +231,15 @@ logger.error('error.name', { error: err instanceof Error ? err.message : String(
 - **SvelteKit experimental:** `svelte.config.js` enables `instrumentation.server` and `tracing.server`
 - **Prettier tailwind:** `.prettierrc` references `tailwindStylesheet: "./src/routes/layout.css"` — update if moving the Tailwind entry point
 - **Prepare script caveat:** The `prepare` script uses `|| echo ''` which swallows errors from `bun run types` and `svelte-kit sync`. A failure in either will still allow `husky` to run and the script to exit 0.
+
+---
+
+## Agentic Delivery OS (ADOS)
+
+This repository carries an Agentic Delivery OS project capsule. The rules above still apply; ADOS adds delivery governance on top.
+
+- **Start here:** read `00-NEXT_AGENT_STARTUP.md`, then run `python3 scripts/resume_project.py` to load the active checkpoint (`.agentic-harness/continuity.yml`).
+- **Policy:** `GUARDRAILS.md` and `ENGINEERING_GUARDRAILS.md` are mandatory. New or edited files must be fully compliant; untouched legacy files are tracked in `.agentic-harness/legacy-baseline.yml`.
+- **Checkpoints:** record progress with `python3 scripts/record_checkpoint.py` before implementation, after decisions/validation, and before handoff.
+- **Validation:** `bash scripts/run_all_checks.sh` (requires `pip install -r requirements-docs.txt`) in addition to `bun run lint && bun run check && bun run test`.
+- **Git hooks:** Husky (`.husky/`) stays the default. `bash scripts/install-git-hooks.sh` switches `core.hooksPath` to `.githooks/` (ADOS gate) and disables Husky lint-staged locally.

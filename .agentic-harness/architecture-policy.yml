@@ -1,0 +1,4 @@
+architecture_mode: adaptive
+microservices_when_justified: true
+modular_monolith_when_smarter: true
+adr_required_for_service_boundaries: true

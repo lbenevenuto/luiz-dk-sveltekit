@@ -1,0 +1,121 @@
+actor: Claude Code ADOS adoption into existing repository
+phase: project_readiness
+outcome: in_progress
+current_task: ADOPT-EXISTING-REPO
+summary: 'ADOS 1.9.2 capsule integrated into the existing repository and validated:
+  capsule checks, lint, typecheck and unit tests pass. Baseline commit is established
+  when the adoption pull request merges.'
+tasks:
+- task_id: BOOTSTRAP
+  title: Validate the generated capsule before creating its baseline commit.
+  status: in_progress
+  acceptance: All capsule checks pass and the baseline commit is confirmed before
+    product implementation.
+  remaining_work: Merge the adoption pull request to establish the baseline commit
+    on main.
+  evidence: []
+- task_id: ADOPT-EXISTING-REPO
+  title: Integrate the generated capsule without replacing existing repository files
+    or tooling.
+  status: done
+  acceptance: README.md, CHANGELOG.md and .gitignore keep their original content;
+    AGENTS.md keeps its original rules plus an ADOS section; Husky and semantic-release
+    remain unchanged; capsule checks pass.
+  remaining_work: None for this unit; CI on the pull request re-runs the same checks.
+  evidence:
+  - docs/evidence/ados-adoption-validation.log
+decisions:
+- id: CANONICAL-STATE
+  summary: Use the declared canonical state files and immutable checkpoint history
+    for project continuity.
+  reason: A single active checkpoint prevents independent state copies from silently
+    diverging during agent replacement.
+  evidence:
+  - docs/CONTINUITY_STANDARD.md
+- id: PRESERVE-EXISTING-ROOT-FILES
+  summary: Restore README.md, CHANGELOG.md and .gitignore to their pre-bootstrap content
+    and keep them as untouched legacy files.
+  reason: The generator overwrites existing files. CHANGELOG.md is owned by semantic-release
+    and README.md/.gitignore describe the live product and its tooling.
+  evidence:
+  - .agentic-harness/legacy-baseline.yml
+- id: EXTEND-AGENTS-MD
+  summary: Keep the original AGENTS.md rules and append an ADOS section with hDS front
+    matter.
+  reason: CLAUDE.md and GEMINI.md import AGENTS.md; the engineering guardrail validator
+    requires AGENTS.md to reference ENGINEERING_GUARDRAILS.md.
+  evidence:
+  - AGENTS.md
+- id: KEEP-HUSKY-DEFAULT
+  summary: Do not chain the ADOS pre-commit gate into Husky; ADOS hooks are opt-in
+    via scripts/install-git-hooks.sh, and CI enforces the gate.
+  reason: Husky runs in CI through the prepare script; chaining would make semantic-release
+    and dependency-update commits depend on Python and checkpoints.
+  evidence:
+  - AGENTS.md
+- id: ISOLATE-CAPSULE-FROM-LINT
+  summary: Exclude generated ADOS paths from Prettier via .prettierignore and tooling/
+    from ESLint via the lint script.
+  reason: Capsule files are hash-bound by checkpoints and coverage records; reformatting
+    them would invalidate evidence, and tooling/visual-review contains CommonJS helpers
+    that violate the product ESLint rules.
+  evidence:
+  - .prettierignore
+  - package.json
+- id: PRODUCT-VERSION-SOURCE
+  summary: Product version is package.json managed by semantic-release; maturity is
+    production.
+  reason: The generated default 0.0.0-prealpha.0 contradicted the released and deployed
+    product.
+  evidence:
+  - PRODUCT_VERSION.md
+  - .github/workflows/deploy.yml
+blockers: []
+no_blockers_reason: No blocker observed; validation is the remaining step for this
+  unit.
+questions: []
+no_questions_reason: The repository owner explicitly requested ADOS adoption and a
+  pull request; product scope is unchanged.
+validation:
+- command:
+  - bash
+  - scripts/run_all_checks.sh
+  status: passed
+  exit_code: 0
+  result: All capsule checks passed; actual output attached.
+  artifact: docs/evidence/ados-adoption-validation.log
+- command:
+  - bun
+  - run
+  - lint
+  status: passed
+  exit_code: 0
+  result: Prettier and ESLint passed with ADOS paths excluded.
+  artifact: docs/evidence/ados-adoption-validation.log
+- command:
+  - bun
+  - run
+  - check
+  status: passed
+  exit_code: 0
+  result: svelte-check passed with stubbed CI environment variables; 0 errors.
+  artifact: docs/evidence/ados-adoption-validation.log
+- command:
+  - bun
+  - run
+  - test
+  status: passed
+  exit_code: 0
+  result: 177 unit tests passed.
+  artifact: docs/evidence/ados-adoption-validation.log
+next_action: Merge the ADOS adoption pull request to establish the baseline, then
+  define the first approved implementation contract.
+resume_checks: Run resume_project.py; compare checkpoint facts with actual Git status
+  and files, preserve uncommitted work and rerun applicable checks.
+read_next:
+- 00-NEXT_AGENT_STARTUP.md
+- AGENTS.md
+- AGENT_STATE.md
+- AGENT_HANDOFF.md
+- docs/CONTINUITY_STANDARD.md
+checkpoint_id: ados-adoption-validated
