@@ -1,7 +1,8 @@
 # npm-check-updates configuration.
-# The previous wrangler hold (Node >=22) no longer applies: CI runs scripts
-# under Bun, whose node-compat satisfies it.
 reject:
+  # Keep Wrangler exact-pinned. 4.153.0 is the minimum release carrying
+  # patched sharp 0.35.5 and undici 7.30.1; later CLI bumps need review.
+  - wrangler
   # typescript-eslint@8.63.0 (latest) peer dep caps typescript at "<6.1.0".
   # TS 7.0.2 would break linting via ERESOLVE until typescript-eslint adds
   # TS 7 support. Revisit once typescript-eslint raises its typescript range.
