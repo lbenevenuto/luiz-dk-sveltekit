@@ -4,26 +4,13 @@ import type { DrizzleClient } from '$lib/server/db/client';
 
 import { getUrlByShortCode, insertUrl, findExistingUrl } from '$lib/server/db/queries/urls';
 
+export { normalizeUrl } from './validation';
+
 interface CreateShortUrlResult {
 	shortCode: string;
 	isExisting: boolean;
 	// Unix timestamp in seconds when the URL expires, or null for non-expiring links
 	expiresAt: number | null;
-}
-
-export function normalizeUrl(input: string): string {
-	const u = new URL(input.trim());
-	u.hostname = u.hostname.toLowerCase();
-
-	if (u.pathname !== '/' && u.pathname.endsWith('/')) {
-		u.pathname = u.pathname.slice(0, -1);
-	}
-
-	const base = `${u.protocol}//${u.host}`;
-	if ((u.pathname === '/' || u.pathname === '') && !u.search && !u.hash) {
-		return base;
-	}
-	return `${base}${u.pathname}${u.search}${u.hash}`;
 }
 
 export class ShortCodeConflictError extends Error {

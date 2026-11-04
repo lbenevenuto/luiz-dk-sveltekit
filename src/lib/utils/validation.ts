@@ -34,27 +34,30 @@ export function sanitizeIdentifier(input: string): string {
 	return input.replace(/[^a-zA-Z0-9._-]/g, '_');
 }
 
+export function normalizeUrl(input: string): string {
+	const u = new URL(input.trim());
+	u.hostname = u.hostname.toLowerCase();
+
+	if (u.pathname !== '/' && u.pathname.endsWith('/')) {
+		u.pathname = u.pathname.slice(0, -1);
+	}
+
+	const base = `${u.protocol}//${u.host}`;
+	if ((u.pathname === '/' || u.pathname === '') && !u.search && !u.hash) {
+		return base;
+	}
+	return `${base}${u.pathname}${u.search}${u.hash}`;
+}
+
 /**
- * Sanitize URL for log output.
- * Removes query and fragment and normalizes trailing slash.
+ * Sanitize URL for log output: the normalized URL without query or fragment.
  */
 export function sanitizeUrlForLog(input: string): string {
 	try {
 		const parsed = new URL(input.trim());
 		parsed.search = '';
 		parsed.hash = '';
-		parsed.hostname = parsed.hostname.toLowerCase();
-
-		if (parsed.pathname !== '/' && parsed.pathname.endsWith('/')) {
-			parsed.pathname = parsed.pathname.slice(0, -1);
-		}
-
-		const base = `${parsed.protocol}//${parsed.host}`;
-		if (parsed.pathname === '/' || parsed.pathname === '') {
-			return base;
-		}
-
-		return `${base}${parsed.pathname}`;
+		return normalizeUrl(parsed.href);
 	} catch {
 		return '[invalid-url]';
 	}
