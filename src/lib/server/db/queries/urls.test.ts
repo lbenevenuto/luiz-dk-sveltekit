@@ -1,5 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import type { DrizzleClient } from '../client';
+import { migrate } from 'drizzle-orm/better-sqlite3/migrator';
+import { createSQLiteClient } from '../client';
 import { getUserUrls, getUrlByShortCode, deleteUrlById, insertUrl, findExistingUrl, searchUrls } from './urls';
 
 function createChainableMock(resolvedValue?: unknown) {
@@ -181,5 +183,42 @@ describe('URL Queries DAL', () => {
 			expect(result.total).toBe(0);
 			expect(result.totalPages).toBe(0);
 		});
+	});
+});
+
+describe('url queries against SQLite', () => {
+	let db: DrizzleClient;
+
+	beforeEach(async () => {
+		db = await createSQLiteClient(':memory:');
+		migrate(db as Parameters<typeof migrate>[0], { migrationsFolder: 'migrations' });
+		const future = new Date(Date.now() + 86_400_000);
+		for (const [shortCode, userId, expiresAt] of [
+			['anon1', null, null],
+			['mine1', 'u1', null],
+			['mine2', 'u1', future],
+			['other', 'u2', null]
+		] as const) {
+			await insertUrl(db, { shortCode, originalUrl: 'https://example.com', userId, expiresAt });
+		}
+	});
+
+	it('findExistingUrl matches owner and expiry exactly', async () => {
+		const find = (userId: string | undefined, expiring: boolean) =>
+			findExistingUrl(db, 'https://example.com', { userId, expiring }).then((row) => row?.shortCode);
+
+		expect(await find(undefined, false)).toBe('anon1');
+		expect(await find('u1', false)).toBe('mine1');
+		expect(await find('u1', true)).toBe('mine2');
+		expect(await find('u3', false)).toBeUndefined();
+	});
+
+	it('searchUrls filters by owner and query, and paginates', async () => {
+		expect((await searchUrls(db, { userId: null })).urls.map((u) => u.shortCode)).toEqual(['anon1']);
+		expect((await searchUrls(db, { userId: 'u1', query: 'mine2' })).total).toBe(1);
+
+		const page = await searchUrls(db, { page: 2, pageSize: 3 });
+		expect(page).toMatchObject({ total: 4, totalPages: 2 });
+		expect(page.urls).toHaveLength(1);
 	});
 });
