@@ -9,7 +9,6 @@ CLERK_WEBHOOK_SECRET=
 
 # Sentry (optional)
 SENTRY_DSN=
-PUBLIC_SENTRY_DSN=
 
 # Cloudflare (analytics + prod migrations)
 CLOUDFLARE_ACCOUNT_ID=
