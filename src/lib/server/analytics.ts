@@ -10,6 +10,8 @@ interface AnalyticsRow {
 	referrer: string;
 	ipHash: string;
 	timestamp: string;
+	// Sample-weighted click count for aggregated chart rows (AE returns 64-bit ints as strings).
+	clicks?: number | string;
 }
 
 interface SqlApiResponse {
@@ -64,16 +66,17 @@ function aggregateAnalytics(analytics: Array<AnalyticsRow & { id: string }>, day
 	}
 
 	for (const row of analytics) {
+		const clicks = Number(row.clicks ?? 1);
 		const date = row.timestamp.split('T')[0];
 		if (dailyClicks.has(date)) {
-			dailyClicks.set(date, (dailyClicks.get(date) || 0) + 1);
+			dailyClicks.set(date, (dailyClicks.get(date) || 0) + clicks);
 		}
 
 		const country = row.country || 'Unknown';
-		countryStats.set(country, (countryStats.get(country) || 0) + 1);
+		countryStats.set(country, (countryStats.get(country) || 0) + clicks);
 
-		const ua = row.userAgent || 'Unknown';
-		browserStats.set(parseBrowser(ua), (browserStats.get(parseBrowser(ua)) || 0) + 1);
+		const browser = parseBrowser(row.userAgent || 'Unknown');
+		browserStats.set(browser, (browserStats.get(browser) || 0) + clicks);
 
 		let referrer = row.referrer || 'Direct';
 		try {
@@ -83,7 +86,7 @@ function aggregateAnalytics(analytics: Array<AnalyticsRow & { id: string }>, day
 		} catch {
 			// ignored
 		}
-		referrerStats.set(referrer, (referrerStats.get(referrer) || 0) + 1);
+		referrerStats.set(referrer, (referrerStats.get(referrer) || 0) + clicks);
 	}
 
 	const sortAndLimit = (map: Map<string, number>, limit: number) =>
@@ -177,16 +180,17 @@ export async function fetchChartAnalytics(
 	}
 	const { platform: configured, whereClause, days } = prepared.context;
 
+	// Aggregate in SQL and weight by _sample_interval, so counts stay right past the row limit and under sampling.
 	const chartSql = `
 		SELECT
-			blob1 as shortCode,
 			blob2 as country,
 			blob3 as userAgent,
 			blob4 as referrer,
-			toDateTime(double1 / 1000) as timestamp
+			toDateTime(intDiv(toUInt32(toDateTime(double1 / 1000)), 86400) * 86400) as timestamp,
+			SUM(_sample_interval) as clicks
 		FROM luiz_dk_analytics
 		WHERE ${whereClause}
-		ORDER BY timestamp DESC
+		GROUP BY country, userAgent, referrer, timestamp
 		LIMIT 10000
 	`;
 
