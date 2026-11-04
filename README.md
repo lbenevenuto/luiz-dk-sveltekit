@@ -12,8 +12,8 @@ Personal URL shortener and playground for serverless tooling. Built with SvelteK
 
 ## Requirements
 
-- Bun (see `package.json` "packageManager")
-- Node (see `.node-version`) for Wrangler tooling
+- Bun (CI pins the version in `.github/actions/setup/action.yml`)
+- Node >= 22 for Wrangler tooling
 
 ## Environment
 
@@ -53,5 +53,5 @@ bun run preview
 
 ## Docs
 
-- `docs/README.md`
-- `CONTRIBUTING.md`
+- `docs/CLERK_SETUP.md`
+- `AGENTS.md`
