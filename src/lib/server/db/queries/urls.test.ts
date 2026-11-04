@@ -55,6 +55,7 @@ describe('URL Queries DAL', () => {
 		expect(mockChain.from).toHaveBeenCalled();
 		expect(mockChain.where).toHaveBeenCalled();
 		expect(result).toEqual([{ id: 1 }]);
+		expect(Object.keys(mockChain.select.mock.calls[0][0])).toEqual(['shortCode']);
 	});
 
 	it('getUrlByShortCode returns first result', async () => {
