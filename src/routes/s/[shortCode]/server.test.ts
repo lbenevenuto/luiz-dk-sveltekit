@@ -62,6 +62,36 @@ describe('GET /s/[shortCode]', () => {
 		);
 	});
 
+	it('writes permanent links back to the cache after a DB hit', async () => {
+		const mockCache = {
+			get: vi.fn().mockResolvedValue(null),
+			set: vi.fn().mockResolvedValue(undefined),
+			delete: vi.fn()
+		};
+		vi.mocked(getCacheAdapter).mockResolvedValue(mockCache);
+		vi.mocked(getUrlByShortCode).mockResolvedValue({
+			id: 2,
+			shortCode: 'perm',
+			originalUrl: 'https://example.com',
+			createdAt: new Date(),
+			updatedAt: new Date(),
+			expiresAt: null,
+			userId: null
+		});
+		const waitUntil = vi.fn();
+		const event = {
+			params: { shortCode: 'perm' },
+			request: new Request('http://localhost/s/perm'),
+			platform: { ctx: { waitUntil } },
+			locals: { db: {} as DrizzleClient }
+		} as unknown as Parameters<typeof GET>[0];
+
+		await expect(GET(event)).rejects.toMatchObject({ status: 302 });
+
+		expect(mockCache.set).toHaveBeenCalledWith('redirect:perm', 'https://example.com', 604800);
+		expect(waitUntil).toHaveBeenCalled();
+	});
+
 	it('returns 410 Gone for an expired link and deletes it', async () => {
 		const mockCache = {
 			get: vi.fn().mockResolvedValue(null),

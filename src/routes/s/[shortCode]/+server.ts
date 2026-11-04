@@ -50,6 +50,11 @@ export const GET: RequestHandler = async ({ platform, params, request, locals })
 			return new Response('This link has expired.', { status: 410 });
 		}
 
+		if (cacheAdapter && !expiresAtMs) {
+			// Refill KV so permanent links stop hitting D1 once the 7-day TTL lapses.
+			platform?.ctx.waitUntil(cacheAdapter.set(`redirect:${shortCode}`, res.originalUrl, 604800));
+		}
+
 		trackAnalytics(platform, request, shortCode);
 		logger.info('redirect.found', { shortCode, target: sanitizeUrlForLog(res.originalUrl) });
 		throw redirect(302, res.originalUrl);
