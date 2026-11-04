@@ -168,7 +168,13 @@ describe('fetchChartAnalytics', () => {
 		const result = await fetchChartAnalytics(platform as unknown as App.Platform, { days: 7 });
 
 		expect(fetchSpy.mock.calls[0][1]?.body).toContain('SUM(_sample_interval)');
-		expect(result.charts!.countries).toEqual([{ label: 'DK', value: 40 }]);
+		const { countries, browsers, referrers, daily } = result.charts!;
+		expect([countries, browsers, referrers]).toEqual([
+			[{ label: 'DK', value: 40 }],
+			[{ label: 'Firefox', value: 40 }],
+			[{ label: 'direct', value: 40 }]
+		]);
+		expect(daily.reduce((sum, day) => sum + day.count, 0)).toBe(40);
 	});
 
 	it('returns error on fetch failure', async () => {
