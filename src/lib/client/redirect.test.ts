@@ -18,4 +18,8 @@ describe('normalizeRedirectPath', () => {
 			expect(normalizeRedirectPath(input)).toBe('/');
 		}
 	);
+
+	it.each(['/.//evil.com', '/%2e//evil.com', '/a/..//evil.com'])('rejects %j, which normalizes to //host', (input) => {
+		expect(normalizeRedirectPath(input)).toBe('/');
+	});
 });

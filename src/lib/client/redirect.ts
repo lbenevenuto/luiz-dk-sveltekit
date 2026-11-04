@@ -9,7 +9,9 @@ export function normalizeRedirectPath(input?: string | null): string {
 	// so `/\evil.com` and `/\t/evil.com` both escape to another origin.
 	try {
 		const url = new URL(input, PROBE_ORIGIN);
-		return url.origin === PROBE_ORIGIN ? `${url.pathname}${url.search}${url.hash}` : '/';
+		// Dot segments can normalize to `//host` (`/.//evil.com`), which is protocol-relative once returned.
+		const sameOrigin = url.origin === PROBE_ORIGIN && !url.pathname.startsWith('//');
+		return sameOrigin ? `${url.pathname}${url.search}${url.hash}` : '/';
 	} catch {
 		return '/';
 	}
