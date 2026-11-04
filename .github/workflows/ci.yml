@@ -9,9 +9,10 @@ on:
 permissions:
   contents: read
 
+# PR runs share a group so superseded ones cancel; each main push gets its own group so none is dropped.
 concurrency:
-  group: ci-${{ github.ref }}
-  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+  group: ${{ github.event_name == 'pull_request' && format('ci-{0}', github.ref) || format('ci-run-{0}', github.run_id) }}
+  cancel-in-progress: true
 
 jobs:
   build:
