@@ -197,7 +197,8 @@ describe('url queries against SQLite', () => {
 			['anon1', null, null],
 			['mine1', 'u1', null],
 			['mine2', 'u1', future],
-			['other', 'u2', null]
+			['other', 'u2', null],
+			['exp3', 'u3', future]
 		] as const) {
 			await insertUrl(db, { shortCode, originalUrl: 'https://example.com', userId, expiresAt });
 		}
@@ -210,15 +211,19 @@ describe('url queries against SQLite', () => {
 		expect(await find(undefined, false)).toBe('anon1');
 		expect(await find('u1', false)).toBe('mine1');
 		expect(await find('u1', true)).toBe('mine2');
+		// Negative cases: first-match semantics would hide a missing owner or expiry predicate.
+		expect(await find(undefined, true)).toBeUndefined();
 		expect(await find('u3', false)).toBeUndefined();
 	});
 
 	it('searchUrls filters by owner and query, and paginates', async () => {
 		expect((await searchUrls(db, { userId: null })).urls.map((u) => u.shortCode)).toEqual(['anon1']);
-		expect((await searchUrls(db, { userId: 'u1', query: 'mine2' })).total).toBe(1);
+		const mine = await searchUrls(db, { userId: 'u1' });
+		expect(mine.urls.map((u) => u.shortCode).sort()).toEqual(['mine1', 'mine2']);
+		expect((await searchUrls(db, { userId: 'u1', query: 'other' })).total).toBe(0);
 
 		const page = await searchUrls(db, { page: 2, pageSize: 3 });
-		expect(page).toMatchObject({ total: 4, totalPages: 2 });
-		expect(page.urls).toHaveLength(1);
+		expect(page).toMatchObject({ total: 5, totalPages: 2 });
+		expect(page.urls).toHaveLength(2);
 	});
 });
