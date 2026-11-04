@@ -14,6 +14,7 @@ export const load: PageServerLoad = async ({ platform, url, locals }) => {
 	const userId = url.searchParams.get('userId');
 	let filterUser = null;
 	let userShortCodes: string[] | undefined = undefined;
+	let filterError: string | undefined;
 
 	if (userId && platform) {
 		try {
@@ -27,15 +28,16 @@ export const load: PageServerLoad = async ({ platform, url, locals }) => {
 				error: getErrorMessage(error),
 				userId
 			});
+			// Never fall back to unfiltered (all users') analytics when the filter can't be resolved.
+			filterError = 'Failed to load analytics for the selected user';
 		}
 	}
 
 	return {
 		streamed: {
-			charts: fetchChartAnalytics(platform, {
-				days,
-				shortCodes: userShortCodes
-			})
+			charts: filterError
+				? Promise.resolve({ charts: undefined, error: filterError })
+				: fetchChartAnalytics(platform, { days, shortCodes: userShortCodes })
 		},
 		days,
 		filterUser: filterUser
