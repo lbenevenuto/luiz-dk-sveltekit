@@ -93,6 +93,7 @@ vi.mock('./hashids', () => ({
 }));
 
 describe('createShortUrl', () => {
+	const uniqueError = new Error('UNIQUE constraint failed: urls.short_code');
 	const mockDb = {} as DrizzleClient;
 	const mockPlatform = { env: { SALT: 'test-salt' } } as unknown as App.Platform;
 
@@ -119,6 +120,13 @@ describe('createShortUrl', () => {
 				expiresAt: null
 			});
 			expect(result).toEqual({ shortCode: 'newcode', isExisting: false, expiresAt: null });
+		});
+
+		it('maps a unique violation on insert to ShortCodeConflictError', async () => {
+			vi.mocked(queries.insertUrl).mockRejectedValue(new Error('x', { cause: uniqueError }));
+			await expect(createShortUrl('https://example.com', null, mockPlatform, mockDb, null, 'race')).rejects.toThrow(
+				ShortCodeConflictError
+			);
 		});
 	});
 

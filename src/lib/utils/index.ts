@@ -36,6 +36,12 @@ export class ShortCodeConflictError extends Error {
 	}
 }
 
+function isUniqueViolation(error: unknown): boolean {
+	// Drizzle wraps driver errors, so the SQLite message can sit on `cause`.
+	const cause = error instanceof Error ? error.cause : undefined;
+	return [error, cause].some((e) => e instanceof Error && e.message.includes('UNIQUE constraint failed'));
+}
+
 export const createShortUrl = async (
 	normalizedUrl: string,
 	expiresAt: number | null,
@@ -53,12 +59,12 @@ export const createShortUrl = async (
 			throw new ShortCodeConflictError(customCode);
 		}
 
-		await insertUrl(db, {
-			shortCode: customCode,
-			originalUrl: normalizedUrl,
-			userId,
-			expiresAt: expiresAtDate
-		});
+		try {
+			await insertUrl(db, { shortCode: customCode, originalUrl: normalizedUrl, userId, expiresAt: expiresAtDate });
+		} catch (error) {
+			// Lost the race against a concurrent insert of the same code.
+			throw isUniqueViolation(error) ? new ShortCodeConflictError(customCode) : error;
+		}
 
 		return { shortCode: customCode, isExisting: false, expiresAt: expiresAt ?? null };
 	}
