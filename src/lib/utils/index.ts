@@ -36,6 +36,8 @@ export class ShortCodeConflictError extends Error {
 	}
 }
 
+const MAX_GENERATED_INSERT_ATTEMPTS = 3;
+
 function isUniqueViolation(error: unknown): boolean {
 	// Drizzle wraps driver errors, so the SQLite message can sit on `cause`.
 	const cause = error instanceof Error ? error.cause : undefined;
@@ -95,15 +97,17 @@ export const createShortUrl = async (
 	}
 
 	const idGeneratorAdapter = await getIdGeneratorAdapter(platform, db);
-	const newCount = await idGeneratorAdapter.getNextId();
-	const shortCode = generateShortCode(newCount, hashSalt);
-
-	await insertUrl(db, {
-		shortCode,
-		originalUrl: normalizedUrl,
-		userId,
-		expiresAt: expiresAtDate
-	});
+	let shortCode: string;
+	for (let attempt = 1; ; attempt++) {
+		shortCode = generateShortCode(await idGeneratorAdapter.getNextId(), hashSalt);
+		try {
+			await insertUrl(db, { shortCode, originalUrl: normalizedUrl, userId, expiresAt: expiresAtDate });
+			break;
+		} catch (error) {
+			// A custom code can already occupy a future generated code; move on to the next id.
+			if (attempt >= MAX_GENERATED_INSERT_ATTEMPTS || !isUniqueViolation(error)) throw error;
+		}
+	}
 
 	if (cacheAdapter && !expiresAt) {
 		await cacheAdapter.set(cacheKey, shortCode, 604800); // 7 days

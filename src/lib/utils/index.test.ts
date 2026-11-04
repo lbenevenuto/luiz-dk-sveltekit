@@ -131,6 +131,17 @@ describe('createShortUrl', () => {
 	});
 
 	describe('auto-generated codes', () => {
+		it('retries with the next id when a generated code is taken', async () => {
+			vi.mocked(factory.getIdGeneratorAdapter).mockResolvedValue({ getNextId: vi.fn().mockResolvedValue(9) });
+			vi.mocked(generateShortCode).mockReturnValueOnce('taken').mockReturnValueOnce('free');
+			vi.mocked(queries.insertUrl).mockRejectedValueOnce(uniqueError);
+
+			const result = await createShortUrl('https://example.com', 1900000000, mockPlatform, mockDb);
+
+			expect(queries.insertUrl).toHaveBeenCalledTimes(2);
+			expect(result.shortCode).toBe('free');
+		});
+
 		it('returns immediately if found in cache (non-expiring)', async () => {
 			const mockCache = { get: vi.fn().mockResolvedValue('cachehit'), set: vi.fn(), delete: vi.fn() };
 			vi.mocked(factory.getCacheAdapter).mockResolvedValue(mockCache);
