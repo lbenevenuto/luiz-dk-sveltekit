@@ -4,6 +4,7 @@ import { getClerkClient } from '$lib/server/clerk';
 import { isPublicRoute } from '$lib/routes/public';
 import type { UserRole } from '../../app';
 import { logger } from '$lib/server/logger';
+import { getErrorMessage } from '$lib/utils/validation';
 
 /** Clerk authorized parties: dev, preview, and the deployed base URL. */
 function getAuthorizedParties(baseUrl?: string): string[] {
@@ -25,6 +26,9 @@ export const authHandle: Handle = async ({ event, resolve }) => {
 		role: null
 	};
 
+	// Redirects never read auth state, so skip the Clerk round trips on the hottest path.
+	if (url.pathname.startsWith('/s/')) return resolve(event);
+
 	const publicRoute = isPublicRoute(url.pathname);
 
 	const clerkClient = getClerkClient(platform.env);
@@ -35,9 +39,12 @@ export const authHandle: Handle = async ({ event, resolve }) => {
 
 	if (requestState.isSignedIn) {
 		const authData = requestState.toAuth();
-		const user = await clerkClient.users.getUser(authData.userId);
-		const rawRole = user.publicMetadata?.role;
-		const role: UserRole = rawRole === 'admin' ? 'admin' : 'user';
+		// A Clerk API failure must not take the page down: degrade to a non-admin session.
+		const user = await clerkClient.users.getUser(authData.userId).catch((error: unknown) => {
+			logger.error('auth.get_user_failed', { userId: authData.userId, error: getErrorMessage(error) });
+			return null;
+		});
+		const role: UserRole = user?.publicMetadata?.role === 'admin' ? 'admin' : 'user';
 		event.locals.auth = {
 			userId: authData.userId,
 			sessionId: authData.sessionId,
