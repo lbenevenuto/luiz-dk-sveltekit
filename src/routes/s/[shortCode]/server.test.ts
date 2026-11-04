@@ -63,9 +63,10 @@ describe('GET /s/[shortCode]', () => {
 	});
 
 	it('writes permanent links back to the cache after a DB hit', async () => {
+		const refill = Promise.resolve();
 		const mockCache = {
 			get: vi.fn().mockResolvedValue(null),
-			set: vi.fn().mockResolvedValue(undefined),
+			set: vi.fn().mockReturnValue(refill),
 			delete: vi.fn()
 		};
 		vi.mocked(getCacheAdapter).mockResolvedValue(mockCache);
@@ -89,7 +90,8 @@ describe('GET /s/[shortCode]', () => {
 		await expect(GET(event)).rejects.toMatchObject({ status: 302 });
 
 		expect(mockCache.set).toHaveBeenCalledWith('redirect:perm', 'https://example.com', 604800);
-		expect(waitUntil).toHaveBeenCalled();
+		// Analytics also calls waitUntil, so check the refill promise itself is the one kept alive.
+		expect(waitUntil).toHaveBeenCalledWith(refill);
 	});
 
 	it('returns 410 Gone for an expired link and deletes it', async () => {
