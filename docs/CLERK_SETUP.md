@@ -146,45 +146,6 @@ Then use Clerk API or dashboard to set metadata.
 
 ---
 
-## Project Structure
-
-### New Files Created
-
-```
-src/
-├── lib/
-│   ├── server/
-│   │   ├── clerk.ts           # Clerk client utility
-│   │   ├── auth.ts             # Auth helper functions
-│   │   └── rate-limit.ts       # Rate limiting utility
-│   └── types/
-│       └── auth.ts             # Auth type definitions (in app.d.ts)
-├── routes/
-│   ├── +layout.server.ts       # Pass Clerk keys to client
-│   ├── sign-in/+page.svelte    # Sign in page
-│   ├── sign-up/+page.svelte    # Sign up page
-│   ├── admin/
-│   │   └── users/
-│   │       ├── +page.server.ts # User management server logic
-│   │       └── +page.svelte    # User management UI
-│   └── api/webhooks/clerk/
-│       └── +server.ts          # Clerk webhook handler
-└── app.d.ts                    # Updated with auth types
-```
-
-### Modified Files
-
-- `src/hooks.server.ts` - Authentication middleware
-- `src/routes/+layout.svelte` - Added Clerk client + auth UI
-- `src/lib/server/db/schemas/urls.ts` - Added `userId` field
-- `src/lib/utils/index.ts` - Updated `createShortUrl` to accept `userId`
-- `src/routes/api/v1/shorten/+server.ts` - Rate limiting + user tracking
-- `src/routes/api/v1/reset/+server.ts` - Admin-only protection
-- `wrangler.jsonc` - Rate limiter binding + Clerk vars
-- `.env` - Clerk environment variables
-
----
-
 ## Authentication Flow
 
 ### 1. Server-Side (hooks.server.ts)
@@ -370,7 +331,7 @@ bun run deploy
 # URL: https://luiz.dk/api/webhooks/clerk
 
 # 5. Test in production
-# - Sign up at https://luiz.dk/sign-up
+# - Sign up at https://luiz.dk/register
 # - Create URLs (rate limited to 10/hour as anonymous)
 # - Sign in and create more (unlimited)
 ```
