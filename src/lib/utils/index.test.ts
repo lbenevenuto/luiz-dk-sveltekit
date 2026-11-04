@@ -206,5 +206,14 @@ describe('createShortUrl', () => {
 			// Expiring URLs should not trigger cache sets inside the create flow
 			expect(result).toEqual({ shortCode: 'expirecode', isExisting: false, expiresAt: 1700000000 });
 		});
+		it('never reuses an existing link for an expiring request', async () => {
+			vi.mocked(factory.getIdGeneratorAdapter).mockResolvedValue({ getNextId: vi.fn().mockResolvedValue(44) });
+			vi.mocked(generateShortCode).mockReturnValue('fresh');
+
+			const result = await createShortUrl('https://example.com', 1900000000, mockPlatform, mockDb, 'user123');
+
+			expect(queries.findExistingUrl).not.toHaveBeenCalled();
+			expect(result).toEqual({ shortCode: 'fresh', isExisting: false, expiresAt: 1900000000 });
+		});
 	});
 });
