@@ -30,7 +30,7 @@
 		]
 	},
 	"devDependencies": {
-		"@clerk/backend": "^3.26.5",
+		"@clerk/backend": "^3.26.6",
 		"@clerk/themes": "^2.4.62",
 		"@eslint/compat": "^2.1.1",
 		"@eslint/js": "^10.0.1",
@@ -52,7 +52,7 @@
 		"drizzle-orm": "^0.45.4",
 		"eslint": "^10.14.0",
 		"eslint-config-prettier": "^10.1.8",
-		"eslint-plugin-svelte": "^3.23.1",
+		"eslint-plugin-svelte": "^3.24.0",
 		"globals": "^17.14.0",
 		"hashids": "^2.3.0",
 		"husky": "^9.1.7",
@@ -73,8 +73,11 @@
 		"zod": "^4.6.7"
 	},
 	"dependencies": {
-		"d3-scale": "^4.0.2",
-		"d3-shape": "^3.2.0",
+		"d3-scale": "^4.0.3",
+		"d3-shape": "^3.2.1",
 		"layercake": "^10.0.3"
+	},
+	"overrides": {
+		"@tailwindcss/typography>postcss-selector-parser": "6.1.5"
 	}
 }
