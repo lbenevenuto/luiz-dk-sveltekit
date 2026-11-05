@@ -75,22 +75,17 @@ export const createShortUrl = async (
 		}
 	}
 
-	const wantsExpiry = Boolean(expiresAt);
-
-	const existing = await findExistingUrl(db, normalizedUrl, { userId: userId ?? undefined, expiring: wantsExpiry });
+	// Expiring links are never reused: the caller asked for this specific expiry.
+	const existing = expiresAt
+		? undefined
+		: await findExistingUrl(db, normalizedUrl, { userId: userId ?? undefined, expiring: false });
 
 	if (existing) {
-		const nowSeconds = Math.floor(Date.now() / 1000);
-		const existingExpiresAtSeconds = existing.expiresAt ? Math.floor(existing.expiresAt.getTime() / 1000) : null;
-		const isExpired = existingExpiresAtSeconds !== null && existingExpiresAtSeconds <= nowSeconds;
-
-		if (!isExpired) {
-			if (cacheAdapter && !existingExpiresAtSeconds) {
-				await cacheAdapter.set(cacheKey, existing.shortCode, 604800); // 7 days
-				await cacheAdapter.set(`redirect:${existing.shortCode}`, normalizedUrl, 604800);
-			}
-			return { shortCode: existing.shortCode, isExisting: true, expiresAt: existingExpiresAtSeconds };
+		if (cacheAdapter) {
+			await cacheAdapter.set(cacheKey, existing.shortCode, 604800); // 7 days
+			await cacheAdapter.set(`redirect:${existing.shortCode}`, normalizedUrl, 604800);
 		}
+		return { shortCode: existing.shortCode, isExisting: true, expiresAt: null };
 	}
 
 	const idGeneratorAdapter = await getIdGeneratorAdapter(platform, db);
