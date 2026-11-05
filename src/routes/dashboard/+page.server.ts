@@ -14,6 +14,7 @@ export const load: PageServerLoad = async ({ platform, url, locals }) => {
 	const days = lenientDaysSchema.parse(url.searchParams.get('days'));
 
 	let userShortCodes: string[] = [];
+	let urlsError: string | undefined;
 	try {
 		const userUrls = await getUserUrls(locals.db, locals.auth.userId);
 		userShortCodes = userUrls.map((u) => u.shortCode);
@@ -21,14 +22,15 @@ export const load: PageServerLoad = async ({ platform, url, locals }) => {
 		logger.error('dashboard.user_urls_fetch_error', {
 			error: getErrorMessage(error)
 		});
+		// Surface the failure instead of rendering it as "no clicks yet".
+		urlsError = 'Failed to load your links';
 	}
 
 	return {
 		streamed: {
-			charts: fetchChartAnalytics(platform, {
-				days,
-				shortCodes: userShortCodes
-			})
+			charts: urlsError
+				? Promise.resolve({ charts: undefined, error: urlsError })
+				: fetchChartAnalytics(platform, { days, shortCodes: userShortCodes })
 		},
 		days
 	};
