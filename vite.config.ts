@@ -23,6 +23,14 @@ export default defineConfig({
 
 	test: {
 		expect: { requireAssertions: true },
+		coverage: {
+			provider: 'v8',
+			// Server/TS code only: Svelte components have no test environment here.
+			include: ['src/**/*.ts'],
+			exclude: ['src/**/*.test.ts', 'src/**/*.d.ts'],
+			// Floor of the current numbers: ratchet up as coverage grows, never down.
+			thresholds: { statements: 81, branches: 73, functions: 75, lines: 82 }
+		},
 
 		projects: [
 			{
