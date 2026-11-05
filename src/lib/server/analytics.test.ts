@@ -155,6 +155,28 @@ describe('fetchChartAnalytics', () => {
 		expect(result.charts!.countries).toEqual([{ label: 'US', value: 1 }]);
 	});
 
+	it('weights chart counts by the sample-weighted clicks column', async () => {
+		const { fetchChartAnalytics } = await loadAnalyticsModule(true);
+		const row = { country: 'DK', userAgent: 'Firefox/1', referrer: 'direct', timestamp: new Date().toISOString() };
+		const fetchSpy = vi
+			.spyOn(globalThis, 'fetch')
+			.mockResolvedValue(
+				new Response(JSON.stringify({ meta: [], data: [{ ...row, clicks: '40' }], rows: 1 }), { status: 200 })
+			);
+		const platform = { env: { CLOUDFLARE_ACCOUNT_ID: 'test', CLOUDFLARE_API_TOKEN_ANALYTICS: 'token' } };
+
+		const result = await fetchChartAnalytics(platform as unknown as App.Platform, { days: 7 });
+
+		expect(fetchSpy.mock.calls[0][1]?.body).toContain('SUM(_sample_interval)');
+		const { countries, browsers, referrers, daily } = result.charts!;
+		expect([countries, browsers, referrers]).toEqual([
+			[{ label: 'DK', value: 40 }],
+			[{ label: 'Firefox', value: 40 }],
+			[{ label: 'direct', value: 40 }]
+		]);
+		expect(daily.reduce((sum, day) => sum + day.count, 0)).toBe(40);
+	});
+
 	it('returns error on fetch failure', async () => {
 		const { fetchChartAnalytics } = await loadAnalyticsModule(true);
 		vi.spyOn(globalThis, 'fetch').mockResolvedValue(new Response('Server error', { status: 500 }));
