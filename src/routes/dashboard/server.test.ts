@@ -30,6 +30,11 @@ describe('dashboard load', () => {
 		expect(mockFetchChartAnalytics).toHaveBeenCalledWith(undefined, expect.objectContaining({ shortCodes: ['abc'] }));
 	});
 
+	it('pins the client-side activity log to the signed-in user', async () => {
+		mockGetUserUrls.mockResolvedValue([]);
+		expect(await runLoad('user_1')).toMatchObject({ filterUser: { id: 'user_1' } });
+	});
+
 	it('returns an error when the user links cannot be loaded', async () => {
 		mockGetUserUrls.mockRejectedValue(new Error('d1 down'));
 		const result = await runLoad('user_1');

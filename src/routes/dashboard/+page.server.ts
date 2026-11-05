@@ -32,6 +32,8 @@ export const load: PageServerLoad = async ({ platform, url, locals }) => {
 				? Promise.resolve({ charts: undefined, error: urlsError })
 				: fetchChartAnalytics(platform, { days, shortCodes: userShortCodes })
 		},
-		days
+		days,
+		// The activity log is fetched client-side; pin it to this user so admins don't get every link's clicks.
+		filterUser: { id: locals.auth.userId }
 	};
 };
