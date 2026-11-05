@@ -164,4 +164,25 @@ describe('authHandle', () => {
 		expect(response.status).toBe(307);
 		expect(response.headers.get('location')).toBe('https://clerk.test/handshake');
 	});
+
+	it('skips Clerk entirely for short-link redirects', async () => {
+		const resolve = vi.fn(async () => new Response('ok'));
+		await authHandle({ event: createEvent('/s/abc'), resolve });
+
+		expect(mockAuthenticateRequest).not.toHaveBeenCalled();
+		expect(resolve).toHaveBeenCalled();
+	});
+
+	it('falls back to a user role when Clerk getUser fails', async () => {
+		mockAuthenticateRequest.mockResolvedValue(
+			createRequestState({ isSignedIn: true, toAuth: vi.fn(() => ({ userId: 'u1', sessionId: 's1' })) })
+		);
+		mockGetUser.mockRejectedValue(new Error('clerk down'));
+		const event = createEvent('/dashboard');
+
+		const response = await authHandle({ event, resolve: vi.fn(async () => new Response('ok')) });
+
+		expect(response.status).toBe(200);
+		expect(event.locals.auth).toMatchObject({ userId: 'u1', role: 'user', user: null });
+	});
 });
