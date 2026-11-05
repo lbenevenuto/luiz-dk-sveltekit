@@ -11,6 +11,11 @@ describe('SqliteIdGenerator', () => {
 		const generator = new SqliteIdGenerator(async () => 41);
 		expect(await generator.getNextId()).toBe(42);
 	});
+
+	it('should hand out a new id on retry when the max id has not moved', async () => {
+		const generator = new SqliteIdGenerator(async () => 1);
+		expect([await generator.getNextId(), await generator.getNextId()]).toEqual([2, 3]);
+	});
 });
 
 describe('DurableObjectIdGenerator', () => {

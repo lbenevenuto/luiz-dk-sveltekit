@@ -27,9 +27,13 @@ export class DurableObjectIdGenerator implements IdGeneratorAdapter {
  * collides on the unique short code. Dev-only; add a counter table if it bites.
  */
 export class SqliteIdGenerator implements IdGeneratorAdapter {
+	private lastIssued = 0;
+
 	constructor(private readMaxId: () => Promise<number | null>) {}
 
+	// Track what this instance handed out: a failed insert leaves MAX(id) unchanged, and a retry needs a new id.
 	async getNextId(): Promise<number> {
-		return ((await this.readMaxId()) ?? 0) + 1;
+		this.lastIssued = Math.max((await this.readMaxId()) ?? 0, this.lastIssued) + 1;
+		return this.lastIssued;
 	}
 }
