@@ -120,20 +120,20 @@ export const dbHandle: Handle = async ({ event, resolve }) => {
 	return resolve(event);
 };
 
+let sentryCloudflareHandle: Handle | undefined;
+
 export const sentryInitHandle: Handle = async ({ event, resolve }) => {
+	const dsn = resolveSentryDsn(event.platform?.env);
+	if (dsn && !dev) {
+		// initCloudflareSentryHandle only returns a Handle; it must run on every request to set up the SDK.
+		sentryCloudflareHandle ??= Sentry.initCloudflareSentryHandle({ dsn, tracesSampleRate: 0.1 });
+		return sentryCloudflareHandle({ event, resolve });
+	}
 	if (!sentryInitialized) {
-		const dsn = resolveSentryDsn(event.platform?.env);
 		if (dsn) {
-			if (dev) {
-				Sentry.init({
-					dsn
-				});
-			} else {
-				Sentry.initCloudflareSentryHandle({
-					dsn,
-					tracesSampleRate: 1.0
-				});
-			}
+			Sentry.init({
+				dsn
+			});
 		}
 		sentryInitialized = true;
 	}

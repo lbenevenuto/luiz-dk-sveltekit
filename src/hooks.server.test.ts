@@ -1,6 +1,14 @@
-import { afterEach, beforeEach, describe, it, expect } from 'vitest';
+import { afterEach, beforeEach, describe, it, expect, vi } from 'vitest';
+import * as Sentry from '@sentry/sveltekit';
 import { buildCspDirectives, requestIdHook, resolveSentryDsn, securityHeadersHandle } from './hooks.server';
+import { sentryInitHandle } from './hooks.server';
 import { requestContext } from '$lib/server/logger';
+
+vi.mock('$app/environment', () => ({ dev: false }));
+vi.mock('@sentry/sveltekit', async (importOriginal) => ({
+	...(await importOriginal<typeof import('@sentry/sveltekit')>()),
+	initCloudflareSentryHandle: vi.fn(() => vi.fn(({ event, resolve }) => resolve(event)))
+}));
 
 describe('hooks security helpers', () => {
 	const originalSentryDsn = process.env.SENTRY_DSN;
@@ -93,5 +101,23 @@ describe('hooks security helpers', () => {
 		expect(response.headers.get('Strict-Transport-Security')).toContain('max-age=31536000');
 		expect(response.headers.get('Content-Security-Policy')).toContain('frontend.clerk.accounts.dev');
 		expect(response.headers.get('Content-Security-Policy')).toContain('platform.ingest.sentry.io');
+	});
+
+	it('runs the Cloudflare Sentry handle on every request, building it once', async () => {
+		const input = {
+			event: { platform: { env: { SENTRY_DSN: 'https://k@o1.ingest.sentry.io/1' } } as App.Platform },
+			resolve: async () => new Response('ok')
+		} as unknown as Parameters<typeof sentryInitHandle>[0];
+
+		await sentryInitHandle(input);
+		const response = await sentryInitHandle(input);
+
+		expect(await response.text()).toBe('ok');
+		expect(Sentry.initCloudflareSentryHandle).toHaveBeenCalledTimes(1);
+		expect(Sentry.initCloudflareSentryHandle).toHaveBeenCalledWith(
+			expect.objectContaining({ dsn: 'https://k@o1.ingest.sentry.io/1' })
+		);
+		const cfHandle = vi.mocked(Sentry.initCloudflareSentryHandle).mock.results[0].value;
+		expect(cfHandle).toHaveBeenCalledTimes(2);
 	});
 });
