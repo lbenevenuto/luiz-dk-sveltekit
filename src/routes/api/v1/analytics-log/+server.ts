@@ -48,8 +48,9 @@ export const GET: RequestHandler = async ({ platform, url, locals }) => {
 
 	const result = await fetchAnalyticsLog(platform, { days, page, pageSize, shortCodes });
 
-	// Non-admins only ever see their own links, so the owner column is admin-only.
-	if (locals.auth.role !== 'admin' || result.rows.length === 0) {
+	// Owners only add information when the log spans everyone's links (admin, no user filter).
+	// Pinned to one user (a dashboard, or a filtered admin view), every row has the same owner.
+	if (locals.auth.role !== 'admin' || userId || result.rows.length === 0) {
 		return json(result);
 	}
 

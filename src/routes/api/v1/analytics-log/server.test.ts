@@ -74,10 +74,13 @@ describe('GET /api/v1/analytics-log', () => {
 		expect(body.rows.map((row) => row.owner)).toEqual([{ name: 'Luiz B', email: 'a@x.dk' }, null, { name: 'u_gone' }]);
 	});
 
-	it('does not look up owners for non-admins', async () => {
+	it.each([
+		['non-admins', '', 'user'],
+		['admins pinned to one user (e.g. their own dashboard)', '?userId=admin', 'admin']
+	] as const)('does not look up owners for %s', async (_case, search, role) => {
 		mockFetchAnalyticsLog.mockResolvedValue({ rows: [{ shortCode: 'u1-code' }] });
 
-		const body = (await (await get('', { userId: 'u1', role: 'user' })).json()) as LogBody;
+		const body = (await (await get(search, { userId: 'admin', role })).json()) as LogBody;
 
 		expect(mockGetShortCodeOwners).not.toHaveBeenCalled();
 		expect(body.rows[0]).not.toHaveProperty('owner');
