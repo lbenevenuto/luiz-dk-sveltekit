@@ -54,7 +54,7 @@ Uses [semantic-release](https://semantic-release.gitbook.io/semantic-release/) â
 ## Tech Stack
 
 - **Framework:** SvelteKit (Svelte 5 runes) on Cloudflare Pages
-- **Runtime:** Bun (package manager), Node (for Wrangler, see `.node-version`)
+- **Runtime:** Bun (package manager), Node >= 22 (for Wrangler)
 - **Database:** Drizzle ORM on SQLite (local) / Cloudflare D1 (prod)
 - **Auth:** Clerk (`@clerk/backend` server-side, JS SDK client-side)
 - **Styling:** Tailwind CSS v4 (utility-first)
@@ -88,9 +88,9 @@ Uses [semantic-release](https://semantic-release.gitbook.io/semantic-release/) â
 | Deploy             | `bun run deploy`                                                             |
 | Clear artifacts    | `bun run clear` (cleanup script; see `package.json` for exact paths removed) |
 
-**CI:** Runs `lint -> check -> test -> build` on push to `main` and all PRs. Uses `.github/actions/setup` which installs Bun 1.3.7 and runs `bun install --frozen-lockfile`.
+**CI:** Runs `lint -> check -> test (with coverage thresholds) -> build` on push to `main` and all PRs. Uses `.github/actions/setup` which installs Bun 1.4.4 and runs `bun install --frozen-lockfile`.
 
-**Pre-commit:** Husky + lint-staged runs prettier + eslint on `*.{js,ts,svelte,json}`.
+**Pre-commit:** Husky + lint-staged runs prettier + eslint on `*.{js,ts,svelte}` and prettier on `json`, `jsonc`, `css`, `html`, `md`, `yml`.
 
 **Deploy:** Triggered on GitHub release published. Build uses `CF_PAGES=1`, then CI runs `bunx wrangler pages deploy` with release/commit metadata flags including `--branch`, `--commit-hash`, and `--commit-message`.
 
@@ -98,7 +98,7 @@ Uses [semantic-release](https://semantic-release.gitbook.io/semantic-release/) â
 
 - Local dev: copy `.env.example` â†’ `.env`, then `bun run db:migrate`
 - Cloudflare preview: copy `.dev.vars.example` â†’ `.dev.vars` after building
-- Required for `build` / `check`: `PUBLIC_SENTRY_DSN`, `SALT`, `BASE_URL`
+- Required for `build` / `check`: `PUBLIC_SENTRY_DSN` (read via `$env/static/public`); `SALT` and `BASE_URL` are runtime vars
 - Prod migrations need: `CLOUDFLARE_ACCOUNT_ID`, `CLOUDFLARE_D1_DATABASE_ID`, `CLOUDFLARE_API_TOKEN`
 
 ---
@@ -209,7 +209,6 @@ logger.error('error.name', { error: err instanceof Error ? err.message : String(
 - **Env vars:** Accessed via `platform.env` (Cloudflare bindings), NOT `process.env` (except Sentry DSN fallback)
 - **Hooks chain:** `requestIdHook` -> `initialHook` -> `sentryInitHandle` -> `Sentry.sentryHandle()` -> `dbHandle` -> `authHandle` -> `securityHeadersHandle`
 - **Lockfile:** `bun.lock` (text-based). CI uses `bun install --frozen-lockfile`.
-- **Node version:** `.node-version` specifies 24.12.0 for Wrangler tooling; `.npmrc` has `engine-strict=true`
 - **Generated types:** `bun run types` generates `worker-configuration.d.ts` from `wrangler.jsonc`
 - **SSR externals:** `vite.config.ts` marks `@sentry/sveltekit` and `zod` as `noExternal` â€” required for Cloudflare adapter bundling
 - **Wrangler flags:** `compatibility_flags` includes `nodejs_als` and `nodejs_compat` for Node.js API support in Workers

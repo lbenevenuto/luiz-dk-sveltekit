@@ -30,8 +30,6 @@ jobs:
         run: bun run check
         env:
           PUBLIC_SENTRY_DSN: ${{ vars.PUBLIC_SENTRY_DSN }}
-          SALT: ${{ secrets.SALT }}
-          BASE_URL: ${{ vars.BASE_URL }}
 
       - name: Test with coverage thresholds
         run: bun run test -- --coverage
@@ -40,8 +38,6 @@ jobs:
         run: bun run build
         env:
           PUBLIC_SENTRY_DSN: ${{ vars.PUBLIC_SENTRY_DSN }}
-          SALT: ${{ secrets.SALT }}
-          BASE_URL: ${{ vars.BASE_URL }}
 
   release:
     needs: build

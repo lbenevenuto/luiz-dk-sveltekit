@@ -21,8 +21,6 @@ jobs:
         env:
           PUBLIC_SENTRY_DSN: ${{ vars.PUBLIC_SENTRY_DSN }}
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
-          SALT: ${{ secrets.SALT }}
-          BASE_URL: ${{ vars.BASE_URL }}
 
       - name: Deploy to Cloudflare Pages
         run: >-
