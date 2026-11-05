@@ -57,8 +57,9 @@ export async function searchUrls(db: DrizzleClient, params: SearchUrlsParams): P
 	};
 }
 
-export async function getUserUrls(db: DrizzleClient, userId: string): Promise<Url[]> {
-	return db.select().from(urls).where(eq(urls.userId, userId));
+// Callers only need the codes (to filter analytics), so don't pull whole rows.
+export async function getUserUrls(db: DrizzleClient, userId: string): Promise<Pick<Url, 'shortCode'>[]> {
+	return db.select({ shortCode: urls.shortCode }).from(urls).where(eq(urls.userId, userId));
 }
 
 export async function getUrlByShortCode(db: DrizzleClient, shortCode: string): Promise<Url | undefined> {
