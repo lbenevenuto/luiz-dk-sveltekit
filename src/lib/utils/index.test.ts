@@ -129,7 +129,7 @@ describe('createShortUrl', () => {
 
 			const result = await createShortUrl('https://example.com', null, mockPlatform, mockDb);
 
-			expect(mockCache.get).toHaveBeenCalledWith('url:https://example.com:permanent');
+			expect(mockCache.get).toHaveBeenCalledWith('url:anon:https://example.com:permanent');
 			expect(result).toEqual({ shortCode: 'cachehit', isExisting: true, expiresAt: null });
 			// Ensure DB was not queried
 			expect(queries.findExistingUrl).not.toHaveBeenCalled();
@@ -147,29 +147,21 @@ describe('createShortUrl', () => {
 				userId: 'user123',
 				expiring: false
 			});
-			expect(mockCache.set).toHaveBeenCalledWith('url:https://example.com:permanent', 'dbhit', 604800);
+			expect(mockCache.set).toHaveBeenCalledWith('url:user123:https://example.com:permanent', 'dbhit', 604800);
 			expect(result).toEqual({ shortCode: 'dbhit', isExisting: true, expiresAt: null });
 		});
 
-		it('caches and returns existing non-expired DB entry (global fallback)', async () => {
-			const mockCache = { get: vi.fn().mockResolvedValue(null), set: vi.fn(), delete: vi.fn() };
-			vi.mocked(factory.getCacheAdapter).mockResolvedValue(mockCache);
-
-			vi.mocked(queries.findExistingUrl)
-				.mockResolvedValueOnce(undefined)
-				.mockResolvedValueOnce(mockUrl({ shortCode: 'globalhit' }));
+		it('does not hand a signed-in user an anonymous row', async () => {
+			const mockIdGen = { getNextId: vi.fn().mockResolvedValue(7) };
+			vi.mocked(factory.getIdGeneratorAdapter).mockResolvedValue(mockIdGen);
+			vi.mocked(queries.findExistingUrl).mockResolvedValue(undefined);
+			vi.mocked(generateShortCode).mockReturnValue('owncode');
 
 			const result = await createShortUrl('https://example.com', null, mockPlatform, mockDb, 'user123');
 
-			expect(queries.findExistingUrl).toHaveBeenNthCalledWith(1, mockDb, 'https://example.com', {
-				userId: 'user123',
-				expiring: false
-			});
-			expect(queries.findExistingUrl).toHaveBeenNthCalledWith(2, mockDb, 'https://example.com', {
-				expiring: false
-			});
-			expect(mockCache.set).toHaveBeenCalledWith('url:https://example.com:permanent', 'globalhit', 604800);
-			expect(result).toEqual({ shortCode: 'globalhit', isExisting: true, expiresAt: null });
+			expect(queries.findExistingUrl).toHaveBeenCalledTimes(1);
+			expect(queries.insertUrl).toHaveBeenCalledWith(mockDb, expect.objectContaining({ userId: 'user123' }));
+			expect(result).toEqual({ shortCode: 'owncode', isExisting: false, expiresAt: null });
 		});
 
 		it('generates new code if not in cache or DB', async () => {
@@ -189,7 +181,7 @@ describe('createShortUrl', () => {
 				userId: null,
 				expiresAt: null
 			});
-			expect(mockCache.set).toHaveBeenCalledWith('url:https://example.com:permanent', 'newgen', 604800);
+			expect(mockCache.set).toHaveBeenCalledWith('url:anon:https://example.com:permanent', 'newgen', 604800);
 			expect(result).toEqual({ shortCode: 'newgen', isExisting: false, expiresAt: null });
 		});
 

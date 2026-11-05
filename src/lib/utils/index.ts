@@ -63,7 +63,8 @@ export const createShortUrl = async (
 		return { shortCode: customCode, isExisting: false, expiresAt: expiresAt ?? null };
 	}
 
-	const cacheKey = expiresAt ? `url:${normalizedUrl}:exp:${expiresAt}` : `url:${normalizedUrl}:permanent`;
+	// Scoped by owner: a code belongs to whoever created it, so it must never be handed to another user.
+	const cacheKey = `url:${userId ?? 'anon'}:${normalizedUrl}:permanent`;
 	const hashSalt = platform?.env?.SALT || 'abd';
 
 	const cacheAdapter = await getCacheAdapter(platform);
@@ -76,17 +77,7 @@ export const createShortUrl = async (
 
 	const wantsExpiry = Boolean(expiresAt);
 
-	let existingForUser;
-	if (userId) {
-		existingForUser = await findExistingUrl(db, normalizedUrl, { userId, expiring: wantsExpiry });
-	}
-
-	let existingGlobal;
-	if (existingForUser === undefined) {
-		existingGlobal = await findExistingUrl(db, normalizedUrl, { expiring: wantsExpiry });
-	}
-
-	const existing = existingForUser || existingGlobal;
+	const existing = await findExistingUrl(db, normalizedUrl, { userId: userId ?? undefined, expiring: wantsExpiry });
 
 	if (existing) {
 		const nowSeconds = Math.floor(Date.now() / 1000);
