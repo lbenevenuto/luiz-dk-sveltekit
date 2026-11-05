@@ -1,10 +1,9 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-const { mockSearchUrls, mockGetUserList } = vi.hoisted(() => ({ mockSearchUrls: vi.fn(), mockGetUserList: vi.fn() }));
+const { mockSearchUrls, mockGetOwners } = vi.hoisted(() => ({ mockSearchUrls: vi.fn(), mockGetOwners: vi.fn() }));
 
 vi.mock('$lib/server/db/queries/urls', () => ({ searchUrls: mockSearchUrls }));
-vi.mock('$lib/server/clerk', () => ({ getClerkClient: () => ({ users: { getUserList: mockGetUserList } }) }));
-vi.mock('$lib/server/logger', () => ({ logger: { error: vi.fn() } }));
+vi.mock('$lib/server/clerk', () => ({ getOwners: mockGetOwners }));
 
 import { load } from './+page.server';
 
@@ -35,31 +34,13 @@ describe('admin urls load', () => {
 		expect(mockSearchUrls).toHaveBeenCalledWith({}, expect.objectContaining({ page: 1, pageSize: 10 }));
 	});
 
-	it('resolves URL owners to names, with email only alongside a real name', async () => {
-		mockSearchUrls.mockResolvedValue({
-			urls: [{ userId: 'u_a' }, { userId: 'u_a' }, { userId: 'u_b' }, { userId: null }]
-		});
-		const email = (address: string) => ({
-			primaryEmailAddressId: 'e',
-			emailAddresses: [{ id: 'e', emailAddress: address }]
-		});
-		mockGetUserList.mockResolvedValue({
-			data: [
-				{ id: 'u_a', firstName: 'Luiz', lastName: 'B', ...email('a@x.dk') },
-				{ id: 'u_b', firstName: null, lastName: null, ...email('b@x.dk') }
-			]
-		});
+	it('resolves the distinct owners on the page plus the filtered user', async () => {
+		mockSearchUrls.mockResolvedValue({ urls: [{ userId: 'u_a' }, { userId: 'u_a' }, { userId: null }] });
+		mockGetOwners.mockResolvedValue({ u_a: { name: 'Luiz B' } });
 
-		const result = (await runLoad('', 'admin', { env: {} })) as { owners: unknown };
+		const result = (await runLoad('?userId=u_f', 'admin', { env: {} })) as { owners: unknown };
 
-		expect(mockGetUserList).toHaveBeenCalledWith({ userId: ['u_a', 'u_b'], limit: 2 });
-		expect(result.owners).toEqual({ u_a: { name: 'Luiz B', email: 'a@x.dk' }, u_b: { name: 'b@x.dk' } });
-	});
-
-	it('falls back to raw ids when Clerk is unavailable', async () => {
-		mockSearchUrls.mockResolvedValue({ urls: [{ userId: 'u_a' }] });
-		mockGetUserList.mockRejectedValue(new Error('clerk down'));
-
-		expect(((await runLoad('', 'admin', { env: {} })) as { owners: unknown }).owners).toEqual({});
+		expect(mockGetOwners).toHaveBeenCalledWith({ env: {} }, ['u_a', 'u_f']);
+		expect(result.owners).toEqual({ u_a: { name: 'Luiz B' } });
 	});
 });

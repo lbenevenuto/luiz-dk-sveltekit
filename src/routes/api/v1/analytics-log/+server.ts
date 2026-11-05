@@ -1,7 +1,8 @@
 import type { RequestHandler } from './$types';
 import { json } from '@sveltejs/kit';
 import { fetchAnalyticsLog } from '$lib/server/analytics';
-import { getUserUrls } from '$lib/server/db/queries/urls';
+import { getOwners } from '$lib/server/clerk';
+import { getShortCodeOwners, getUserUrls } from '$lib/server/db/queries/urls';
 import { jsonError } from '$lib/server/responses';
 import { daysSchema, pageSizeSchema } from '$lib/server/validation-schemas';
 import { z } from 'zod';
@@ -47,5 +48,17 @@ export const GET: RequestHandler = async ({ platform, url, locals }) => {
 
 	const result = await fetchAnalyticsLog(platform, { days, page, pageSize, shortCodes });
 
-	return json(result);
+	// Non-admins only ever see their own links, so the owner column is admin-only.
+	if (locals.auth.role !== 'admin' || result.rows.length === 0) {
+		return json(result);
+	}
+
+	const ownerIds = await getShortCodeOwners(locals.db, [...new Set(result.rows.map((row) => row.shortCode))]);
+	const owners = await getOwners(platform, [...new Set([...ownerIds.values()].filter((id) => id !== null))]);
+	const rows = result.rows.map((row) => {
+		const ownerId = ownerIds.get(row.shortCode) ?? null;
+		return { ...row, owner: ownerId ? (owners[ownerId] ?? { name: ownerId }) : null };
+	});
+
+	return json({ ...result, rows });
 };
