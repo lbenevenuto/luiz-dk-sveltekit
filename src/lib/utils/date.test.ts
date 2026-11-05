@@ -12,6 +12,10 @@ describe('formatDate', () => {
 	it('zero-pads single-digit months, days, and time parts', () => {
 		expect(formatDate(new Date(2026, 0, 5, 9, 8, 7))).toBe('2026-01-05 09:08:07');
 	});
+
+	it('accepts epoch milliseconds (Clerk createdAt)', () => {
+		expect(formatDate(fixed.getTime())).toBe('2026-06-29 13:04:05');
+	});
 });
 
 describe('formatDateShort', () => {

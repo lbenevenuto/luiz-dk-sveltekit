@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
+	import { formatDate } from '$lib/utils/date';
 
 	interface User {
 		id: string;
@@ -67,7 +68,7 @@
 							</td>
 							<td class="px-6 py-4 whitespace-nowrap">
 								<div class="text-sm text-gray-400">
-									{new Date(user.createdAt).toLocaleDateString()}
+									{formatDate(user.createdAt)}
 								</div>
 							</td>
 							<td class="px-6 py-4 text-sm whitespace-nowrap">
