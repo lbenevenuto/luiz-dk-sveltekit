@@ -1,7 +1,8 @@
 import type { PageServerLoad } from './$types';
 import { requireAdmin } from '$lib/server/auth';
 import { searchUrls } from '$lib/server/db/queries/urls';
-import { ALLOWED_PAGE_SIZES } from '$lib/utils/constants';
+import { pageSizeSchema } from '$lib/server/validation-schemas';
+import { DEFAULT_PAGE_SIZE } from '$lib/utils/constants';
 import { z } from 'zod';
 
 const searchParamsSchema = z.object({
@@ -9,11 +10,7 @@ const searchParamsSchema = z.object({
 	userId: z.string().optional(),
 	anonymous: z.enum(['true']).optional(),
 	page: z.coerce.number().int().positive().optional(),
-	pageSize: z.coerce
-		.number()
-		.int()
-		.refine((v) => (ALLOWED_PAGE_SIZES as readonly number[]).includes(v))
-		.optional()
+	pageSize: pageSizeSchema.optional()
 });
 
 export const load: PageServerLoad = async ({ url, locals }) => {
@@ -36,7 +33,7 @@ export const load: PageServerLoad = async ({ url, locals }) => {
 		userIdFilter = params.userId;
 	}
 
-	const pageSize = params.pageSize ?? 10;
+	const pageSize = params.pageSize ?? DEFAULT_PAGE_SIZE;
 
 	const result = await searchUrls(locals.db, {
 		query: params.q,
