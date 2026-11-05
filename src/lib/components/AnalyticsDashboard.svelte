@@ -31,6 +31,8 @@
 		country: string;
 		referrer: string;
 		userAgent: string;
+		// Present (null = anonymous link) only in admin responses.
+		owner?: { name: string; email?: string } | null;
 	}
 
 	interface LogData {
@@ -50,6 +52,15 @@
 	let pageSize = $state<number>(DEFAULT_PAGE_SIZE);
 
 	const totalPages = $derived(logData ? Math.ceil(logData.totalRows / pageSize) : 0);
+	const showOwner = $derived(logData?.rows.some((row) => row.owner !== undefined) ?? false);
+	const headings = $derived([
+		'Time',
+		'Short Code',
+		...(showOwner ? ['User'] : []),
+		'Country',
+		'Referrer',
+		'User Agent'
+	]);
 
 	function goToPage(next: number) {
 		page = next;
@@ -210,7 +221,7 @@
 					<table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
 						<thead class="bg-gray-50 dark:bg-gray-700/50">
 							<tr>
-								{#each ['Time', 'Short Code', 'Country', 'Referrer', 'User Agent'] as heading (heading)}
+								{#each headings as heading (heading)}
 									<th
 										scope="col"
 										class="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase dark:text-gray-400"
@@ -231,6 +242,18 @@
 											{row.shortCode}
 										</a>
 									</td>
+									{#if showOwner}
+										<td class="px-6 py-4 text-sm whitespace-nowrap text-gray-900 dark:text-white">
+											{#if row.owner}
+												{row.owner.name}
+												{#if row.owner.email}
+													<span class="block text-xs text-gray-500 dark:text-gray-400">{row.owner.email}</span>
+												{/if}
+											{:else}
+												<span class="text-gray-500 italic dark:text-gray-400">anonymous</span>
+											{/if}
+										</td>
+									{/if}
 									<td class="px-6 py-4 text-sm whitespace-nowrap text-gray-900 dark:text-white">
 										{row.country || 'Unknown'}
 									</td>

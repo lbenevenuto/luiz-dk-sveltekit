@@ -2,7 +2,15 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import type { DrizzleClient } from '../client';
 import { migrate } from 'drizzle-orm/better-sqlite3/migrator';
 import { createSQLiteClient } from '../client';
-import { getUserUrls, getUrlByShortCode, deleteUrlById, insertUrl, findExistingUrl, searchUrls } from './urls';
+import {
+	getShortCodeOwners,
+	getUserUrls,
+	getUrlByShortCode,
+	deleteUrlById,
+	insertUrl,
+	findExistingUrl,
+	searchUrls
+} from './urls';
 
 function createChainableMock(resolvedValue?: unknown) {
 	const chain = {
@@ -225,5 +233,16 @@ describe('url queries against SQLite', () => {
 		const page = await searchUrls(db, { page: 2, pageSize: 3 });
 		expect(page).toMatchObject({ total: 5, totalPages: 2 });
 		expect(page.urls).toHaveLength(2);
+	});
+
+	it('getShortCodeOwners maps each code to its owner, null for anonymous', async () => {
+		const owners = await getShortCodeOwners(db, ['anon1', 'mine1', 'missing']);
+		expect(owners).toEqual(
+			new Map([
+				['anon1', null],
+				['mine1', 'u1']
+			])
+		);
+		expect(await getShortCodeOwners(db, [])).toEqual(new Map());
 	});
 });

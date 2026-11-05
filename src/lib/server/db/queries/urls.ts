@@ -1,4 +1,4 @@
-import { eq, and, isNull, isNotNull, desc, sql } from 'drizzle-orm';
+import { eq, and, inArray, isNull, isNotNull, desc, sql } from 'drizzle-orm';
 import { urls } from '../schemas';
 import type { Url } from '../schemas';
 import type { DrizzleClient } from '../client';
@@ -60,6 +60,16 @@ export async function searchUrls(db: DrizzleClient, params: SearchUrlsParams): P
 // Callers only need the codes (to filter analytics), so don't pull whole rows.
 export async function getUserUrls(db: DrizzleClient, userId: string): Promise<Pick<Url, 'shortCode'>[]> {
 	return db.select({ shortCode: urls.shortCode }).from(urls).where(eq(urls.userId, userId));
+}
+
+/** Owner (Clerk user id, or null for anonymous) of each given short code. */
+export async function getShortCodeOwners(db: DrizzleClient, shortCodes: string[]): Promise<Map<string, string | null>> {
+	if (shortCodes.length === 0) return new Map();
+	const rows = await db
+		.select({ shortCode: urls.shortCode, userId: urls.userId })
+		.from(urls)
+		.where(inArray(urls.shortCode, shortCodes));
+	return new Map(rows.map((row) => [row.shortCode, row.userId]));
 }
 
 export async function getUrlByShortCode(db: DrizzleClient, shortCode: string): Promise<Url | undefined> {

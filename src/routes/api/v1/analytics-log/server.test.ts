@@ -1,12 +1,18 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-const { mockFetchAnalyticsLog, mockGetUserUrls } = vi.hoisted(() => ({
+const { mockFetchAnalyticsLog, mockGetUserUrls, mockGetShortCodeOwners, mockGetOwners } = vi.hoisted(() => ({
 	mockFetchAnalyticsLog: vi.fn(),
-	mockGetUserUrls: vi.fn()
+	mockGetUserUrls: vi.fn(),
+	mockGetShortCodeOwners: vi.fn(),
+	mockGetOwners: vi.fn()
 }));
 
 vi.mock('$lib/server/analytics', () => ({ fetchAnalyticsLog: mockFetchAnalyticsLog }));
-vi.mock('$lib/server/db/queries/urls', () => ({ getUserUrls: mockGetUserUrls }));
+vi.mock('$lib/server/clerk', () => ({ getOwners: mockGetOwners }));
+vi.mock('$lib/server/db/queries/urls', () => ({
+	getUserUrls: mockGetUserUrls,
+	getShortCodeOwners: mockGetShortCodeOwners
+}));
 
 import { GET } from './+server';
 
@@ -15,6 +21,10 @@ const get = (search: string, auth: { userId: string | null; role: 'admin' | 'use
 		url: new URL(`https://luiz.dk/api/v1/analytics-log${search}`),
 		locals: { db: {}, auth }
 	} as unknown as Parameters<typeof GET>[0]);
+
+interface LogBody {
+	rows: Array<{ owner?: unknown }>;
+}
 
 const shortCodesArg = () => mockFetchAnalyticsLog.mock.calls[0][1].shortCodes;
 
@@ -45,5 +55,31 @@ describe('GET /api/v1/analytics-log', () => {
 		await get('', { userId: 'admin', role: 'admin' });
 		expect(mockGetUserUrls).not.toHaveBeenCalled();
 		expect(shortCodesArg()).toBeUndefined();
+	});
+
+	it("adds each row's link owner for admins, falling back to the raw id", async () => {
+		mockFetchAnalyticsLog.mockResolvedValue({ rows: [{ shortCode: 'a' }, { shortCode: 'b' }, { shortCode: 'c' }] });
+		mockGetShortCodeOwners.mockResolvedValue(
+			new Map([
+				['a', 'u_a'],
+				['b', null],
+				['c', 'u_gone']
+			])
+		);
+		mockGetOwners.mockResolvedValue({ u_a: { name: 'Luiz B', email: 'a@x.dk' } });
+
+		const body = (await (await get('', { userId: 'admin', role: 'admin' })).json()) as LogBody;
+
+		expect(mockGetOwners).toHaveBeenCalledWith(undefined, ['u_a', 'u_gone']);
+		expect(body.rows.map((row) => row.owner)).toEqual([{ name: 'Luiz B', email: 'a@x.dk' }, null, { name: 'u_gone' }]);
+	});
+
+	it('does not look up owners for non-admins', async () => {
+		mockFetchAnalyticsLog.mockResolvedValue({ rows: [{ shortCode: 'u1-code' }] });
+
+		const body = (await (await get('', { userId: 'u1', role: 'user' })).json()) as LogBody;
+
+		expect(mockGetShortCodeOwners).not.toHaveBeenCalled();
+		expect(body.rows[0]).not.toHaveProperty('owner');
 	});
 });
