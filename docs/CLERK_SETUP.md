@@ -20,9 +20,9 @@ This project now has **Clerk authentication** integrated with role-based access 
 
 ✅ **Rate Limiting**
 
-- Anonymous users: 10 URLs per hour
+- Anonymous users: `RATE_LIMIT_MAX_REQUESTS` per `RATE_LIMIT_WINDOW_SECONDS`
 - Authenticated users: Unlimited
-- Cloudflare Rate Limiting API integration
+- KV-backed sliding window (`src/lib/server/rate-limit.ts`)
 
 ✅ **User Tracking**
 
@@ -148,7 +148,7 @@ Then use Clerk API or dashboard to set metadata.
 
 ## Authentication Flow
 
-### 1. Server-Side (hooks.server.ts)
+### 1. Server-Side (`src/lib/server/auth-handle.ts`)
 
 ```typescript
 // On every request:
@@ -178,9 +178,8 @@ Then use Clerk API or dashboard to set metadata.
 
 **Anonymous Users:**
 
-- Key: `anon:${IP_ADDRESS}`
-- Limit: 10 requests per hour
-- Uses Cloudflare Rate Limiting API
+- Key: `ratelimit:anon:${IP_ADDRESS}` in KV
+- Limit: `RATE_LIMIT_MAX_REQUESTS` per `RATE_LIMIT_WINDOW_SECONDS`
 
 **Authenticated Users:**
 
@@ -199,14 +198,6 @@ requireAuth(locals);
 
 // Throw 403 if not admin
 requireAdmin(locals);
-
-// Check if user is authenticated
-if (isAuthenticated(locals)) {
-}
-
-// Check if user has a specific role
-if (hasRole(locals, 'admin')) {
-}
 ```
 
 ### Usage Example
@@ -264,25 +255,10 @@ await clerkClient.users.updateUserMetadata(userId, {
 
 ## Rate Limiting Configuration
 
-Rate limiter is configured in `wrangler.jsonc`:
+Set in the `vars` blocks of `wrangler.jsonc`:
 
-```jsonc
-"ratelimits": [
-  {
-    "name": "URL_SHORTENER_RATE_LIMITER",
-    "namespace_id": "1001",
-    "simple": {
-      "limit": 10,        // 10 requests
-      "period": 3600      // per hour (in seconds)
-    }
-  }
-]
-```
-
-**To adjust limits:**
-
-- Change `limit` value
-- Change `period` (must be 10 or 60 seconds, or use advanced mode)
+- `RATE_LIMIT_MAX_REQUESTS` (default 10)
+- `RATE_LIMIT_WINDOW_SECONDS` (default 3600)
 
 ---
 
@@ -359,7 +335,7 @@ bun run deploy
 
 ### Rate limiting not working
 
-Rate limiting only works in production with Cloudflare Workers.
+Rate limiting needs the `CACHE` KV binding (production or `bun run preview`).
 
 Local dev allows all requests.
 
