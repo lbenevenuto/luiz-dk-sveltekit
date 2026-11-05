@@ -24,10 +24,11 @@
 		"clear": "rm -rf node_modules/ .svelte-kit/ .wrangler/ dist/ coverage/ pnpm-lock.yaml bun.lockb bun.lock package-lock.json yarn.lock"
 	},
 	"lint-staged": {
-		"*.{js,ts,svelte,json}": [
+		"*.{js,ts,svelte}": [
 			"prettier --write",
 			"eslint"
-		]
+		],
+		"*.{json,jsonc,css,html,md,yml,yaml}": "prettier --write"
 	},
 	"devDependencies": {
 		"@clerk/backend": "^3.26.6",
