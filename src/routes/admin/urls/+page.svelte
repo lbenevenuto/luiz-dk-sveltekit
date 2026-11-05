@@ -88,7 +88,7 @@
 			<div class="mt-3 flex items-center gap-2 text-sm text-gray-400">
 				<span>Filtered by user:</span>
 				<span class="rounded-full bg-indigo-900/50 px-2.5 py-0.5 text-xs font-medium text-indigo-300">
-					{data.userIdFilter}
+					{data.owners[data.userIdFilter]?.name ?? data.userIdFilter}
 				</span>
 				<a href={buildUrl({ userId: undefined, anonymous: undefined })} class="text-gray-500 hover:text-gray-300">
 					&times;
@@ -145,12 +145,16 @@
 							</td>
 							<td class="px-6 py-4 whitespace-nowrap">
 								{#if url.userId}
+									{@const owner = data.owners[url.userId]}
 									<a
 										href={buildUrl({ userId: url.userId, anonymous: undefined, page: '1' })}
 										class="text-sm text-gray-300 hover:text-white"
 										title="Filter by this user"
 									>
-										{url.userId}
+										{owner?.name ?? url.userId}
+										{#if owner?.email}
+											<span class="block text-xs text-gray-500">{owner.email}</span>
+										{/if}
 									</a>
 								{:else}
 									<a
