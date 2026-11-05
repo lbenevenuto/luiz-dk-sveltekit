@@ -1,3 +1,7 @@
+## [1.8.1](https://github.com/lbenevenuto/luiz-dk-sveltekit/compare/v1.8.0...v1.8.1) (2026-11-05)
+
+**Full Changelog**: https://github.com/lbenevenuto/luiz-dk-sveltekit/compare/v1.8.0...v1.8.1
+
 ## [1.8.0](https://github.com/lbenevenuto/luiz-dk-sveltekit/compare/v1.7.1...v1.8.0) (2026-11-05)
 
 **Full Changelog**: https://github.com/lbenevenuto/luiz-dk-sveltekit/compare/v1.7.1...v1.8.0
