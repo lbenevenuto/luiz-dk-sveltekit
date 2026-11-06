@@ -1,0 +1,8 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "$id":"https://agentic-os.local/schemas/visual-review/review-1.0.0.json",
+  "title":"Visual Review Human Decisions",
+  "type":"object",
+  "required":["schemaVersion","status","pairs"],
+  "properties":{"schemaVersion":{"const":"1.0.0"},"status":{"enum":["pending-review","human-accepted","human-rejected"]},"reviewer":{"type":["string","null"]},"reviewedAt":{"type":["string","null"]},"pairs":{"type":"object","additionalProperties":{"type":"object","required":["status"],"properties":{"status":{"enum":["pending-review","human-accepted","human-rejected"]},"reviewer":{"type":["string","null"]},"reviewedAt":{"type":["string","null"]}}}}}
+}

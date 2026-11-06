@@ -1,0 +1,409 @@
+actor: ADOS explicit capsule bootstrap operation
+phase: project_readiness
+outcome: in_progress
+current_task: BOOTSTRAP
+summary: Actual capsule validation completed; project readiness and baseline confirmation
+  remain pending.
+tasks:
+- task_id: BOOTSTRAP
+  title: Validate the generated capsule before creating its baseline commit.
+  status: in_progress
+  acceptance: All capsule checks pass and the baseline commit is confirmed before
+    product implementation.
+  remaining_work: Confirm the initial Git baseline, inspect actual briefing and define
+    the first approved implementation contract.
+  evidence: []
+decisions:
+- id: CANONICAL-STATE
+  summary: Use the declared canonical state files and immutable checkpoint history
+    for project continuity.
+  reason: A single active checkpoint prevents independent state copies from silently
+    diverging during agent replacement.
+  evidence:
+  - docs/CONTINUITY_STANDARD.md
+blockers: []
+no_blockers_reason: No bootstrap failure is observed yet; project blockers still require
+  explicit briefing inspection.
+questions: []
+no_questions_reason: Project questions have not been assessed; the next agent must
+  inspect briefing and record every material gap.
+validation:
+- command:
+  - /private/tmp/claude-501/-Users-luiz-Projects-Personal-agentic-delivery-os/beef953a-1025-4848-8464-f8a1fbc3a814/scratchpad/venv/bin/python3
+  - -c
+  - "import ast, hashlib, json, pathlib, sys\nfor name in json.loads(sys.argv[1]):\n\
+    \ p = pathlib.Path(name)\n item = {\"path\": name, \"sha256\": hashlib.sha256(p.read_bytes()).hexdigest()}\n\
+    \ if p.suffix == \".py\":\n  tree = ast.parse(p.read_text())\n  item[\"definitions\"\
+    ] = [n.name for n in tree.body if isinstance(n, (ast.FunctionDef, ast.ClassDef))]\n\
+    \ print(json.dumps(item, sort_keys=True))\n"
+  - '["scripts/hds_gate.py", "scripts/hds_validation/__init__.py", "scripts/hds_validation/common.py",
+    "scripts/hds_validation/documents.py", "scripts/hds_validation/evolution.py",
+    "scripts/hds_validation/links.py", "scripts/hds_validation/registries.py", "scripts/hds_validation/scope.py",
+    "scripts/project_hds.py", "scripts/validate_hds.py", "scripts/validate_project_hds.py"]'
+  status: passed
+  exit_code: 0
+  result: Executed source inspection produced the attached path/hash/public-definition
+    inventory. This is structural evidence, not a claim of product correctness.
+  artifact: docs/evidence/documentation-source-inspection.jsonl
+- command:
+  - bash
+  - scripts/run_all_checks.sh
+  status: passed
+  exit_code: 0
+  result: The executed capsule suite finished with the recorded exit status; attached
+    output is the actual combined stdout and stderr.
+  artifact: docs/evidence/bootstrap-validation.log
+next_action: Run capsule checks, confirm baseline, inspect PROJECT_BRIEF.md and define
+  the first approved implementation contract.
+resume_checks: Run resume_project.py; compare checkpoint facts with actual Git status
+  and files, preserve uncommitted work, inspect briefing and rerun applicable checks.
+read_next:
+- 00-NEXT_AGENT_STARTUP.md
+- AGENTS.md
+- AGENT_STATE.md
+- AGENT_HANDOFF.md
+- PROJECT_BRIEF.md
+- docs/CONTINUITY_STANDARD.md
+checkpoint_id: bootstrap-validated
+carried_tasks: []
+recorded_at: '2026-10-12T20:34:12.621196+00:00'
+schema_version: 1.0.0
+sequence: 2
+previous:
+  path: .agentic-harness/checkpoints/00000001.yml
+  sha256: bb2d127eacadac92d6749ba9c3435aeea77a03643da0866eeb8d92385454cb44
+configuration_hash: 29b4a736c168f8bccb4be518d17bfa28749bc3dffa0de40814658fc6313d9b40
+state_hashes:
+  AGENT_STATE.md: 35d7bbe955d9769023b61a5bd3d80386eb357d30e1dd579912cba70274849e59
+  AGENT_PROGRESS.md: 5ca35b18403af4904792d46b00f1ebfc931a34b480b66f5c807737ac3a37156a
+  AGENT_TODO.md: 7d16ac66e67ffe4145f32e78f06ad2bdb162c39762d8f57401bb91485718c1a1
+  AGENT_DECISIONS.md: eb14da5d3861a0b667cbf10a4e2318d2060abb87c5773822c980611748808776
+  AGENT_BLOCKERS.md: 703e8e0db975ad632db1ec0b207b9eb30766986c394023c1a6837b5c68fac3b2
+  AGENT_VALIDATION.md: 11390549472d65977d4c5d2ed316ead51047761325b1256a6f24876578f05a26
+  AGENT_HANDOFF.md: a87618309b56fb62cb30ed84f9853f605d901c8e8a48e6e547513d18f063962c
+state_snapshots:
+  AGENT_STATE.md:
+    snapshot: .agentic-harness/checkpoints/00000002/AGENT_STATE.md.txt
+    sha256: 35d7bbe955d9769023b61a5bd3d80386eb357d30e1dd579912cba70274849e59
+  AGENT_PROGRESS.md:
+    snapshot: .agentic-harness/checkpoints/00000002/AGENT_PROGRESS.md.txt
+    sha256: 5ca35b18403af4904792d46b00f1ebfc931a34b480b66f5c807737ac3a37156a
+  AGENT_TODO.md:
+    snapshot: .agentic-harness/checkpoints/00000002/AGENT_TODO.md.txt
+    sha256: 7d16ac66e67ffe4145f32e78f06ad2bdb162c39762d8f57401bb91485718c1a1
+  AGENT_DECISIONS.md:
+    snapshot: .agentic-harness/checkpoints/00000002/AGENT_DECISIONS.md.txt
+    sha256: eb14da5d3861a0b667cbf10a4e2318d2060abb87c5773822c980611748808776
+  AGENT_BLOCKERS.md:
+    snapshot: .agentic-harness/checkpoints/00000002/AGENT_BLOCKERS.md.txt
+    sha256: 703e8e0db975ad632db1ec0b207b9eb30766986c394023c1a6837b5c68fac3b2
+  AGENT_VALIDATION.md:
+    snapshot: .agentic-harness/checkpoints/00000002/AGENT_VALIDATION.md.txt
+    sha256: 11390549472d65977d4c5d2ed316ead51047761325b1256a6f24876578f05a26
+  AGENT_HANDOFF.md:
+    snapshot: .agentic-harness/checkpoints/00000002/AGENT_HANDOFF.md.txt
+    sha256: a87618309b56fb62cb30ed84f9853f605d901c8e8a48e6e547513d18f063962c
+artifacts:
+  00-NEXT_AGENT_STARTUP.md:
+    snapshot: .agentic-harness/checkpoints/00000002/evidence-0000.bin
+    sha256: 3e65f855970294ca8a0996599248a5a0cb971387f14138812c423d72b13c351d
+  AGENTS.md:
+    snapshot: .agentic-harness/checkpoints/00000002/evidence-0001.bin
+    sha256: 4c86683053b5d45a4bc90b7a328c3168f4cf53b3f7c6d01db0ab0f72567a8960
+  AGENT_HANDOFF.md:
+    snapshot: .agentic-harness/checkpoints/00000002/evidence-0002.bin
+    sha256: a87618309b56fb62cb30ed84f9853f605d901c8e8a48e6e547513d18f063962c
+  AGENT_STATE.md:
+    snapshot: .agentic-harness/checkpoints/00000002/evidence-0003.bin
+    sha256: 35d7bbe955d9769023b61a5bd3d80386eb357d30e1dd579912cba70274849e59
+  PROJECT_BRIEF.md:
+    snapshot: .agentic-harness/checkpoints/00000002/evidence-0004.bin
+    sha256: 8cb3a44609eafc9b31aa37e9a84ac70cda05ca6d317a055bbbc73e28f21e6999
+  docs/CONTINUITY_STANDARD.md:
+    snapshot: .agentic-harness/checkpoints/00000002/evidence-0005.bin
+    sha256: a92062ac647e7203578acdcc96e24c42198581bbbb89e8c51d459837fd4a6e5e
+  docs/evidence/bootstrap-validation.log:
+    snapshot: .agentic-harness/checkpoints/00000002/evidence-0006.bin
+    sha256: 06eeab07e778098b897ca6f10f79720793befbf8c19b3d48881fce59c0dd1382
+  docs/evidence/documentation-source-inspection.jsonl:
+    snapshot: .agentic-harness/checkpoints/00000002/evidence-0007.bin
+    sha256: 1f1c824b9321d5da0fce73074a69bd54d8d9954d7aee8df5f569fc73bb302ad3
+request_snapshot:
+  snapshot: .agentic-harness/checkpoints/00000002/request.bin
+  sha256: 916c5a9c7c11402c72866cd06d4e75b437f2e15419f43acaf5978780efa41a04
+prior_states:
+  AGENT_STATE.md:
+    snapshot: .agentic-harness/checkpoints/00000002/prior-AGENT_STATE.md.txt
+    sha256: 10773fa8a5dc687843f2d83fbe5ffe52c366107b41b6a64680de94c688b510ef
+  AGENT_PROGRESS.md:
+    snapshot: .agentic-harness/checkpoints/00000002/prior-AGENT_PROGRESS.md.txt
+    sha256: 1a0d7e60e143e91f00bf70a35bfa6fe844d9445bba232601447414485e4a044a
+  AGENT_TODO.md:
+    snapshot: .agentic-harness/checkpoints/00000002/prior-AGENT_TODO.md.txt
+    sha256: 58c83b1aa9ef717658c1d76c44970b98a6d6348798f9244eb4f5ddb649c6566e
+  AGENT_DECISIONS.md:
+    snapshot: .agentic-harness/checkpoints/00000002/prior-AGENT_DECISIONS.md.txt
+    sha256: 7129494c9696256536c49d43aa0358c319777d17b75d49b6522c52a2dbe98255
+  AGENT_BLOCKERS.md:
+    snapshot: .agentic-harness/checkpoints/00000002/prior-AGENT_BLOCKERS.md.txt
+    sha256: 4f1b4ab47495c6ee0a3fb3aa6234a377faf0f0700f8114eb65c931e99143b8f2
+  AGENT_VALIDATION.md:
+    snapshot: .agentic-harness/checkpoints/00000002/prior-AGENT_VALIDATION.md.txt
+    sha256: cfd1a8c6265a981bc3d4e7f0f02297142b7d787e1249dd51848ad1d44aaf6f7a
+  AGENT_HANDOFF.md:
+    snapshot: .agentic-harness/checkpoints/00000002/prior-AGENT_HANDOFF.md.txt
+    sha256: f609e179e71d30c631f48d0587dd061cdba7f4f9654f385bb502ef2d77e2cdf7
+changes:
+  .agentic-harness/architecture-policy.yml: 31a36bdbcfde8aa7c76c6a2e3f7742dad7b69a7a6f008496a989ecfd8278a8ef
+  .agentic-harness/context-map.yml: 8c54d3d0f9b69ed32e9bb07e673729e528020f2b973c641d182cd028da879049
+  .agentic-harness/documentation-coverage.yml: bbbd293f52da4e959db523297a1705c1401863bda7e3ae9a6c882c03cae4d920
+  .agentic-harness/export-source.yml: 5d068bc1791f5fd280cc5890249829456c9785ff739b5b9a19fa6217cfd3800f
+  .agentic-harness/legacy-baseline.yml: 712e77d76d495ea82e54e9f4c67fee95d889ad8daacacdeb10e663b811a8134b
+  .agentic-harness/legacy-findings.yml: 599a2a7df5b8cfda255764818bb1f7f12360d6e68ca3b4126856b5db3520a3df
+  .agentic-harness/manifest.yml: 85d0b0b06039475c5e67a6b64b3ce07d6a298a12baca25c1380363a2548d67db
+  .agentic-harness/project-policy.yml: 03b9f05f371805cb480a87a87ddcd5ffa98debddee8b77bdf03d72d26b282d90
+  .agentic-harness/security-policy.yml: 186cfc09bedc049c6ca3b3f65907f731269af5d23a3ad02862d7a57c2d6b1020
+  .agentic-harness/source-exclusions.yml: 01048431f79e97ed1a302ebef79a97ab2ac79a123ffbc3d29992dbfc3da92383
+  .agentic-harness/validation-policy.yml: ff98a908ee60c4d48b01b75cddd04f22bc9bd1352b09a6959fc6749aac8239a0
+  .githooks/pre-commit: 373c014c91788abb36a135c79f3582fc9ef5eaa7f6373c3522ad3ef13d3738c1
+  .githooks/pre-push: 7da6f1671e1097a3c8366bb0bb6bfdb74e02fa9ac94b3641b2993e81f6788db0
+  .github/workflows/documented-engineering.yml: fcd3d969d4b808df9ded4c9214b1f57371413d4564e5934c578180e3a8cb3e81
+  .github/workflows/validate.yml: 1643d75b6c6a8ec1acba1c9010f915cfd4f780644fd945889e0e9ca7338dd0c3
+  .gitignore: f4be9c633e20c853498e3516516e2bbf240f1ce9e7f597000473fbf8f4693c5c
+  .hds/assets.yml: 8ebc50c85fab458365517f7340e5ff136e8254d314a2804ce4960690252cd8b8
+  .hds/config.yml: 7d057d3e3770757a272f36189158f745a1b7837d1d866b1d0de09a6173b983b1
+  .hds/findings.yml: bdd36f9d9850d14eebb96b9b398a843331760c8890fd153dc11317aa58331df1
+  .hds/ownership.yml: 558cfac96205675fd53408116088bcd134a22d8ff99eb0141839c1ea62433121
+  .hds/policies/audience-policy.md: ec2b08d5d90ee5f378ec1e054291f88503fa4c17f7977ca588626b1f5ff9aa2b
+  .hds/policies/documentation-policy.md: 3b333a4402fd51f37ce4d20a923fbd007624964068102daaaa80ffe1ed8321e1
+  .hds/policies/dual-document-policy.md: 8f8a22d8df1bc7894e4c1a230fb80567f9b3aed0edc775b494393f271afce77a
+  .hds/policies/front-matter-policy.md: 7320d08d53119db034108522df86e04528d74fe08a582599b49fa55363a84415
+  .hds/policies/language-policy.md: 4f28b88a45b0576e16d3cf910e562e56fef44e425b35c191085abb7c64e85a93
+  .hds/policies/migration-policy.md: 4f41ed01d45fd3b5c87eacc585f8f069bcce46632e390806e28b4f0f921bdd1d
+  .hds/policies/versioning-semver-policy.md: a29750b0ab47436e7cec83fd8660191607096eb193005fbc86a22930270c310c
+  .hds/waivers.yml: a9fa6b665d25a0a721a91c3a58bb911b425d8d8c50deb64974a8eaecd96a7011
+  .skills/project-safe/architecture-decision/skill.md: aab7edcc98671e5d573bcc08682802d2c7c25fb24fc73b53a8fc0adfd52f6c90
+  .skills/project-safe/code-architecture-review/skill.md: b5a986696c77b9fc4737209dd33193bb488b4c03990de6be88e38d3682fcb362
+  .skills/project-safe/dependency-review/skill.md: 922894442db8169a4e863dfaf196c6b0d06c537659fb283f87432a28b578bdea
+  .skills/project-safe/documentation-density-review/skill.md: 8998babbedc8d26f93ae2e501f45a78ae88b0a6a907d7e46f32ac4a612cff8dc
+  .skills/project-safe/enterprise-grade-readiness-review/skill.md: 8ae4d7378ac29a2530c61cb40367d221d3ce355f825a470662744a2a6a2c8441
+  .skills/project-safe/git-semver-release/skill.md: 38a8708ca230b22dfca295203ddca4661f55f06a63a3023cb59bfc30441e36d4
+  .skills/project-safe/hds-update/skill.md: 52f4b2010cd01950f0fb66f69f0140d6da8db16900a49438710a78889fb8a707
+  .skills/project-safe/secure-code-review/skill.md: 8d40895182d57ad03afb36763fa7f663fda4fb5a6b53d338b49c8f2411c9d006
+  .skills/project-safe/service-boundary-assessment/skill.md: 5e616b811de113e9d80619a22c381242145d50b3abc91a2611bf6dbf61be5b11
+  .skills/project-safe/test-strategy/skill.md: 3fe58f81dc25c8b175bc43d0a9549e68225651876afde72bf9f13f6a4c359052
+  00-NEXT_AGENT_STARTUP.md: 3e65f855970294ca8a0996599248a5a0cb971387f14138812c423d72b13c351d
+  AGENTS.md: 4c86683053b5d45a4bc90b7a328c3168f4cf53b3f7c6d01db0ab0f72567a8960
+  CHANGELOG.md: 1c029293e9e49fa36ad5596925d8aae81c977864778db30094234e4ff24ca320
+  ENGINEERING_GUARDRAILS.md: f881b44bb3c10b2097c08d24a08f1ecfc7767d93e73797c78eb1d69cf9b03345
+  GUARDRAILS.md: e57fc85eb6b9e42e7f401605672e63a8da8a33b5eb938c2b1c7c44438289198c
+  PRODUCT_VERSION.md: af969f8e7eb4ee70c31f0718cb368201c858f54e6c220d0499016c0fd1b2f85e
+  PROJECT_BRIEF.md: 8cb3a44609eafc9b31aa37e9a84ac70cda05ca6d317a055bbbc73e28f21e6999
+  README.md: 3d2da2e8f1842fba2a3f3c7c968917c955823c42bba8a6ad6b6178eb966b0728
+  START_HERE_FOR_AGENTS.md: e3ea0cbe9e37242b358bfae7b1d840e64a10d392c69307719b13c809bb787474
+  VERSION: e9dd8507f4bf0c6f42458e41aea833ad0bd3f6127272335eee9bf4d58541ed67
+  VISUAL_REFERENCE_HUMAN_PARITY_STANDARD.md: 94c43d7f82d2999cd4072770e520504ab4e1eacfda8601015de15407690cadc8
+  docs/CONTINUITY_STANDARD.md: a92062ac647e7203578acdcc96e24c42198581bbbb89e8c51d459837fd4a6e5e
+  docs/DOCUMENTED_ENGINEERING_STANDARD.md: 65b6f288543606fe6a447f4fe944087c480b8cf1ab71982f7309335fce0b9e17
+  docs/ENGINEERING_EVIDENCE_STANDARD.md: e68685c8e5c19606da8ed090ef0e726420a6a24864830e7d30205da36cd82e3f
+  docs/_shared/front-matter-standard.md: 15c3703ce7a0ddbf0c0bdc7025ce1a95dabdbd863672ea7c8af42a45eab3c44e
+  docs/_templates/harness/template-checkpoint.yml: 9130ba1653693c39b9934f2fe3949faef2430017fe1f0a5fadb6715dea119d7f
+  docs/_templates/harness/template-engineering-evidence.yml: e1f9dbe81c857f51f5dc8fd1f95cf7603a89490421cbd6264da57eb49ab72d17
+  docs/_templates/hds/template-adr.md: 539d3dbf7ffd6283c44596d2616038712b51cee16eeaa7ac4434391ca2873b41
+  docs/_templates/hds/template-api-endpoint.md: d7a4ac657b4bb97e2e5ccfb046d0d4470105fb2fe330cba2880843e97c86bae7
+  docs/_templates/hds/template-architecture.md: 8272d6fe15605e088b464cc06d5ab4561e9e8046e8628e78a393120f28dcfa9b
+  docs/_templates/hds/template-bibliography.md: b8c9279ce37b555db9e31e36d2e566be52e2dce2890627f39e5af7df035747f8
+  docs/_templates/hds/template-business-rules-pair.md: 9c0471f40702dca934eb008b110e7015e41b9c757c770a927898b183fdeaf603
+  docs/_templates/hds/template-c-level.md: 88931907e3601d498dd1a7a39742f814e0de95eb1b2fa0cf55f7676c2ba5934d
+  docs/_templates/hds/template-data-dictionary.md: 16934d86b069bd736eb6cfeefdb5f8004437e66cbc04d1a65fb99b607ae80a9a
+  docs/_templates/hds/template-data-model.md: 44d990fdd6755f77e83b6a32b67f16fba66564de283806c1e78f15e1c2854102
+  docs/_templates/hds/template-document.md: 7e16e5358163945fb19d1ef1014c17be0878dfe4ce6be6178489910bb1b73965
+  docs/_templates/hds/template-environment.md: 812e6fce8b1f325a7933312cba9a082a17a9c4e533c17a627b7e04ac75fbf663
+  docs/_templates/hds/template-glossary.md: 83526e14ef5d5f4651c63821606c349ba93b2efb760d5739d99efbd75a2db843
+  docs/_templates/hds/template-human-ai-ai.md: 38f44ff17d301f13e42ee228177e984eaa457f012bb2acc473151b9abdc3592a
+  docs/_templates/hds/template-human-ai-human.md: eae6a806f58ee49c1958a9e408c5d143cf9ee377b4c45c8701a1cb0ff4ccb38c
+  docs/_templates/hds/template-installation.md: 52ef99ead635f8caa36fa678a4f483530231d2acd984069e68f6accd41e1e4c1
+  docs/_templates/hds/template-manager.md: 3d29616dc2c9a347e3ae55a723c21de6bcece7f78b3687968e9cb7ef8f25e7d3
+  docs/_templates/hds/template-openapi.yml: 4c4b961913b6ef188272693f7efc7328570588f5e64d7adcbd4332b4886224a8
+  docs/_templates/hds/template-personas.md: e032e2d48311c938f9ebf1f062c61e81d3111b589fbc0c423646653d02e2c2c4
+  docs/_templates/hds/template-rfc.md: 8ecbdcaecf07d9df364fadb44a79e47583b6faa1f4ccf1d77ae1c2a2cdbaedf0
+  docs/_templates/hds/template-runbook.md: ae38caeec5cb818759b02625efde2149fc150ee26e4e407ea383d9a1fcaeecb5
+  docs/_templates/hds/template-security-privacy.md: 017001685042a2beef06107fef0689f5239fb446ed71fef1b5f8f19510db369b
+  docs/_templates/hds/template-system-overview.md: 6896c68d2539e6cdb0d2d93587a4b6d48cc1e632a729535a6febc38e5c55541e
+  docs/_templates/hds/template-tech.md: cb79f080b76e4c9838a0e60d825f2c116ce04567d5a674f92177d63f1ffabc06
+  docs/_templates/hds/template-technical-ai.md: a8ae01d2647e24adcb97aebe0b04ba379b4dde1341b05380bbea903257913088
+  docs/_templates/hds/template-technical-human.md: 3fa94575d5f397021410b3ea293174e3f85a3e284a0847f87c2f8facacf1a2e5
+  docs/_templates/hds/template-user-story.md: 5c5b08233f5f2dcddfc2c4fa6226ba7a8f5248e6366a28b248af4ad61dbe9135
+  docs/architecture/FILE_SIZE_AUDIT.md: fc5be7903fa99e3ce0adceea389c8dcbe4ff7e6eec3c01d514af91c85e791479
+  docs/architecture/STRUCTURAL_REFACTOR_PLAN.md: 9d5ed8141a2bb2021f3bc710e34bb6570183a44a37017a880950dc938735ac39
+  docs/architecture/adr-0001-initial-architecture-posture.md: e8c1d461fca8a643179829f7714d1e840b49da7c88207e4f71ed1b00f679a68f
+  docs/evidence/bootstrap-validation.log: 06eeab07e778098b897ca6f10f79720793befbf8c19b3d48881fce59c0dd1382
+  docs/evidence/canonical-engineering-decisions.yml: 353498f0fa43cc4c293989863e4325aa5cdd1fdbe10659dabad9c5382d0e80f7
+  docs/evidence/documentation-engineering.yml: 9a5977872d7ae66ae0084bd8e89543b7c0c8e64f4717d6a3a350d94ce50afcad
+  docs/evidence/documentation-review.md: a92429d76b3646874cc4221d9b88d65cb345f8107db3a87c9e68c3fd3f27b731
+  docs/evidence/documentation-source-inspection.jsonl: 1f1c824b9321d5da0fce73074a69bd54d8d9954d7aee8df5f569fc73bb302ad3
+  docs/evidence/engineering-engineering.yml: 63b7468e73ebe97ff1b3dfd3b95aee7ae01263fb1b40af319c97b9e95788a4e2
+  docs/evidence/engineering-review.md: 34ba4e9f5035a7e7e42dea3fd0e234e7755ba116952b9e69cd5869617fba4912
+  docs/evidence/engineering-source-inspection.jsonl: a2794d294541b002914d9751a9edf6977cca943ae74f1d47d4a1e870c7ea5539
+  docs/evidence/governance-engineering.yml: 85442eb5f0f50ba7e46f761e8399db60e6f68713dc9aca976254fc1948e0e759
+  docs/evidence/governance-review.md: b149bdef6e7ba916a15c3943a1a7a8bc168a9b6bb2345f9fec9ceb73991fe94c
+  docs/evidence/governance-source-inspection.jsonl: d8269d98dca6a7e8ab700fccd9a8ee38f13f335279b5bbb0d5a4ace7401514c6
+  docs/evidence/revision-register.yml: b5347e055c096f76d5fb65741de9b79007eeaaf70b37c44eb588a3a7468b8ac0
+  docs/evidence/visual-review-engineering.yml: a630504f9a73096bfdee34ff0c5e75001bd729addc1aa594c806a08ec33d71f4
+  docs/evidence/visual-review-review.md: 709b5424e115099419daaafc0725dad678bde4bc06a11ad9114c92e375955ffe
+  docs/evidence/visual-review-source-inspection.jsonl: 950b7d8d6909aa83dbad2915ab0368a2fed22e05cc7a09c9645894659d823a9e
+  docs/harness/discipline/anti-hallucination-and-evidence-policy-ai.md: e40446cf2ce085cb185291fc602a4701add6d2462abafe46602f42344bf5cd48
+  docs/harness/discipline/anti-hallucination-and-evidence-policy-human.md: 0df71550b7d7c253e5244947b4ad19d6496a3aab6839aaf1cdec05bb7561c9fa
+  docs/harness/discipline/deterministic-execution-policy-ai.md: f2dbf8c47c6a084de33e98eb29ced4cf0d64ba220e2eb03e73923687db3acfee
+  docs/harness/discipline/deterministic-execution-policy-human.md: b29e5748fd075edd4d05b1ebf69f2d01724c71c4e12c2267907756d20c236c0b
+  docs/harness/discipline/no-workarounds-and-real-resolution-policy-ai.md: e355829de8818b895794ac00e6f1e7dc26f30a18b3224f04078b38f879debe30
+  docs/harness/discipline/no-workarounds-and-real-resolution-policy-human.md: 4ff676546cf56af5b4259730b5464932f03f3140030996791111200930989ce9
+  docs/harness/software-engineering/api-contract-policy-ai.md: 6ce5ac03a02bf7ae1a166567ec794f5b04ccdcf80fe6619609006fe7d207c70a
+  docs/harness/software-engineering/api-contract-policy-human.md: dc9d918526980647814d6b0b411cdf2222f255b4be24c0b39a6579ad7e9fac69
+  docs/harness/software-engineering/class-design-policy-ai.md: 8c066755515ce35e8bc6b07ecfd857d169c2b41c319c4921bb98b1185e6d438e
+  docs/harness/software-engineering/class-design-policy-human.md: 8d559d83c73d791932bd74af8f662e3843e5e81fb9f45e1e4b361a27c9fe925e
+  docs/harness/software-engineering/code-organization-policy-ai.md: 93fd3130b87b7a851818a0462d71e549acbb580462d2ce096d7aa6560f8b208b
+  docs/harness/software-engineering/code-organization-policy-human.md: 0c691d703e0c02435c3057c1645df8aa6b21937dc66b93027ab71d17d05aebdc
+  docs/harness/software-engineering/data-privacy-and-tenant-isolation-policy-ai.md: 37e7e3dd538d20cdd21b0983498afe2c22e864ce1b84dc30932be6731aff62e7
+  docs/harness/software-engineering/data-privacy-and-tenant-isolation-policy-human.md: e5382516eca20f56476146c2445c0fc3deb11a229ce8b53bbc272e2ce63d4a75
+  docs/harness/software-engineering/dependency-policy-ai.md: 632a35d66346fc51f70236c04365a630bc634ec6563cc2fcc05578f0b395357f
+  docs/harness/software-engineering/dependency-policy-human.md: 8d1d2e0948d0997777b709bb8fc5fd96536623c55dccea563961c96f73ed17cf
+  docs/harness/software-engineering/engineering-standards-ai.md: f9e06df511256c669e08167eddf4242e98f66a48a181d4fbe2d4011115455970
+  docs/harness/software-engineering/engineering-standards-human.md: a552cf97ed15b87a69839498d888127b17eae5dd8e5cb1ea5c7856ddbaa15300
+  docs/harness/software-engineering/helper-policy-ai.md: b1e2bf86e9c9e9af941619cc2c3364cabc03b9abbd8cb2b540aaf5761ac63de1
+  docs/harness/software-engineering/helper-policy-human.md: f09beb4a4e45c7f531d64fd1ad5181aaa088d7e996c82904779461039912f412
+  docs/harness/software-engineering/observability-and-operability-policy-ai.md: 041c6614d7b7b219fb64c68cde3ef7764b16d9a15e83d3aca5c2aa07fae9f1aa
+  docs/harness/software-engineering/observability-and-operability-policy-human.md: 209d290a358af84c942fd4feab700881b2ee2b29d04f3776792e6fa2ca097bd6
+  docs/harness/software-engineering/performance-and-scalability-policy-ai.md: fe9898e5c6426ef2db54034ded62e452b583dfafcd4f2123146d30a42732df0e
+  docs/harness/software-engineering/performance-and-scalability-policy-human.md: 2cdadfcfd0a6dd06d69a759b8dfa5f0ef816ff12100c75e126719e085a18a227
+  docs/harness/software-engineering/refactoring-policy-ai.md: a07be4c40b7109a6689178129c0f793216a6421a1049338ae9b65ea7cb705d13
+  docs/harness/software-engineering/refactoring-policy-human.md: 30ecdde7a855930808d1b4f3221ac3c93217d5efadbb24b6bfadde2fa8e02124
+  docs/harness/software-engineering/reuse-and-extension-policy-ai.md: 9f366fdbc06f092a634083afe0719315c685cabbff6ec0de1175bb544c4d8283
+  docs/harness/software-engineering/reuse-and-extension-policy-human.md: b64bca322c55946dfff4e0e53b6b8781d551173ca2415e1003261d749101d039
+  docs/harness/software-engineering/secure-coding-and-threat-model-policy-ai.md: f7f93919753c05cbec27c700a24d6152a9cf4ba79d0f7913cc05cb2b1951f43d
+  docs/harness/software-engineering/secure-coding-and-threat-model-policy-human.md: f0417b852d9b01c0fc5f28c999b7b9c72ccd7913da31c3c3c53bbe3285b1f7b1
+  docs/harness/software-engineering/testing-strategy-ai.md: 5f9c40437697e31e33d995be9de9ddee1267a1d0e40deb4e611a98824e790d17
+  docs/harness/software-engineering/testing-strategy-human.md: 6cc1644c64b947d3fb18562a38cc90d7e68f6648471b73e666c0cc6413187b33
+  docs/hds/core/document-catalog.md: d9532799f63d9822d522f3f413edc31a8459f2ec7cfc777fa197bd4384b5fee1
+  docs/hds/core/hds-overview-ai.md: c2e702e1fcbe342fc63a721f1f33eb6627b1287d89bdf49e703e0ea206b128dd
+  docs/hds/core/hds-overview-human.md: 0fe49d75a9c494f75837d437dfa6d7522c89a4310a4117325d5c3bb9d5e90a4e
+  docs/hds/core/repository-structure.md: bc60cf53ccedfb94f941131982823c37375e2743f552e01c809b2f84e86b70ca
+  docs/hds/discovery/.gitkeep: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+  docs/hds/discovery/PROJECT_BRIEF.md: 47481f89edd71455b3d3643dd722eb07ba3ae7ca6b9e3c3eca4656c6fac9c7c3
+  docs/hds/discovery/assumptions.md: af054c0daff0756fb5861a8560fce0be85fd28f140e2f0f41ee733c89896045b
+  docs/hds/discovery/open-questions.md: 74becbcf04f5d3b738f03cc00ecc687c770789aa647d61d40b745b33c090c993
+  docs/hds/governance/change-control-flow-ai.md: 8dddc290fc247e8eace58c0cf9bce8078ecfe30127b76441781204a29530ff5a
+  docs/hds/governance/change-control-flow-human.md: 07c620813a896ec37ec358ba7db64b550e923e63a2e2675bd6cd6347099eb8b8
+  docs/hds/governance/documentation-governance-ai.md: 9942467090f3c9c068600d23a0dac2b96a92233c459953f19f7ab108b30f3b87
+  docs/hds/governance/documentation-governance-human.md: 8916e150857e2e02ec9ee6a15ef7316839175d8af885fd3258925fb4e42aae98
+  docs/hds/governance/evidence-trail-ai.md: cd62b476a23a187af9b1db294765cae98384c929a13b3796a3bcfbe256a988e1
+  docs/hds/governance/evidence-trail-human.md: 8b0314fa657492d3670d57729155fa41413838d1e7be33388da1556483f4d553
+  docs/hds/governance/pr-merge-semver-policy-ai.md: 31430e184c0c4277879fad1f682dd38faba0132cc317577e2d2dc942978b7715
+  docs/hds/governance/pr-merge-semver-policy-human.md: 06581e015d87fe45abbd0e20ed30676fed7d14e68494223ebdefb55884ba6074
+  docs/hds/governance/quality-contract-ai.md: 9190adfd0b1efc9074fc53c5fb59f360e683ae821463119a557b5f9fbbbf23cb
+  docs/hds/governance/quality-contract-human.md: 2bb8f9e785ab8a0a6992ef294c8f7521fb36623e07201a2f8fe40b20ffcc63c0
+  docs/hds/governance/registry-schemas.md: 974886c3e03647e83eebbfb7d8f854eca338569b40db1295e6e1893767e410eb
+  docs/hds/operations/adoption-runbook-ai.md: 0bc14e72c3b87e421a4e4683840e7004ecb73ea12dce8659cf6ca5b49da4538c
+  docs/hds/operations/adoption-runbook-human.md: cba62998db58fdb086467f57054972ceacf28bfc210bf68e13029a554085f7fa
+  docs/hds/operations/assets-and-diagrams-ai.md: 1eec3817645d9425326e34b4f77bc3e491f99ff53e9aefc89c7af26ae860f13c
+  docs/hds/operations/assets-and-diagrams-human.md: cc12ea7d1533ddeb6a12bf15e5713c7ffb674f8e09fb70760d1addcd2bd9b29e
+  docs/hds/operations/github-settings-checklist-ai.md: f39c8c61a6e6abc4db50d69c8b87c982fcdbcf6006e52026d242a095f28333de
+  docs/hds/operations/github-settings-checklist-human.md: 42ff7d35c56954dbdf1bed431f32901dcf516d827ade6bf0f4a5e87927957301
+  docs/hds/operations/migration-runbook-ai.md: 9fac61bc2fa1fddd8c959bcab0d4f36b9a3df3955d372457700d62376de11b50
+  docs/hds/operations/migration-runbook-human.md: 7b5ab668c243ee99a2dc22c5fca8f73549c23c4ab7dd5ea2a00c35fcd89fb1e2
+  docs/hds/operations/scm-platform-mapping-ai.md: 83b9c3e062283f7b8b9623b06316c4523657e0c9b3183621a5eb007c1ab0abd2
+  docs/hds/operations/scm-platform-mapping-human.md: 79dbf2959f3bf0697aec5c84e9af26998980406e5a2004b2bd08bb72d499f904
+  docs/hds/operations/upgrade-v2-ai.md: 01a5bf07fe7bd5d2461fd3d0f9bb13f554c3877c54d3c4a4e876b23ff2c1131e
+  docs/hds/operations/upgrade-v2-human.md: 82dc531748c6fd75baf60f3d3c23608c7e3e766a8050a31a0ed198640f537790
+  docs/hds/release/consolidation-record.md: eb226a74bf75ead26672a58159e0e2374fdef04976a69387d4ac583ffa65fa79
+  docs/tech/documentation-ai.md: 4e970226251a8aa25addaba384953ebf81f0bcaaaabc68c200fbbc2a237618a7
+  docs/tech/documentation-human.md: 1bec7b0c6095d4513361e86468da003a56fbce7ccecae56d0bed099a565e6401
+  docs/tech/engineering-ai.md: 39c5e7cfb8a38f078f32262b013e31c727cd0fc2dc6ebf0f1f2d774a9b6a2bb5
+  docs/tech/engineering-human.md: 9cbd42501c21de3c44507cd11fb5bb5e431fb831ac13bb5305d06205d0d8b2cc
+  docs/tech/governance-ai.md: 3ad8348fdac6cab60d35ea98f79243436c1f805e86bd6d4ed4727792094971db
+  docs/tech/governance-human.md: 7aee4ea61a6ca5b6164334745fab7d3c7b8830da390aedb0c71f9b06c214df77
+  docs/tech/visual-review-ai.md: 38e70a007c90297b3241156cf1ac1cd95d01ad5d6f5af6695a8ea6cc508ed57d
+  docs/tech/visual-review-human.md: b019709a87c32b26ce76d3a0c65e7c15fff7dd8c4c927dd05dcb6fd51f5657ad
+  requirements-docs.txt: 0969da99a0bc2a1b71ed50584560f4588a37567ac63af3ddbaf3c4617ca5621a
+  scripts/audit_legacy.py: 5dd8c96dcad3942456db0322d0e02b73456459ff87d8f5b16a17380d10f55307
+  scripts/engineering_quality/__init__.py: 3414f94e94028825bc9c290d57a9eb1ae4567058b8cf8ec338990781006646db
+  scripts/engineering_quality/change_scope.py: 73307f9812a184ab483eb06ae4a57d6d1e281f7466a589bdc305962c76da2705
+  scripts/engineering_quality/change_validation.py: efc7d590735d92077ed3f96f41a8c4f19fa97bc92d50343b7183f18b09eae879
+  scripts/engineering_quality/checkpoint.py: 6c9b7cd7843807029e6e2f247b7d8997624affb912ee352a03eb30ff38764ece
+  scripts/engineering_quality/cli.py: d31d6a6da1ab5b7007c20d512a210f3b6966639e95cb6f1896d03fa446ba7464
+  scripts/engineering_quality/continuity.py: 6c3cea4660297139188d107eaf6aa09a0efed56c074b3871808e17f559c66434
+  scripts/engineering_quality/continuity_history.py: 9a6102abcf9a9223969a41979152b5531b614673a24e5a284fe7598ff7ca06b4
+  scripts/engineering_quality/coverage.py: 6c22fd746589ce06e50cd54f834fe2b4f77f9988f8921191e5df3798307177d7
+  scripts/engineering_quality/duplication.py: 6d62704da8d47c8de7b13abae94bffccf2efaa1f6a743aff57877d5ff76afe23
+  scripts/engineering_quality/evidence.py: d9fa4fa8ffd1c256e50e7a7e297d147db2e776bf6dc5ed399168f873d3a66761
+  scripts/engineering_quality/legacy.py: 9b4f2c4b3b50fdf23996d853bc6ff0829b66c2041ccc323078fe5da77e1b1029
+  scripts/engineering_quality/policies.py: 5b6aa09a07af86abb2a2a44f5fc2b5e8cb8fa871b163b4bfce4e48b6c19a022c
+  scripts/engineering_quality/python_clones.py: ad9bcd6c153d60426dd6097e29391683016e443542b2702440683e300f42b93f
+  scripts/engineering_quality/recovery.py: a2fd8b76e6ed804d6b6ac11003a7839205d7ac0b8e5c6d213194fd324dd106d5
+  scripts/engineering_quality/sources.py: 7b99381080e8498f1d9ba476f21031a255cd46d8fba0434daa605bf102cac59b
+  scripts/engineering_quality/stack.py: 6bc617b547bfde9fc5fc15e2b61043e6eb987936223a0dbc742e2b7f41c7ee19
+  scripts/engineering_quality/structure.py: f8fe1861896f1646b80873eaf06797a602d3f07e08739dc4510a1c1416ce8301
+  scripts/finalize_bootstrap_commit.sh: c89136353b71aca7ae1462bf179590d09e558495034d0c889e55fc7f7fd28c8a
+  scripts/hds_gate.py: 82cc2fc2fd0bda73c9eee48d2549b6531187b35c1ab16fb684b37e5b5a365c69
+  scripts/hds_validation/__init__.py: 3c3dc2279f863ac000a129a7d48e5663a03bb863b068d8b79c5e6771122e64ad
+  scripts/hds_validation/common.py: 7204dadc493d0763de974c5d03fffe9c205b65e5d0080b5b7b9cfa394d5e2ea0
+  scripts/hds_validation/documents.py: 6a338afb8825ee380efbc6b3572bd0ddf11ead8642302322c80fe56ed9af216c
+  scripts/hds_validation/evolution.py: 494b279092d99927cdbf616c7b78a6047398b4edcc13ed7e16fcf67ca932632b
+  scripts/hds_validation/links.py: 721dfb77986ac24539f390ef5c46ca3c1a9b79e221892f356aa3636695412670
+  scripts/hds_validation/registries.py: e96d85b958ad055d91ff5ed152b72e4e8e1bfa9c718facfae64f18904063fec2
+  scripts/hds_validation/scope.py: a11eed044c3f025fc11ded32c7b1c87b94ab7080df1c88c3ec380bc66595732a
+  scripts/install-git-hooks.sh: 9f3e2a5b356dc3dddd6a7dcb36ca776876e3a16fb033c431bf5ec6c69d436027
+  scripts/project_hds.py: 7ce40399ec97ffafe188fd891cf68f910296a558aaaf757dc3ce0ad56e449c12
+  scripts/record_checkpoint.py: 5516aa103fbd23a9caacbe178b88b37bf35e85817c84e87d87d175ba7be592e6
+  scripts/resume_project.py: 1432bf62d60b54c9bb08f18a27103302ed4c9138c5d2e5788e6aa266722930b6
+  scripts/run_all_checks.sh: f1fc8f20de700f7aeb28f50204e5bdffb7a4e3cc776b72713ebb2891c9982256
+  scripts/validate_baseline_commit.py: 1495295e8546815284109687170d1585921e6acbc066e47d203b7d7ec27a81a7
+  scripts/validate_briefing_bootstrap.py: 84ac8adadba0c2e115a056a63418c3ed0ebfc7ea21c73c3b3f211b7de3dd1987
+  scripts/validate_commit.py: 6b9a7260b6e559ec53156cd6696f9a2f526598614b8550602d18cbb218afb867
+  scripts/validate_continuity.py: 6476951dae2e070605c591496945aab155ee48187b48fec4582238bf5156323e
+  scripts/validate_engineering_guardrails.py: 4cd83d1791e3453bd6c3874d4a05cfc2f4872b29376631fed729174a88940939
+  scripts/validate_engineering_quality.py: c39f237e048121377aa6fdc5f513ff2b9f20b8387e1f5d00119badf7f2f601d8
+  scripts/validate_file_size_policy.py: 2e3e2a00039e0265febd4bfb59d163d92686d5c68cb6e33ae8b4409d9ce71b84
+  scripts/validate_generated_metadata.py: 7e5ac59331e1a40d52c21ecc6244ca7227722d244e38a271f8e200598497c4e3
+  scripts/validate_git_repository.py: 14d26cfe82c074613d68dcb7c7fd7269d65e4f0b09cb76e4f51adb3847d1086c
+  scripts/validate_hds.py: 8d92461452ad480d145d2873ea476cb7e5c8aee0dde6da6c5c5c5a79732e614a
+  scripts/validate_input_assets_scaffold.py: 1c266284901d568c1356c9524017040107017b524db6a9a6cd33ccc493068a9e
+  scripts/validate_next_agent_startup.py: 2a751cdc4d70e2f09d6d80d736373623e4c4a0d354836c79bcaaf935147c35aa
+  scripts/validate_project_capsule.py: efb72db4a920809fbb58458a4d3547dd07d6f7087c446707d402a9a4365e1b47
+  scripts/validate_project_hds.py: faefb12a2b5ae36fd1a73bb3b560e4a94789cdf73493369f9227a8f535083ebd
+  scripts/validate_staged.py: 5f21386ece0cfbb7d92329292ab46b83c41c8d25e4dac1e032ab865342fdb66a
+  scripts/validate_v154_project_policy.py: ab070f080159d0cd816aabee0978f534bd560af64d50141c431e42ffb82f6fd0
+  scripts/validate_visual_review_policy.py: d69523cc42ca2cfb478c48370f2ff724eedcb19711769be9da187a58af6cf311
+  tooling/visual-review/README.md: f5e369abef897b119423732a382c1c868be1b12efcb8eb4254db2ef201a8e3ab
+  tooling/visual-review/VERSION: e9dd8507f4bf0c6f42458e41aea833ad0bd3f6127272335eee9bf4d58541ed67
+  tooling/visual-review/bin/visual-review.mjs: 86b6f38b413bfd3b91793e1822f1b7f8014e6b451647d6e9d9c23af1b5bb6b97
+  tooling/visual-review/examples/visual-review.config.mjs: d29e874a18b070b3b2a8929b90c8b5e632c8090747aa519bd20356d9411f57e7
+  tooling/visual-review/schemas/comparison.schema.json: 4a13dcea3d9a9276a47e8297e8c37d6ba894eb88541dddd859bec15390375c6e
+  tooling/visual-review/schemas/config.schema.json: 4eba4db2259b38d573be9c4a6c56d8a87229493af19eb641090721cafcd378d6
+  tooling/visual-review/schemas/review.schema.json: b0d71075544f6c01ff90d82809c79c6762eeb1f364f3b35e33e0129c2e63f46b
+  tooling/visual-review/schemas/run.schema.json: b739c638eab63abf952b149d8abb6e6941d787dc8f08837d8efd223af3a32ca6
+  tooling/visual-review/src/browser-validation.mjs: bdb771363127651e404c3cb7e7f1ac071eb07664b1edb95a4f029eb651ab38e5
+  tooling/visual-review/src/capture-sequence.mjs: a441a92921eb84347f1b0aef15a888f698db1b5e04202ba2e63974ebe0e152fd
+  tooling/visual-review/src/capture.mjs: 14cdfb0cec775a7e0ba6eacc560e0a17974ba836a264f39687b6f31fa5f44034
+  tooling/visual-review/src/comparison.mjs: 25f160f235ba27e3772a2fc7a096038137ba50aeec19a13cb775e0f8cd3238db
+  tooling/visual-review/src/config.mjs: b113795275e5dad7732f9e2b47e8394b70bd1f7db210cf15b63b39f15d630781
+  tooling/visual-review/src/index.mjs: cbebdfb20606b531be58e9afaef4d85b9050fcc513e2171f0021935dda5743e6
+  tooling/visual-review/src/interactions.mjs: 98f97461fb3ccdbd89ab5444877aa2ee9aab4c0057dfa40e1e986540c926c6f2
+  tooling/visual-review/src/png-comparison.mjs: 5bfb60b765281e1114a90831ec49cfdbb050f202a67472aaa1e834bda3533442
+  tooling/visual-review/src/report.mjs: 0e645f850fbc6d14ea4c1067fb54f98a07636e5d145b07d3e963527e339226e2
+  tooling/visual-review/src/review.mjs: 3b55069fffdf502e44c6ea8dc50da4b1ea32b704196ef889ad66ed418d2f0b6c
+  tooling/visual-review/src/run.mjs: c2bb99b21155b29b3df1a2c066752679a814f5d79887c66311d4f95a1f641c0c
+  tooling/visual-review/src/util.mjs: b1d204a46df2e09430252f9fedaf3e193499e7342e0a3e87bc1a2ace3eca5bef
+  tooling/visual-review/src/validation.mjs: 6a1a5673772e4873fa3d6046b1ae5ba7d2e740a3f52bee0a6c8003bb60716cd2
+  tooling/visual-review/tests/browser-validation.test.mjs: f93502998f33bebe70538b0b48616a632d115802bbfddfa1f3cb90354ab1a501
+  tooling/visual-review/tests/config-contract.test.mjs: d1403521dcdfcf77c62a5cb0308bfb7963b97e3106c2b2730cbacc0adadefacd
+  tooling/visual-review/tests/helpers/fixtures.mjs: 5bb6fc760b48bba7231f904065e0e3d1c171b7ea88a226b611ee351299daa0d0
+  tooling/visual-review/tests/helpers/pngjs-shim/index.cjs: 6e63ceb64bf3720d60a792ae650f662b0a413166012f7647b76491db42ebe9b7
+  tooling/visual-review/tests/helpers/pngjs-shim/package.json: 20eddc35c5850f461e6caeec6d9a32221652dcf09a35c0e132981c1d23fd20b0
+  tooling/visual-review/tests/interactions-capture.test.mjs: d3389549f41cba83710e47d4079b61aaeae3c70b7234ffab3254b2ba81a98acb
+  tooling/visual-review/tests/path-safety.test.mjs: a4e9d3b48c7fc92c831b8d5fcb2b259e22728df27ec1aaee2d7128485116b115
+  tooling/visual-review/tests/pipeline-report-review.test.mjs: 7fe7d0dc6e0d15fac474159cffca2dc40e8a08be6a54696c36d7d30803ea1070
+  tooling/visual-review/tests/png-comparison.test.mjs: 35032683da4ae4fe9240cf435dfca3c05da3dc9b904a78efddba342262e0c25b
+  tooling/visual-review/tests/public-api.test.mjs: 05a4dfb48d36c60658395121704c90916f34cadcb7780ab76053dbb7193bc23c
+  tooling/visual-review/tests/run-paths-staleness.test.mjs: 568586f586a55bad53a0495e4b50a3bdc4f157859bc1aa68896411e8b4ee4316
+  tooling/visual-review/vendor/png-rgba-codec.mjs: b3ec12d67ec4779ff2571c8f59cdbee384faab9ed4488d25650cebd666568067

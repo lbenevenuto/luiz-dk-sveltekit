@@ -1,0 +1,27 @@
+$ bash scripts/run_all_checks.sh
+GIT REPOSITORY VALIDATION PASSED
+PROJECT CAPSULE VALIDATION PASSED
+HDS VALIDATION PASSED
+BRIEFING BOOTSTRAP VALIDATION PASSED
+NEXT AGENT STARTUP VALIDATION PASSED
+INPUT ASSETS SCAFFOLD VALIDATION PASSED
+GENERATED METADATA VALIDATION PASSED
+V1.6.1 PROJECT POLICY VALIDATION PASSED
+ENGINEERING GUARDRAILS VALIDATION PASSED
+VISUAL REVIEW POLICY VALIDATION PASSED
+ENGINEERING QUALITY PASSED
+ALL AVAILABLE CHECKS PASSED
+exit_code=0
+$ bun run lint
+$ prettier --check . && eslint . --ignore-pattern tooling/
+Checking formatting...
+All matched files use Prettier code style!
+exit_code=0
+$ bun run check (CI env vars stubbed)
+$ svelte-kit sync && svelte-check --tsconfig ./tsconfig.json
+1791838202669 COMPLETED 1714 FILES 0 ERRORS 0 WARNINGS 0 FILES_WITH_PROBLEMS
+exit_code=0
+$ bun run test
+ Test Files  27 passed (27)
+      Tests  177 passed (177)
+exit_code=0

@@ -12,3 +12,27 @@ CHANGELOG.md
 /static/
 /migrations/
 /coverage/
+
+# Agentic Delivery OS capsule (generated, hash-bound by checkpoints)
+/.agentic-harness/
+/.hds/
+/.skills/
+/tooling/
+/docs/_shared/
+/docs/_templates/
+/docs/architecture/
+/docs/evidence/
+/docs/harness/
+/docs/hds/
+/docs/tech/
+/docs/CONTINUITY_STANDARD.md
+/docs/DOCUMENTED_ENGINEERING_STANDARD.md
+/docs/ENGINEERING_EVIDENCE_STANDARD.md
+/00-NEXT_AGENT_STARTUP.md
+/AGENT_*.md
+/ENGINEERING_GUARDRAILS.md
+/GUARDRAILS.md
+/PRODUCT_VERSION.md
+/PROJECT_BRIEF.md
+/START_HERE_FOR_AGENTS.md
+/VISUAL_REFERENCE_HUMAN_PARITY_STANDARD.md

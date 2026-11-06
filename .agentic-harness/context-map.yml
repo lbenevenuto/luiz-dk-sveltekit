@@ -1,0 +1,15 @@
+start_files:
+  - START_HERE_FOR_AGENTS.md
+  - PROJECT_BRIEF.md
+  - AGENTS.md
+  - GUARDRAILS.md
+  - ENGINEERING_GUARDRAILS.md
+  - AGENT_HANDOFF.md
+on_demand:
+  visual_validation:
+    load_when:
+      - approved executable visual reference exists and fidelity is claimed
+    files:
+      - VISUAL_REFERENCE_HUMAN_PARITY_STANDARD.md
+      - tooling/visual-review/README.md
+      - tooling/visual-review/schemas/

@@ -1,0 +1,19 @@
+{"definitions": [], "path": "scripts/engineering_quality/__init__.py", "sha256": "3414f94e94028825bc9c290d57a9eb1ae4567058b8cf8ec338990781006646db"}
+{"definitions": ["git", "has_head", "changed", "enforce_baseline_identity", "snapshot", "selected"], "path": "scripts/engineering_quality/change_scope.py", "sha256": "73307f9812a184ab483eb06ae4a57d6d1e281f7466a589bdc305962c76da2705"}
+{"definitions": ["check_view", "report"], "path": "scripts/engineering_quality/change_validation.py", "sha256": "efc7d590735d92077ed3f96f41a8c4f19fa97bc92d50343b7183f18b09eae879"}
+{"definitions": ["initialize_config", "task_lines", "records", "render", "state_document", "collect_artifacts", "record"], "path": "scripts/engineering_quality/checkpoint.py", "sha256": "6c9b7cd7843807029e6e2f247b7d8997624affb912ee352a03eb30ff38764ece"}
+{"definitions": ["run", "main"], "path": "scripts/engineering_quality/cli.py", "sha256": "d31d6a6da1ab5b7007c20d512a210f3b6966639e95cb6f1896d03fa446ba7464"}
+{"definitions": ["state_paths", "config", "identifier", "references", "facts", "protected", "validate"], "path": "scripts/engineering_quality/continuity.py", "sha256": "6c3cea4660297139188d107eaf6aa09a0efed56c074b3871808e17f559c66434"}
+{"definitions": ["head", "pending_tasks", "decision_history", "check_chain", "validate_base"], "path": "scripts/engineering_quality/continuity_history.py", "sha256": "9a6102abcf9a9223969a41979152b5531b614673a24e5a284fe7598ff7ca06b4"}
+{"definitions": ["validate"], "path": "scripts/engineering_quality/coverage.py", "sha256": "6c22fd746589ce06e50cd54f834fe2b4f77f9988f8921191e5df3798307177d7"}
+{"definitions": ["tokens", "validate"], "path": "scripts/engineering_quality/duplication.py", "sha256": "6d62704da8d47c8de7b13abae94bffccf2efaa1f6a743aff57877d5ff76afe23"}
+{"definitions": ["text", "local", "command", "validate", "validate_prior_removals"], "path": "scripts/engineering_quality/evidence.py", "sha256": "d9fa4fa8ffd1c256e50e7a7e297d147db2e776bf6dc5ed399168f873d3a66761"}
+{"definitions": ["capture", "initialize", "load", "unchanged", "audit"], "path": "scripts/engineering_quality/legacy.py", "sha256": "9b4f2c4b3b50fdf23996d853bc6ff0829b66c2041ccc323078fe5da77e1b1029"}
+{"definitions": ["validate"], "path": "scripts/engineering_quality/policies.py", "sha256": "5b6aa09a07af86abb2a2a44f5fc2b5e8cb8fa871b163b4bfce4e48b6c19a022c"}
+{"definitions": ["CanonicalBindings", "validate"], "path": "scripts/engineering_quality/python_clones.py", "sha256": "ad9bcd6c153d60426dd6097e29391683016e443542b2702440683e300f42b93f"}
+{"definitions": ["inspect"], "path": "scripts/engineering_quality/recovery.py", "sha256": "a2fd8b76e6ed804d6b6ac11003a7839205d7ac0b8e5c6d213194fd324dd106d5"}
+{"definitions": ["digest", "inventory"], "path": "scripts/engineering_quality/sources.py", "sha256": "7b99381080e8498f1d9ba476f21031a255cd46d8fba0434daa605bf102cac59b"}
+{"definitions": ["validate"], "path": "scripts/engineering_quality/stack.py", "sha256": "6bc617b547bfde9fc5fc15e2b61043e6eb987936223a0dbc742e2b7f41c7ee19"}
+{"definitions": ["validate"], "path": "scripts/engineering_quality/structure.py", "sha256": "f8fe1861896f1646b80873eaf06797a602d3f07e08739dc4510a1c1416ce8301"}
+{"definitions": [], "path": "scripts/validate_engineering_quality.py", "sha256": "c39f237e048121377aa6fdc5f513ff2b9f20b8387e1f5d00119badf7f2f601d8"}
+{"definitions": [], "path": "scripts/validate_file_size_policy.py", "sha256": "2e3e2a00039e0265febd4bfb59d163d92686d5c68cb6e33ae8b4409d9ce71b84"}

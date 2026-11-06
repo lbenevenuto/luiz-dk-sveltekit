@@ -1,0 +1,4 @@
+source: private-agentic-delivery-os
+exported_version: 1.9.2
+export_mode: project-harness-capsule
+briefing_first_bootstrap: true

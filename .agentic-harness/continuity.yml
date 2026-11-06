@@ -1,0 +1,3 @@
+schema_version: 1.0.0
+head: .agentic-harness/checkpoints/00000005.yml
+sha256: 8680ebb88870afb989a2957543e04b775c1445ff8d419b0405f59901dbdc9452

@@ -1,0 +1,18 @@
+---
+doc_id: OS-AGENT-DECISIONS-MD
+title: AGENT_DECISIONS.md
+owner: hyst
+lang: en
+audience: tech
+tags:
+- agentic-os
+document_type: guide
+pair_required: false
+status: review
+version: 0.1.0
+last_updated: '2026-10-12'
+---
+
+# AGENT_DECISIONS.md
+
+Initial decision: use adaptive architecture posture until more project evidence is available. If manual generation was used, record the reason here before implementation.

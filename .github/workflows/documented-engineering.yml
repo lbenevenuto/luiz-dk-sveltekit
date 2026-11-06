@@ -1,0 +1,29 @@
+name: documented-engineering
+on:
+  pull_request:
+  push:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: python3 -m pip install -r requirements-docs.txt
+      - run: bash scripts/run_all_checks.sh
+      - name: Changed commit and documentation validation
+        env:
+          BASE_REF: ${{ github.event.pull_request.base.sha || github.event.before }}
+        run: |
+          if [[ -n "$BASE_REF" && ! "$BASE_REF" =~ ^0+$ ]]; then
+            python3 scripts/validate_commit.py --base-ref "$BASE_REF"
+          fi

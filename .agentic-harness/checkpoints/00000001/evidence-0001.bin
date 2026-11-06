@@ -1,0 +1,47 @@
+---
+doc_id: OS-AGENTS-MD
+title: Agent Rules — luiz-dk-sveltekit
+owner: hyst
+lang: en
+audience: tech
+tags:
+- agentic-os
+document_type: guide
+pair_required: false
+status: review
+version: 0.1.0
+last_updated: '2026-10-12'
+---
+
+# Agent Rules — luiz-dk-sveltekit
+
+Follow the project capsule, hDS, SemVer, banking-grade security, adaptive architecture and validation gates. Use RPI: Research, Plan, Implement. Do not implement before reading the briefing, recording assumptions, and confirming a clean bootstrap baseline commit exists.
+
+## Non-negotiables
+
+- No hallucinated facts.
+- No fake validations.
+- No permanent workarounds.
+- No skipped security, quality or performance steps.
+- No copying private Agentic Delivery OS internals.
+- All meaningful decisions must be recorded.
+- Raw briefing material is read-only evidence and is ignored by default.
+- The generated capsule must be committed before product implementation starts.
+- Manual fixtures must never be used as live fallback data.
+- Downloads must be classified by payload signature, not file extension alone.
+- UI labels must not be trusted as actual data grain until semantics are inspected.
+- `needs_review` QA status blocks client-ready output unless a documented human policy says otherwise.
+- Generated metadata, caches, venvs, run artifacts and browser outputs must not be committed.
+- Discover installed Skills through `.skills/installed/INSTALL_MANIFEST.yml`.
+- Before using an installed Skill, read its `SKILL.md` and report the version used.
+- Never update an installed Skill silently or rewrite its functional contract.
+- `ENGINEERING_GUARDRAILS.md` is mandatory global engineering policy. Apply `G-OFFICIAL-API-FIRST` before creating durable workarounds, `G-PRESERVE-INTENT-NOT-ACCIDENTAL-COMPLEXITY` during migration/modernization, and `G-LEGACY-CONVERGENCE` whenever new work touches inherited code: do not add new debt, do not worsen touched debt, and queue material out-of-scope debt.
+- When an approved executable visual reference exists and fidelity is part of the mandate, load `VISUAL_REFERENCE_HUMAN_PARITY_STANDARD.md`; automated comparison is evidence only and Human Visual Acceptance is final parity authority.
+
+## Mandatory documented engineering
+
+Read docs/DOCUMENTED_ENGINEERING_STANDARD.md, docs/ENGINEERING_EVIDENCE_STANDARD.md and the human/AI engineering policies under docs/harness/software-engineering/ and docs/harness/discipline/. Every code change requires investigation, reuse and architectural evidence. hDS documentation and blocking engineering gates are mandatory before task completion.
+
+## Mandatory continuity
+
+Run `python3 scripts/resume_project.py` before work. Read docs/CONTINUITY_STANDARD.md and the active checkpoint in .agentic-harness/continuity.yml. Canonical state paths are declared in .agentic-harness/continuity-config.yml. Save an explicit checkpoint before implementation, after decisions and validation milestones, at least every 15 minutes of substantive work, and before handoff or interruption. Never infer facts from prior chat or silently discard unrecorded changes.

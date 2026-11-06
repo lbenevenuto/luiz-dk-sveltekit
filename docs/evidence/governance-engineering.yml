@@ -1,0 +1,137 @@
+schema_version: 1.0.0
+unit_id: governance
+reviewer: OS bootstrap source inspection
+reviewed_on: '2026-10-12'
+sources:
+  scripts/audit_legacy.py: 5dd8c96dcad3942456db0322d0e02b73456459ff87d8f5b16a17380d10f55307
+  scripts/finalize_bootstrap_commit.sh: c89136353b71aca7ae1462bf179590d09e558495034d0c889e55fc7f7fd28c8a
+  scripts/install-git-hooks.sh: 9f3e2a5b356dc3dddd6a7dcb36ca776876e3a16fb033c431bf5ec6c69d436027
+  scripts/record_checkpoint.py: 5516aa103fbd23a9caacbe178b88b37bf35e85817c84e87d87d175ba7be592e6
+  scripts/resume_project.py: 1432bf62d60b54c9bb08f18a27103302ed4c9138c5d2e5788e6aa266722930b6
+  scripts/run_all_checks.sh: f1fc8f20de700f7aeb28f50204e5bdffb7a4e3cc776b72713ebb2891c9982256
+  scripts/validate_baseline_commit.py: 1495295e8546815284109687170d1585921e6acbc066e47d203b7d7ec27a81a7
+  scripts/validate_briefing_bootstrap.py: 84ac8adadba0c2e115a056a63418c3ed0ebfc7ea21c73c3b3f211b7de3dd1987
+  scripts/validate_commit.py: 6b9a7260b6e559ec53156cd6696f9a2f526598614b8550602d18cbb218afb867
+  scripts/validate_continuity.py: 6476951dae2e070605c591496945aab155ee48187b48fec4582238bf5156323e
+  scripts/validate_engineering_guardrails.py: 4cd83d1791e3453bd6c3874d4a05cfc2f4872b29376631fed729174a88940939
+  scripts/validate_generated_metadata.py: 7e5ac59331e1a40d52c21ecc6244ca7227722d244e38a271f8e200598497c4e3
+  scripts/validate_git_repository.py: 14d26cfe82c074613d68dcb7c7fd7269d65e4f0b09cb76e4f51adb3847d1086c
+  scripts/validate_input_assets_scaffold.py: 1c266284901d568c1356c9524017040107017b524db6a9a6cd33ccc493068a9e
+  scripts/validate_next_agent_startup.py: 2a751cdc4d70e2f09d6d80d736373623e4c4a0d354836c79bcaaf935147c35aa
+  scripts/validate_project_capsule.py: efb72db4a920809fbb58458a4d3547dd07d6f7087c446707d402a9a4365e1b47
+  scripts/validate_staged.py: 5f21386ece0cfbb7d92329292ab46b83c41c8d25e4dac1e032ab865342fdb66a
+  scripts/validate_v154_project_policy.py: ab070f080159d0cd816aabee0978f534bd560af64d50141c431e42ffb82f6fd0
+  scripts/validate_visual_review_policy.py: d69523cc42ca2cfb478c48370f2ff724eedcb19711769be9da187a58af6cf311
+artifacts:
+  docs/evidence/canonical-engineering-decisions.yml: 353498f0fa43cc4c293989863e4325aa5cdd1fdbe10659dabad9c5382d0e80f7
+  docs/evidence/governance-source-inspection.jsonl: d8269d98dca6a7e8ab700fccd9a8ee38f13f335279b5bbb0d5a4ace7401514c6
+investigation:
+  context: Review the actual OS-owned governance component, its public definitions
+    and consumer boundary; preserve unchanged inherited debt while enforcing evidence
+    for changed implementation.
+  searches:
+  - command: &id001
+    - /private/tmp/claude-501/-Users-luiz-Projects-Personal-agentic-delivery-os/beef953a-1025-4848-8464-f8a1fbc3a814/scratchpad/venv/bin/python3
+    - -c
+    - "import ast, hashlib, json, pathlib, sys\nfor name in json.loads(sys.argv[1]):\n\
+      \ p = pathlib.Path(name)\n item = {\"path\": name, \"sha256\": hashlib.sha256(p.read_bytes()).hexdigest()}\n\
+      \ if p.suffix == \".py\":\n  tree = ast.parse(p.read_text())\n  item[\"definitions\"\
+      ] = [n.name for n in tree.body if isinstance(n, (ast.FunctionDef, ast.ClassDef))]\n\
+      \ print(json.dumps(item, sort_keys=True))\n"
+    - '["scripts/audit_legacy.py", "scripts/finalize_bootstrap_commit.sh", "scripts/install-git-hooks.sh",
+      "scripts/record_checkpoint.py", "scripts/resume_project.py", "scripts/run_all_checks.sh",
+      "scripts/validate_baseline_commit.py", "scripts/validate_briefing_bootstrap.py",
+      "scripts/validate_commit.py", "scripts/validate_continuity.py", "scripts/validate_engineering_guardrails.py",
+      "scripts/validate_generated_metadata.py", "scripts/validate_git_repository.py",
+      "scripts/validate_input_assets_scaffold.py", "scripts/validate_next_agent_startup.py",
+      "scripts/validate_project_capsule.py", "scripts/validate_staged.py", "scripts/validate_v154_project_policy.py",
+      "scripts/validate_visual_review_policy.py"]'
+    scope: Enumerate public definitions of the selected OS-owned modules; consumer
+      files are not enrolled.
+    result: Source inventory and Python syntax inspected successfully; canonical component
+      responsibility reviewed in the linked decision catalog.
+    artifact: docs/evidence/governance-source-inspection.jsonl
+  references:
+  - docs/evidence/canonical-engineering-decisions.yml
+  - scripts/audit_legacy.py
+  - scripts/finalize_bootstrap_commit.sh
+  - scripts/install-git-hooks.sh
+  - scripts/record_checkpoint.py
+  - scripts/resume_project.py
+  - scripts/run_all_checks.sh
+  - scripts/validate_baseline_commit.py
+  - scripts/validate_briefing_bootstrap.py
+  - scripts/validate_commit.py
+  - scripts/validate_continuity.py
+  - scripts/validate_engineering_guardrails.py
+  - scripts/validate_generated_metadata.py
+  - scripts/validate_git_repository.py
+  - scripts/validate_input_assets_scaffold.py
+  - scripts/validate_next_agent_startup.py
+  - scripts/validate_project_capsule.py
+  - scripts/validate_staged.py
+  - scripts/validate_v154_project_policy.py
+  - scripts/validate_visual_review_policy.py
+reuse:
+  decision: reuse
+  rationale: Reuse governance scripts and engineering-quality change_validation. Generated
+    capsule checks call these canonical packages.
+  alternatives: Separate copies of validators and policy names were rejected because
+    they drift. A new class hierarchy was rejected where the operation has no state,
+    invariant or lifecycle requiring a class.
+  candidates:
+  - scripts/audit_legacy.py
+  - scripts/finalize_bootstrap_commit.sh
+  - scripts/install-git-hooks.sh
+  - scripts/record_checkpoint.py
+  - scripts/resume_project.py
+  - scripts/run_all_checks.sh
+  - scripts/validate_baseline_commit.py
+  - scripts/validate_briefing_bootstrap.py
+  - scripts/validate_commit.py
+  - scripts/validate_continuity.py
+  - scripts/validate_engineering_guardrails.py
+  - scripts/validate_generated_metadata.py
+  - scripts/validate_git_repository.py
+  - scripts/validate_input_assets_scaffold.py
+  - scripts/validate_next_agent_startup.py
+  - scripts/validate_project_capsule.py
+  - scripts/validate_staged.py
+  - scripts/validate_v154_project_policy.py
+  - scripts/validate_visual_review_policy.py
+architecture:
+  responsibilities: Independent entrypoints enforce capsule completeness, release
+    metadata and state while invoking the canonical validation packages.
+  boundaries: Independent entrypoints enforce capsule completeness, release metadata
+    and state while invoking the canonical validation packages.
+  abstraction: Thin command entrypoints delegate to cohesive reusable functions. Avoid
+    parallel implementations of staged or committed validation.
+  rationale: Reuse governance scripts and engineering-quality change_validation. Generated
+    capsule checks call these canonical packages.
+  duplication_review: Canonical inventory, parsing and snapshot helpers are shared.
+    Lexical and Python-clone sensors supplement review; semantic duplication is not
+    automatically proven absent.
+  risks: Recorded evidence can be dishonest; hashes prove freshness, not truth. Human/agent
+    review and relevant behavior tests remain necessary. Product code is never enrolled
+    by infrastructure export.
+  cohesion_review: Inspect modules above 300 lines for coherent orchestration or declarative
+    capsule templates; the hard 500-line limit still applies and no size waiver is
+    introduced.
+resolution:
+  kind: canonical_export
+  cause_or_need: Review the actual OS-owned governance component, its public definitions
+    and consumer boundary; preserve unchanged inherited debt while enforcing evidence
+    for changed implementation.
+  official_mechanisms: Use the canonical OS modules and hDS public validation entrypoints,
+    keeping index and commit checks on the same implementation.
+  solution: Reuse governance scripts and engineering-quality change_validation. Generated
+    capsule checks call these canonical packages.
+  regression: Source inspection below checks syntax and records hashes. Full release
+    regressions are separate release evidence; consumer readiness is not certified.
+  workaround: false
+validation:
+- command: *id001
+  exit_code: 0
+  result: Executed source inspection produced the attached path/hash/public-definition
+    inventory. This is structural evidence, not a claim of product correctness.
+  artifact: docs/evidence/governance-source-inspection.jsonl

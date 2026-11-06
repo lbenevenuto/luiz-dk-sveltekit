@@ -1,0 +1,44 @@
+schema_version: 2.0.0
+standard_version: 2.1.1
+project_name: hDS — hyst Documentation System
+project_code: hds
+default_language: pt-BR
+legacy_directory: legacy-documentation
+audiences:
+- tech
+- manager
+- c-level
+doc_status_values:
+- draft
+- review
+- approved
+- deprecated
+required_front_matter:
+- doc_id
+- title
+- version
+- status
+- owner
+- lang
+- audience
+- last_updated
+- tags
+- document_type
+- pair_required
+ownership_file: .hds/ownership.yml
+findings_file: .hds/findings.yml
+assets_registry: .hds/assets.yml
+line_limits:
+  warning: 300
+  maximum: 500
+waivers_file: .hds/waivers.yml
+pair_required_types:
+- business_rule
+- process
+- technical
+publication_enabled: false
+external_links_checked: false
+repository_role: consumer
+independently_governed_paths:
+- .skills
+- briefing

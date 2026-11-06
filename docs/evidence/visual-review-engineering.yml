@@ -1,0 +1,163 @@
+schema_version: 1.0.0
+unit_id: visual-review
+reviewer: OS bootstrap source inspection
+reviewed_on: '2026-10-12'
+sources:
+  tooling/visual-review/bin/visual-review.mjs: 86b6f38b413bfd3b91793e1822f1b7f8014e6b451647d6e9d9c23af1b5bb6b97
+  tooling/visual-review/examples/visual-review.config.mjs: d29e874a18b070b3b2a8929b90c8b5e632c8090747aa519bd20356d9411f57e7
+  tooling/visual-review/src/browser-validation.mjs: bdb771363127651e404c3cb7e7f1ac071eb07664b1edb95a4f029eb651ab38e5
+  tooling/visual-review/src/capture-sequence.mjs: a441a92921eb84347f1b0aef15a888f698db1b5e04202ba2e63974ebe0e152fd
+  tooling/visual-review/src/capture.mjs: 14cdfb0cec775a7e0ba6eacc560e0a17974ba836a264f39687b6f31fa5f44034
+  tooling/visual-review/src/comparison.mjs: 25f160f235ba27e3772a2fc7a096038137ba50aeec19a13cb775e0f8cd3238db
+  tooling/visual-review/src/config.mjs: b113795275e5dad7732f9e2b47e8394b70bd1f7db210cf15b63b39f15d630781
+  tooling/visual-review/src/index.mjs: cbebdfb20606b531be58e9afaef4d85b9050fcc513e2171f0021935dda5743e6
+  tooling/visual-review/src/interactions.mjs: 98f97461fb3ccdbd89ab5444877aa2ee9aab4c0057dfa40e1e986540c926c6f2
+  tooling/visual-review/src/png-comparison.mjs: 5bfb60b765281e1114a90831ec49cfdbb050f202a67472aaa1e834bda3533442
+  tooling/visual-review/src/report.mjs: 0e645f850fbc6d14ea4c1067fb54f98a07636e5d145b07d3e963527e339226e2
+  tooling/visual-review/src/review.mjs: 3b55069fffdf502e44c6ea8dc50da4b1ea32b704196ef889ad66ed418d2f0b6c
+  tooling/visual-review/src/run.mjs: c2bb99b21155b29b3df1a2c066752679a814f5d79887c66311d4f95a1f641c0c
+  tooling/visual-review/src/util.mjs: b1d204a46df2e09430252f9fedaf3e193499e7342e0a3e87bc1a2ace3eca5bef
+  tooling/visual-review/src/validation.mjs: 6a1a5673772e4873fa3d6046b1ae5ba7d2e740a3f52bee0a6c8003bb60716cd2
+  tooling/visual-review/tests/browser-validation.test.mjs: f93502998f33bebe70538b0b48616a632d115802bbfddfa1f3cb90354ab1a501
+  tooling/visual-review/tests/config-contract.test.mjs: d1403521dcdfcf77c62a5cb0308bfb7963b97e3106c2b2730cbacc0adadefacd
+  tooling/visual-review/tests/helpers/fixtures.mjs: 5bb6fc760b48bba7231f904065e0e3d1c171b7ea88a226b611ee351299daa0d0
+  tooling/visual-review/tests/helpers/pngjs-shim/index.cjs: 6e63ceb64bf3720d60a792ae650f662b0a413166012f7647b76491db42ebe9b7
+  tooling/visual-review/tests/interactions-capture.test.mjs: d3389549f41cba83710e47d4079b61aaeae3c70b7234ffab3254b2ba81a98acb
+  tooling/visual-review/tests/path-safety.test.mjs: a4e9d3b48c7fc92c831b8d5fcb2b259e22728df27ec1aaee2d7128485116b115
+  tooling/visual-review/tests/pipeline-report-review.test.mjs: 7fe7d0dc6e0d15fac474159cffca2dc40e8a08be6a54696c36d7d30803ea1070
+  tooling/visual-review/tests/png-comparison.test.mjs: 35032683da4ae4fe9240cf435dfca3c05da3dc9b904a78efddba342262e0c25b
+  tooling/visual-review/tests/public-api.test.mjs: 05a4dfb48d36c60658395121704c90916f34cadcb7780ab76053dbb7193bc23c
+  tooling/visual-review/tests/run-paths-staleness.test.mjs: 568586f586a55bad53a0495e4b50a3bdc4f157859bc1aa68896411e8b4ee4316
+  tooling/visual-review/vendor/png-rgba-codec.mjs: b3ec12d67ec4779ff2571c8f59cdbee384faab9ed4488d25650cebd666568067
+artifacts:
+  docs/evidence/canonical-engineering-decisions.yml: 353498f0fa43cc4c293989863e4325aa5cdd1fdbe10659dabad9c5382d0e80f7
+  docs/evidence/visual-review-source-inspection.jsonl: 950b7d8d6909aa83dbad2915ab0368a2fed22e05cc7a09c9645894659d823a9e
+investigation:
+  context: Review the actual OS-owned visual-review component, its public definitions
+    and consumer boundary; preserve unchanged inherited debt while enforcing evidence
+    for changed implementation.
+  searches:
+  - command: &id001
+    - /private/tmp/claude-501/-Users-luiz-Projects-Personal-agentic-delivery-os/beef953a-1025-4848-8464-f8a1fbc3a814/scratchpad/venv/bin/python3
+    - -c
+    - "import ast, hashlib, json, pathlib, sys\nfor name in json.loads(sys.argv[1]):\n\
+      \ p = pathlib.Path(name)\n item = {\"path\": name, \"sha256\": hashlib.sha256(p.read_bytes()).hexdigest()}\n\
+      \ if p.suffix == \".py\":\n  tree = ast.parse(p.read_text())\n  item[\"definitions\"\
+      ] = [n.name for n in tree.body if isinstance(n, (ast.FunctionDef, ast.ClassDef))]\n\
+      \ print(json.dumps(item, sort_keys=True))\n"
+    - '["tooling/visual-review/bin/visual-review.mjs", "tooling/visual-review/examples/visual-review.config.mjs",
+      "tooling/visual-review/src/browser-validation.mjs", "tooling/visual-review/src/capture-sequence.mjs",
+      "tooling/visual-review/src/capture.mjs", "tooling/visual-review/src/comparison.mjs",
+      "tooling/visual-review/src/config.mjs", "tooling/visual-review/src/index.mjs",
+      "tooling/visual-review/src/interactions.mjs", "tooling/visual-review/src/png-comparison.mjs",
+      "tooling/visual-review/src/report.mjs", "tooling/visual-review/src/review.mjs",
+      "tooling/visual-review/src/run.mjs", "tooling/visual-review/src/util.mjs", "tooling/visual-review/src/validation.mjs",
+      "tooling/visual-review/tests/browser-validation.test.mjs", "tooling/visual-review/tests/config-contract.test.mjs",
+      "tooling/visual-review/tests/helpers/fixtures.mjs", "tooling/visual-review/tests/helpers/pngjs-shim/index.cjs",
+      "tooling/visual-review/tests/interactions-capture.test.mjs", "tooling/visual-review/tests/path-safety.test.mjs",
+      "tooling/visual-review/tests/pipeline-report-review.test.mjs", "tooling/visual-review/tests/png-comparison.test.mjs",
+      "tooling/visual-review/tests/public-api.test.mjs", "tooling/visual-review/tests/run-paths-staleness.test.mjs",
+      "tooling/visual-review/vendor/png-rgba-codec.mjs"]'
+    scope: Enumerate public definitions of the selected OS-owned modules; consumer
+      files are not enrolled.
+    result: Source inventory and Python syntax inspected successfully; canonical component
+      responsibility reviewed in the linked decision catalog.
+    artifact: docs/evidence/visual-review-source-inspection.jsonl
+  references:
+  - docs/evidence/canonical-engineering-decisions.yml
+  - tooling/visual-review/bin/visual-review.mjs
+  - tooling/visual-review/examples/visual-review.config.mjs
+  - tooling/visual-review/src/browser-validation.mjs
+  - tooling/visual-review/src/capture-sequence.mjs
+  - tooling/visual-review/src/capture.mjs
+  - tooling/visual-review/src/comparison.mjs
+  - tooling/visual-review/src/config.mjs
+  - tooling/visual-review/src/index.mjs
+  - tooling/visual-review/src/interactions.mjs
+  - tooling/visual-review/src/png-comparison.mjs
+  - tooling/visual-review/src/report.mjs
+  - tooling/visual-review/src/review.mjs
+  - tooling/visual-review/src/run.mjs
+  - tooling/visual-review/src/util.mjs
+  - tooling/visual-review/src/validation.mjs
+  - tooling/visual-review/tests/browser-validation.test.mjs
+  - tooling/visual-review/tests/config-contract.test.mjs
+  - tooling/visual-review/tests/helpers/fixtures.mjs
+  - tooling/visual-review/tests/helpers/pngjs-shim/index.cjs
+  - tooling/visual-review/tests/interactions-capture.test.mjs
+  - tooling/visual-review/tests/path-safety.test.mjs
+  - tooling/visual-review/tests/pipeline-report-review.test.mjs
+  - tooling/visual-review/tests/png-comparison.test.mjs
+  - tooling/visual-review/tests/public-api.test.mjs
+  - tooling/visual-review/tests/run-paths-staleness.test.mjs
+  - tooling/visual-review/vendor/png-rgba-codec.mjs
+reuse:
+  decision: reuse
+  rationale: Reuse tooling/visual-review unchanged; no substitute screenshots or artificial
+    acceptance are generated.
+  alternatives: Separate copies of validators and policy names were rejected because
+    they drift. A new class hierarchy was rejected where the operation has no state,
+    invariant or lifecycle requiring a class.
+  candidates:
+  - tooling/visual-review/bin/visual-review.mjs
+  - tooling/visual-review/examples/visual-review.config.mjs
+  - tooling/visual-review/src/browser-validation.mjs
+  - tooling/visual-review/src/capture-sequence.mjs
+  - tooling/visual-review/src/capture.mjs
+  - tooling/visual-review/src/comparison.mjs
+  - tooling/visual-review/src/config.mjs
+  - tooling/visual-review/src/index.mjs
+  - tooling/visual-review/src/interactions.mjs
+  - tooling/visual-review/src/png-comparison.mjs
+  - tooling/visual-review/src/report.mjs
+  - tooling/visual-review/src/review.mjs
+  - tooling/visual-review/src/run.mjs
+  - tooling/visual-review/src/util.mjs
+  - tooling/visual-review/src/validation.mjs
+  - tooling/visual-review/tests/browser-validation.test.mjs
+  - tooling/visual-review/tests/config-contract.test.mjs
+  - tooling/visual-review/tests/helpers/fixtures.mjs
+  - tooling/visual-review/tests/helpers/pngjs-shim/index.cjs
+  - tooling/visual-review/tests/interactions-capture.test.mjs
+  - tooling/visual-review/tests/path-safety.test.mjs
+  - tooling/visual-review/tests/pipeline-report-review.test.mjs
+  - tooling/visual-review/tests/png-comparison.test.mjs
+  - tooling/visual-review/tests/public-api.test.mjs
+  - tooling/visual-review/tests/run-paths-staleness.test.mjs
+  - tooling/visual-review/vendor/png-rgba-codec.mjs
+architecture:
+  responsibilities: Capture, comparison and reporting provide evidence. Explicit Human
+    Visual Acceptance remains the parity authority.
+  boundaries: Capture, comparison and reporting provide evidence. Explicit Human Visual
+    Acceptance remains the parity authority.
+  abstraction: Use existing Node entrypoints and stable public browser/test APIs.
+    Keep comparison algorithms separate from capture and acceptance.
+  rationale: Reuse tooling/visual-review unchanged; no substitute screenshots or artificial
+    acceptance are generated.
+  duplication_review: Canonical inventory, parsing and snapshot helpers are shared.
+    Lexical and Python-clone sensors supplement review; semantic duplication is not
+    automatically proven absent.
+  risks: Recorded evidence can be dishonest; hashes prove freshness, not truth. Human/agent
+    review and relevant behavior tests remain necessary. Product code is never enrolled
+    by infrastructure export.
+  cohesion_review: Inspect modules above 300 lines for coherent orchestration or declarative
+    capsule templates; the hard 500-line limit still applies and no size waiver is
+    introduced.
+resolution:
+  kind: canonical_export
+  cause_or_need: Review the actual OS-owned visual-review component, its public definitions
+    and consumer boundary; preserve unchanged inherited debt while enforcing evidence
+    for changed implementation.
+  official_mechanisms: Use the canonical OS modules and hDS public validation entrypoints,
+    keeping index and commit checks on the same implementation.
+  solution: Reuse tooling/visual-review unchanged; no substitute screenshots or artificial
+    acceptance are generated.
+  regression: Source inspection below checks syntax and records hashes. Full release
+    regressions are separate release evidence; consumer readiness is not certified.
+  workaround: false
+validation:
+- command: *id001
+  exit_code: 0
+  result: Executed source inspection produced the attached path/hash/public-definition
+    inventory. This is structural evidence, not a claim of product correctness.
+  artifact: docs/evidence/visual-review-source-inspection.jsonl
