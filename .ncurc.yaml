@@ -25,3 +25,6 @@ reject:
   # out of scope for a routine pass; adapter-cloudflare@8 goes with it.
   - '@sveltejs/kit'
   - '@sveltejs/adapter-cloudflare'
+  # semantic-release@26 requires Node >=26.13 (and depends on beta plugins);
+  # the repo/CI runs an older Node. Revisit with a coordinated Node upgrade.
+  - semantic-release
