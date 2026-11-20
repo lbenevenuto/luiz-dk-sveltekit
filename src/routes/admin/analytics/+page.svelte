@@ -40,29 +40,33 @@
 				class="rounded-md px-3 py-2 text-sm font-medium {data.days === 7
 					? 'bg-blue-600 text-white'
 					: 'bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600'}"
-				>7 Days</a
 			>
+				7 Days
+			</a>
 			<a
 				href="?days=30{data.filterUser ? `&userId=${data.filterUser.id}` : ''}"
 				class="rounded-md px-3 py-2 text-sm font-medium {data.days === 30
 					? 'bg-blue-600 text-white'
 					: 'bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600'}"
-				>30 Days</a
 			>
+				30 Days
+			</a>
 			<a
 				href="?days=90{data.filterUser ? `&userId=${data.filterUser.id}` : ''}"
 				class="rounded-md px-3 py-2 text-sm font-medium {data.days === 90
 					? 'bg-blue-600 text-white'
 					: 'bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600'}"
-				>90 Days</a
 			>
+				90 Days
+			</a>
 			<a
 				href="?days=180{data.filterUser ? `&userId=${data.filterUser.id}` : ''}"
 				class="rounded-md px-3 py-2 text-sm font-medium {data.days === 180
 					? 'bg-blue-600 text-white'
 					: 'bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600'}"
-				>180 Days</a
 			>
+				180 Days
+			</a>
 		</div>
 	</div>
 
