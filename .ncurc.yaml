@@ -3,9 +3,10 @@ reject:
   # Keep Wrangler exact-pinned. 4.153.0 is the minimum release carrying
   # patched sharp 0.35.5 and undici 7.30.1; later CLI bumps need review.
   - wrangler
-  # typescript-eslint@8.63.0 (latest) peer dep caps typescript at "<6.1.0".
-  # TS 7.0.2 would break linting via ERESOLVE until typescript-eslint adds
-  # TS 7 support. Revisit once typescript-eslint raises its typescript range.
+  # typescript-eslint@8.73.0 (latest) caps typescript at "<6.1.0", and
+  # svelte-check@4.7.8 peers "^5 || ^6". TS 7.0.2 breaks both (and drops the
+  # tsserver bin). 6.0.3 is the last 6.x. Revisit once typescript-eslint and
+  # svelte-check accept TS 7.
   - typescript
   # layercake@11 ("The No More Stores Edition") rewrites the core to Svelte 5
   # runes and removes the store-based component context API with no shim.
@@ -15,13 +16,20 @@ reject:
   # ...). Upgrading needs a full rewrite of those layers — out of scope for
   # a routine update pass.
   - layercake
-  # conventional-changelog-conventionalcommits@10.4.0 requires
-  # conventional-changelog-writer@9, but @semantic-release/release-notes-generator
-  # (14.1.x) still depends on writer ^8, so the release job fails in generateNotes.
-  # Revisit once release-notes-generator moves to writer 9.
+  # conventional-changelog-conventionalcommits@10.4.x calls createLegacyWriterGuard,
+  # which throws under conventional-changelog-writer <=8 in generateNotes.
+  # @semantic-release/release-notes-generator 14.1.1 (latest, used by
+  # semantic-release 25) is still on writer ^8; writer 9 only ships in the 15.x
+  # betas pulled by semantic-release 26. Revisit with the semantic-release 26 move.
   - conventional-changelog-conventionalcommits
+  # semantic-release@26 requires node >=26.13 and its bin exits 1 below that; the
+  # CI release job runs `bunx semantic-release` on ubuntu-latest's default Node 22
+  # (no setup-node). v26 also depends on beta core/commit-analyzer/
+  # release-notes-generator/npm plugins. Revisit when CI installs Node >=26.13
+  # and those plugins ship stable.
+  - semantic-release
   # @sveltejs/kit@3 drops svelte.config.js (config moves into the sveltekit(...)
   # Vite plugin) and fails the build with config_file_unsupported. Migration is
-  # out of scope for a routine pass; adapter-cloudflare@8 goes with it.
+  # out of scope for a routine pass; adapter-cloudflare@8+ goes with it.
   - '@sveltejs/kit'
   - '@sveltejs/adapter-cloudflare'
