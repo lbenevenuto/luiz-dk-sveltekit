@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { ActionFailure } from '@sveltejs/kit';
+import { render } from 'svelte/server';
 
 const { mockGetUserList, mockUpdateUserMetadata, mockRequireAdmin, mockLogger } = vi.hoisted(() => ({
 	mockGetUserList: vi.fn(),
@@ -30,13 +31,16 @@ vi.mock('$lib/server/logger', () => ({
 }));
 
 import { actions, load } from './+page.server';
+import AdminUsers from './+page.svelte';
+
+const adminUserId = 'admin_1';
 
 function createLocals(): App.Locals {
 	return {
 		requestId: 'req-1',
 		db: {} as App.Locals['db'],
 		auth: {
-			userId: 'admin_1',
+			userId: adminUserId,
 			sessionId: 'sess_1',
 			user: null,
 			role: 'admin'
@@ -125,6 +129,80 @@ describe('admin users page server', () => {
 		expect(mockUpdateUserMetadata).toHaveBeenCalledWith('user_1', {
 			publicMetadata: { role: 'admin' }
 		});
+	});
+
+	it.each(['setRole', 'removeRole'] as const)('%s rejects self-removal before calling Clerk', async (action) => {
+		await expect(
+			actions[action]({
+				request: new Request(`https://luiz.dk/admin/users?/${action}`, {
+					method: 'POST',
+					body: new URLSearchParams({ userId: adminUserId, role: 'user' })
+				}),
+				platform: { env: {} } as App.Platform,
+				locals: createLocals()
+			})
+		).resolves.toMatchObject({
+			status: 403,
+			data: { success: false, error: 'You cannot remove your own admin access.' }
+		});
+		expect(mockUpdateUserMetadata).not.toHaveBeenCalled();
+	});
+
+	it.each(['setRole', 'removeRole'] as const)('%s removes admin access from another user', async (action) => {
+		mockUpdateUserMetadata.mockResolvedValueOnce(undefined);
+
+		await expect(
+			actions[action]({
+				request: new Request(`https://luiz.dk/admin/users?/${action}`, {
+					method: 'POST',
+					body: new URLSearchParams({ userId: 'admin_2', role: 'user' })
+				}),
+				platform: { env: {} } as App.Platform,
+				locals: createLocals()
+			})
+		).resolves.toEqual({ success: true });
+		expect(mockUpdateUserMetadata).toHaveBeenCalledWith('admin_2', {
+			publicMetadata: { role: 'user' }
+		});
+	});
+
+	it('shows Remove Admin only on the other admin’s row', async () => {
+		mockGetUserList.mockResolvedValueOnce({
+			data: [adminUserId, 'admin_2'].map((id) => ({
+				id,
+				firstName: null,
+				lastName: null,
+				emailAddresses: [],
+				publicMetadata: { role: 'admin' },
+				createdAt: 123
+			}))
+		});
+
+		const data = await load({ platform: { env: {} } as App.Platform, locals: createLocals() });
+		const { body } = render(AdminUsers, {
+			props: {
+				params: {},
+				data: { ...data, clerkPublishableKey: '', clerkFrontendApi: '' },
+				form: null
+			}
+		});
+
+		expect(body.match(/Remove Admin/g)).toHaveLength(1);
+		expect(body).toContain('name="userId" value="admin_2"');
+		expect(body).not.toContain(`name="userId" value="${adminUserId}"`);
+	});
+
+	it('displays role update errors on the users page', () => {
+		const { body } = render(AdminUsers, {
+			props: {
+				params: {},
+				data: { users: [], clerkPublishableKey: '', clerkFrontendApi: '' },
+				form: { success: false, error: 'You cannot remove your own admin access.' }
+			}
+		});
+
+		expect(body).toContain('role="alert"');
+		expect(body).toContain('You cannot remove your own admin access.');
 	});
 
 	it('rejects invalid role removal requests before calling clerk', async () => {

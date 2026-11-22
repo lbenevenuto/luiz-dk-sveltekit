@@ -6,6 +6,7 @@ import { getErrorMessage } from '$lib/utils/validation';
 import { z } from 'zod';
 
 const userRoleSchema = z.enum(['admin', 'user']);
+const selfRemovalError = 'You cannot remove your own admin access.';
 
 const setRoleSchema = z.object({
 	userId: z.string().min(1),
@@ -31,6 +32,7 @@ export const load = async ({ platform, locals }: { platform?: App.Platform; loca
 		return {
 			users: users.map((user) => ({
 				id: user.id,
+				isCurrentUser: user.id === locals.auth.userId,
 				firstName: user.firstName,
 				lastName: user.lastName,
 				email: user.emailAddresses.find((e) => e.id === user.primaryEmailAddressId)?.emailAddress,
@@ -67,6 +69,9 @@ export const actions = {
 		}
 
 		const { userId, role } = parsed.data;
+		if (role === 'user' && userId === locals.auth.userId) {
+			return fail(403, { success: false, error: selfRemovalError });
+		}
 
 		try {
 			const clerkClient = getClerkClient(platform.env);
@@ -112,6 +117,9 @@ export const actions = {
 		}
 
 		const { userId } = parsed.data;
+		if (userId === locals.auth.userId) {
+			return fail(403, { success: false, error: selfRemovalError });
+		}
 
 		try {
 			const clerkClient = getClerkClient(platform.env);
