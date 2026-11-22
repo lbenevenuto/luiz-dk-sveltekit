@@ -25,7 +25,7 @@ export default defineConfig({
 		expect: { requireAssertions: true },
 		coverage: {
 			provider: 'v8',
-			// Server/TS code only: Svelte components have no test environment here.
+			// Coverage tracks .ts only; .svelte files are excluded even when rendered in tests.
 			include: ['src/**/*.ts'],
 			exclude: ['src/**/*.test.ts', 'src/**/*.d.ts'],
 			// Floor of the current numbers: ratchet up as coverage grows, never down.

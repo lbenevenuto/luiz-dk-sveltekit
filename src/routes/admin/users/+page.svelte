@@ -1,17 +1,10 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import { formatDate } from '$lib/utils/date';
+	import type { PageProps } from './$types';
 
-	interface User {
-		id: string;
-		firstName: string | null;
-		lastName: string | null;
-		email: string | undefined;
-		role: string;
-		createdAt: number;
-	}
-
-	let { data }: { data: { users: User[]; error?: string } } = $props();
+	let { data, form }: PageProps = $props();
+	const error = $derived(form?.error ?? data.error);
 </script>
 
 <div class="space-y-6">
@@ -22,9 +15,9 @@
 		</div>
 	</div>
 
-	{#if data.error}
-		<div class="rounded-lg border border-red-800 bg-red-900/20 p-4">
-			<p class="text-red-400">{data.error}</p>
+	{#if error}
+		<div role="alert" class="rounded-lg border border-red-800 bg-red-900/20 p-4">
+			<p class="text-red-400">{error}</p>
 		</div>
 	{/if}
 
@@ -81,7 +74,7 @@
 												Make Admin
 											</button>
 										</form>
-									{:else}
+									{:else if !user.isCurrentUser}
 										<form method="POST" action="?/setRole" use:enhance>
 											<input type="hidden" name="userId" value={user.id} />
 											<input type="hidden" name="role" value="user" />
