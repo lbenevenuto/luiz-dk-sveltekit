@@ -6,7 +6,7 @@ import { getErrorMessage } from '$lib/utils/validation';
 import { z } from 'zod';
 
 const userRoleSchema = z.enum(['admin', 'user']);
-const selfRemovalError = 'You cannot remove your own admin access.';
+const SELF_REMOVAL_ERROR = 'You cannot remove your own admin access.';
 
 const setRoleSchema = z.object({
 	userId: z.string().min(1),
@@ -53,7 +53,7 @@ export const actions = {
 		requireAdmin(locals);
 
 		if (!platform) {
-			return { success: false, error: 'Platform not available' };
+			return fail(503, { success: false, error: 'Platform not available' });
 		}
 
 		const formData = await request.formData();
@@ -70,7 +70,7 @@ export const actions = {
 
 		const { userId, role } = parsed.data;
 		if (role === 'user' && userId === locals.auth.userId) {
-			return fail(403, { success: false, error: selfRemovalError });
+			return fail(403, { success: false, error: SELF_REMOVAL_ERROR });
 		}
 
 		try {
@@ -86,7 +86,7 @@ export const actions = {
 				role,
 				error: getErrorMessage(error)
 			});
-			return { success: false, error: 'Failed to update role' };
+			return fail(500, { success: false, error: 'Failed to update role' });
 		}
 	},
 
@@ -102,7 +102,7 @@ export const actions = {
 		requireAdmin(locals);
 
 		if (!platform) {
-			return { success: false, error: 'Platform not available' };
+			return fail(503, { success: false, error: 'Platform not available' });
 		}
 
 		const formData = await request.formData();
@@ -118,7 +118,7 @@ export const actions = {
 
 		const { userId } = parsed.data;
 		if (userId === locals.auth.userId) {
-			return fail(403, { success: false, error: selfRemovalError });
+			return fail(403, { success: false, error: SELF_REMOVAL_ERROR });
 		}
 
 		try {
@@ -133,7 +133,7 @@ export const actions = {
 				userId,
 				error: getErrorMessage(error)
 			});
-			return { success: false, error: 'Failed to remove role' };
+			return fail(500, { success: false, error: 'Failed to remove role' });
 		}
 	}
 };
