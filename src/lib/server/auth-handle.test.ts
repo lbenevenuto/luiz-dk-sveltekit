@@ -1,21 +1,25 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-const { mockAuthenticateRequest, mockGetUser, mockIsPublicRoute, mockLogger } = vi.hoisted(() => ({
-	mockAuthenticateRequest: vi.fn(),
-	mockGetUser: vi.fn(),
-	mockIsPublicRoute: vi.fn(),
-	mockLogger: {
-		info: vi.fn(),
-		warn: vi.fn(),
-		error: vi.fn()
-	}
-}));
+const { mockAuthenticateRequest, mockGetUser, mockUpdateUserMetadata, mockIsPublicRoute, mockLogger } = vi.hoisted(
+	() => ({
+		mockAuthenticateRequest: vi.fn(),
+		mockGetUser: vi.fn(),
+		mockUpdateUserMetadata: vi.fn(),
+		mockIsPublicRoute: vi.fn(),
+		mockLogger: {
+			info: vi.fn(),
+			warn: vi.fn(),
+			error: vi.fn()
+		}
+	})
+);
 
 vi.mock('$lib/server/clerk', () => ({
 	getClerkClient: vi.fn(() => ({
 		authenticateRequest: mockAuthenticateRequest,
 		users: {
-			getUser: mockGetUser
+			getUser: mockGetUser,
+			updateUserMetadata: mockUpdateUserMetadata
 		}
 	}))
 }));
@@ -184,5 +188,43 @@ describe('authHandle', () => {
 
 		expect(response.status).toBe(200);
 		expect(event.locals.auth).toMatchObject({ userId: 'u1', role: 'user', user: null });
+	});
+
+	describe('role resolution', () => {
+		function signedIn() {
+			mockAuthenticateRequest.mockResolvedValue(
+				createRequestState({ isSignedIn: true, toAuth: vi.fn(() => ({ userId: 'u1', sessionId: 's1' })) })
+			);
+		}
+
+		it('uses the default role for a roleless user without writing to Clerk', async () => {
+			signedIn();
+			mockGetUser.mockResolvedValue({ id: 'u1', publicMetadata: {} });
+			const event = createEvent('/dashboard');
+
+			const response = await authHandle({ event, resolve: vi.fn(async () => new Response('ok')) });
+
+			expect(response.status).toBe(200);
+			expect(event.locals.auth.role).toBe('user');
+			expect(mockUpdateUserMetadata).not.toHaveBeenCalled();
+		});
+
+		it('does not touch users that already have a role', async () => {
+			signedIn();
+			mockGetUser.mockResolvedValue({ id: 'u1', publicMetadata: { role: 'admin' } });
+
+			await authHandle({ event: createEvent('/dashboard'), resolve: vi.fn(async () => new Response('ok')) });
+
+			expect(mockUpdateUserMetadata).not.toHaveBeenCalled();
+		});
+
+		it('skips the update when getUser fails', async () => {
+			signedIn();
+			mockGetUser.mockRejectedValue(new Error('clerk down'));
+
+			await authHandle({ event: createEvent('/dashboard'), resolve: vi.fn(async () => new Response('ok')) });
+
+			expect(mockUpdateUserMetadata).not.toHaveBeenCalled();
+		});
 	});
 });
