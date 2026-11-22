@@ -44,6 +44,7 @@ export const authHandle: Handle = async ({ event, resolve }) => {
 			logger.error('auth.get_user_failed', { userId: authData.userId, error: getErrorMessage(error) });
 			return null;
 		});
+		// Keep the default request-local so it cannot overwrite a concurrent admin grant.
 		const role: UserRole = user?.publicMetadata?.role === 'admin' ? 'admin' : 'user';
 		event.locals.auth = {
 			userId: authData.userId,
