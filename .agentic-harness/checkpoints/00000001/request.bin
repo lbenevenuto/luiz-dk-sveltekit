@@ -1,0 +1,66 @@
+checkpoint_id: bootstrap-created
+actor: ADOS explicit capsule bootstrap operation
+phase: project_readiness
+outcome: in_progress
+current_task: BOOTSTRAP
+summary: Capsule files have been generated. Product implementation and project-readiness
+  approval have not started.
+tasks:
+- task_id: BOOTSTRAP
+  title: Validate the generated capsule before creating its baseline commit.
+  status: in_progress
+  acceptance: All capsule checks pass and the baseline commit is confirmed before
+    product implementation.
+  remaining_work: Run the complete capsule suite, inspect actual inputs and confirm
+    the initial Git baseline.
+  evidence: []
+decisions:
+- id: CANONICAL-STATE
+  summary: Use the declared canonical state files and immutable checkpoint history
+    for project continuity.
+  reason: A single active checkpoint prevents independent state copies from silently
+    diverging during agent replacement.
+  evidence:
+  - docs/CONTINUITY_STANDARD.md
+blockers: []
+no_blockers_reason: No bootstrap failure is observed yet; project blockers still require
+  explicit briefing inspection.
+questions: []
+no_questions_reason: Project questions have not been assessed; the next agent must
+  inspect briefing and record every material gap.
+validation:
+- command:
+  - /private/tmp/claude-501/-Users-luiz-Projects-Personal-agentic-delivery-os/beef953a-1025-4848-8464-f8a1fbc3a814/scratchpad/venv/bin/python3
+  - -c
+  - "import ast, hashlib, json, pathlib, sys\nfor name in json.loads(sys.argv[1]):\n\
+    \ p = pathlib.Path(name)\n item = {\"path\": name, \"sha256\": hashlib.sha256(p.read_bytes()).hexdigest()}\n\
+    \ if p.suffix == \".py\":\n  tree = ast.parse(p.read_text())\n  item[\"definitions\"\
+    ] = [n.name for n in tree.body if isinstance(n, (ast.FunctionDef, ast.ClassDef))]\n\
+    \ print(json.dumps(item, sort_keys=True))\n"
+  - '["scripts/hds_gate.py", "scripts/hds_validation/__init__.py", "scripts/hds_validation/common.py",
+    "scripts/hds_validation/documents.py", "scripts/hds_validation/evolution.py",
+    "scripts/hds_validation/links.py", "scripts/hds_validation/registries.py", "scripts/hds_validation/scope.py",
+    "scripts/project_hds.py", "scripts/validate_hds.py", "scripts/validate_project_hds.py"]'
+  status: passed
+  exit_code: 0
+  result: Executed source inspection produced the attached path/hash/public-definition
+    inventory. This is structural evidence, not a claim of product correctness.
+  artifact: docs/evidence/documentation-source-inspection.jsonl
+- command:
+  - bash
+  - scripts/run_all_checks.sh
+  status: not_run
+  exit_code: null
+  result: The complete capsule suite has not run yet; this checkpoint records only
+    actual source inspection.
+next_action: Run capsule checks, confirm baseline, inspect PROJECT_BRIEF.md and define
+  the first approved implementation contract.
+resume_checks: Run resume_project.py; compare checkpoint facts with actual Git status
+  and files, preserve uncommitted work, inspect briefing and rerun applicable checks.
+read_next:
+- 00-NEXT_AGENT_STARTUP.md
+- AGENTS.md
+- AGENT_STATE.md
+- AGENT_HANDOFF.md
+- PROJECT_BRIEF.md
+- docs/CONTINUITY_STANDARD.md

@@ -1,0 +1,29 @@
+checkpoint_id: session-unique-checkpoint
+actor: TODO_actual_agent_or_operator_identity
+phase: implementation
+outcome: in_progress
+current_task: TASK-001
+summary: TODO_actual_work_and_where_it_stopped
+tasks:
+  - task_id: TASK-001
+    title: TODO_actual_task
+    status: in_progress
+    acceptance: TODO_objective_acceptance_criteria
+    remaining_work: TODO_exact_pending_work
+    evidence: []
+decisions: []
+no_decisions_reason: TODO_explain_why_no_new_decision_was_needed
+blockers: []
+no_blockers_reason: TODO_actual_inspection_and_no_known_blocker
+questions: []
+no_questions_reason: TODO_actual_requirement_inspection_or_explicit_unassessed_gaps
+validation:
+  - command: [bash, scripts/run_all_checks.sh]
+    status: not_run
+    exit_code: null
+    result: TODO_explain_what_has_not_run_and_why
+next_action: TODO_concrete_next_action_and_authorized_scope
+resume_checks: TODO_Git_files_contracts_tests_and_external_actions_to_reconcile
+read_next:
+  - AGENTS.md
+  - docs/CONTINUITY_STANDARD.md

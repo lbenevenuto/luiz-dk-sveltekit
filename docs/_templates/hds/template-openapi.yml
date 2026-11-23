@@ -1,0 +1,6 @@
+# Template; not an implemented API. Fill verified product contracts before use.
+openapi: 3.1.0
+info:
+  title: Template de contrato OpenAPI
+  version: 0.1.0
+paths: {}

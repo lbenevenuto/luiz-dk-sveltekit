@@ -1,0 +1,8 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "$id":"https://agentic-os.local/schemas/visual-review/comparison-1.0.0.json",
+  "title":"Visual Review Automated Comparison",
+  "type":"object",
+  "required":["schemaVersion","automatedComparison","pairs"],
+  "properties":{"schemaVersion":{"const":"1.0.0"},"automatedComparison":{"type":"object"},"pairs":{"type":"array","items":{"type":"object","required":["key","scenarioId","viewportId","automatedResult","reference","target"],"properties":{"automatedResult":{"enum":["exact-match","reported-difference"]},"reference":{"type":"object","required":["path","sha256"]},"target":{"type":"object","required":["path","sha256"]}}}}}
+}

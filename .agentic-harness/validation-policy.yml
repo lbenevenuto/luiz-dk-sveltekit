@@ -1,0 +1,10 @@
+required_command: bash scripts/run_all_checks.sh
+finalize_bootstrap_command: bash scripts/finalize_bootstrap_commit.sh
+no_fake_validation: true
+all_failures_block_progress: true
+briefing_bootstrap_validation_required: true
+wip_validation_disclosure_required: true
+commit_authority_wording_required: true
+generated_metadata_forbidden: true
+fixture_outputs_not_client_ready: true
+needs_review_blocks_client_ready: true

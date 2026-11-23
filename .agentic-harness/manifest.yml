@@ -1,0 +1,11 @@
+agentic_os_exported_version: 1.9.2
+project_name: luiz-dk-sveltekit
+project_type: saas-web-app
+export_mode: project-harness-capsule
+private_method_not_exported: true
+briefing_status: no-raw-briefing-provided
+engineering_guardrails_version: 1.3.0
+hds_standard_version: 2.1.1
+hds_default: true
+visual_review_standard_version: 1.0.0
+visual_review_harness_version: 0.1.0

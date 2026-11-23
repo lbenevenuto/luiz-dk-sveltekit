@@ -1,0 +1,36 @@
+---
+doc_id: OS-AGENT-VALIDATION-MD
+title: Agent Validation
+owner: hyst
+lang: en
+audience: tech
+tags:
+- agentic-os
+- continuity
+document_type: record
+pair_required: false
+status: review
+version: 0.1.3
+last_updated: '2026-10-12'
+checkpoint_id: ados-adoption-in-progress
+phase: project_readiness
+outcome: in_progress
+---
+
+# Agent Validation
+
+## Active checkpoint
+
+Checkpoint: ados-adoption-in-progress. Phase: project_readiness. Outcome: in_progress. Current task: ADOPT-EXISTING-REPO. Recorded by: Claude Code ADOS adoption into existing repository.
+
+ADOS 1.9.2 capsule generated into the existing luiz-dk-sveltekit repository. Generator overwrote existing root files; originals restored and integration adjusted. Validation pending.
+
+## Actual validation status
+
+- not_run: `["bash", "scripts/run_all_checks.sh"]`; exit code: None.
+  Capsule checks will run after this checkpoint is recorded.
+  Artifact: not executed
+
+## Continuity contract
+
+The active structured record and immutable archived states live in .agentic-harness/checkpoints/. Run `python3 scripts/resume_project.py` and inspect actual Git status before continuing. A checkpoint preserves saved facts only; it does not capture unsaved conversations or certify decision truth. Preserve untouched legacy findings in .agentic-harness/legacy-findings.yml and repair the complete files changed by this unit.

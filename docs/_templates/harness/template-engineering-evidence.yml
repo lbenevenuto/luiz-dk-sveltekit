@@ -1,0 +1,42 @@
+schema_version: 1.0.0
+unit_id: TODO
+reviewer: TODO
+reviewed_on: 'YYYY-MM-DD'
+sources:
+  src/example.py: TODO_SHA256
+artifacts:
+  docs/evidence/search-output.txt: TODO_SHA256
+  docs/evidence/test-output.txt: TODO_SHA256
+investigation:
+  context: TODO_actual_contract_need_and_sources
+  searches:
+    - command: [rg, --no-ignore, -n, example, src, tests]
+      scope: TODO_actual_repository_scope
+      result: TODO_actual_candidates_or_no_matches
+      artifact: docs/evidence/search-output.txt
+  references: [src/example.py]
+reuse:
+  decision: new
+  rationale: TODO_why_existing_code_cannot_satisfy_contract
+  alternatives: TODO_candidates_examined_and_rejected
+  candidates: []
+architecture:
+  responsibilities: TODO_responsibilities
+  boundaries: TODO_dependencies_and_consumers
+  abstraction: TODO_class_function_composition_or_helper
+  rationale: TODO_why_this_abstraction_is_appropriate
+  duplication_review: TODO_semantic_review_in_addition_to_detector
+  risks: TODO_remaining_risks_and_limits
+  cohesion_review: TODO_required_above_300_lines
+resolution:
+  kind: feature
+  cause_or_need: TODO_requirement_or_proven_root_cause
+  official_mechanisms: TODO_APIs_configuration_hooks_and_versions_inspected
+  solution: TODO_actual_correction_or_feature
+  regression: TODO_behavior_test_and_preserved_contract
+  workaround: false
+validation:
+  - command: [python3, -m, unittest, discover, -s, tests]
+    exit_code: 0
+    result: TODO_actual_executed_result_never_preclaim_success
+    artifact: docs/evidence/test-output.txt

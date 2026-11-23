@@ -1,0 +1,5 @@
+security_level: banking-grade
+no_sensitive_data_in_prompts: true
+secrets_in_git: forbidden
+human_approval_for_sensitive_changes: true
+raw_briefing_commit_default: forbidden

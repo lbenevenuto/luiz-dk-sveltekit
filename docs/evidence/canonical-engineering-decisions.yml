@@ -1,0 +1,147 @@
+schema_version: 1.0.0
+reviewer: Codex source and architecture review
+reviewed_on: '2026-10-12'
+units:
+  bootstrap:
+    context: Review the actual OS-owned bootstrap component, its public definitions
+      and consumer boundary; preserve unchanged inherited debt while enforcing evidence
+      for changed implementation.
+    reuse: Reuse project_creation documentation and bootstrap helpers; export the
+      canonical engineering policy list rather than duplicating policy names in the
+      generator.
+    alternatives: Separate copies of validators and policy names were rejected because
+      they drift. A new class hierarchy was rejected where the operation has no state,
+      invariant or lifecycle requiring a class.
+    architecture:
+      responsibilities: Bootstrap coordinates explicit creation; settings, input collection,
+        capsule documents, Git operations and documentation export have separate modules.
+      boundaries: Capsule bootstrap creates initial state and records actual source
+        inspection, then saves actual suite output. Existing capsule regeneration
+        is rejected before writes. Project readiness and human approval remain pending.
+      abstraction: Functions compose a stateless creation workflow. Path objects carry
+        explicit roots; no new framework or inheritance hierarchy is needed.
+      rationale: Reuse project_creation documentation and bootstrap helpers; export
+        the canonical engineering policy list rather than duplicating policy names
+        in the generator.
+      duplication_review: Canonical inventory, parsing and snapshot helpers are shared.
+        Lexical and Python-clone sensors supplement review; semantic duplication is
+        not automatically proven absent.
+      risks: Recorded evidence can be dishonest; hashes prove freshness, not truth.
+        Human/agent review and relevant behavior tests remain necessary. Product code
+        is never enrolled by infrastructure export.
+      cohesion_review: Inspect modules above 300 lines for coherent orchestration
+        or declarative capsule templates; the hard 500-line limit still applies and
+        no size waiver is introduced.
+  documentation:
+    context: Review the actual OS-owned documentation component, its public definitions
+      and consumer boundary; preserve unchanged inherited debt while enforcing evidence
+      for changed implementation.
+    reuse: Reuse hds_validation modules through project_hds and hds_gate. Preserve
+      hDS independence from source-code quality.
+    alternatives: Separate copies of validators and policy names were rejected because
+      they drift. A new class hierarchy was rejected where the operation has no state,
+      invariant or lifecycle requiring a class.
+    architecture:
+      responsibilities: hDS owns document parsing, identities, reciprocal pairs, SemVer,
+        links and assets. The OS adapter owns project adoption and Git scope.
+      boundaries: hDS owns document parsing, identities, reciprocal pairs, SemVer,
+        links and assets. The OS adapter owns project adoption and Git scope.
+      abstraction: Small functions share hDS parsing and OS scope utilities. The adapter
+        does not inspect or repair product implementation.
+      rationale: Reuse hds_validation modules through project_hds and hds_gate. Preserve
+        hDS independence from source-code quality.
+      duplication_review: Canonical inventory, parsing and snapshot helpers are shared.
+        Lexical and Python-clone sensors supplement review; semantic duplication is
+        not automatically proven absent.
+      risks: Recorded evidence can be dishonest; hashes prove freshness, not truth.
+        Human/agent review and relevant behavior tests remain necessary. Product code
+        is never enrolled by infrastructure export.
+      cohesion_review: Inspect modules above 300 lines for coherent orchestration
+        or declarative capsule templates; the hard 500-line limit still applies and
+        no size waiver is introduced.
+  engineering:
+    context: Review the actual OS-owned engineering component, its public definitions
+      and consumer boundary; preserve unchanged inherited debt while enforcing evidence
+      for changed implementation.
+    reuse: Extend coverage with one evidence validator, shared by working-tree, index
+      and commit gates; use one policy inventory for inheritance checks and export.
+    alternatives: Separate copies of validators and policy names were rejected because
+      they drift. A new class hierarchy was rejected where the operation has no state,
+      invariant or lifecycle requiring a class.
+    architecture:
+      responsibilities: One source inventory supplies structural and documentary gates.
+        Continuity validates facts; history validates archives and the Git base; checkpoint
+        records explicit supplied facts; recovery only reconciles files and Git.
+      boundaries: Read-only validators never write state or stage files. The explicit
+        recorder owns canonical state and revision writes. Git snapshot selection
+        is shared with commit gates; hDS supplies YAML and Markdown parsing only.
+      abstraction: Small pure functions validate facts and references. The explicit
+        recorder manages a bounded file-write lifecycle; test fixture classes own
+        setup/cleanup state. No additional inheritance hierarchy is required.
+      rationale: Reuse selected(), snapshot(), local(), digest() and hDS parsing.
+        Separate history, current consistency and recording so commit and restart
+        do not duplicate implementations or invent state.
+      duplication_review: Canonical inventory, parsing and snapshot helpers are shared.
+        Lexical and Python-clone sensors supplement review; semantic duplication is
+        not automatically proven absent.
+      risks: Saved facts can be incomplete or dishonest. Abrupt failures can occur
+        between file writes and are detected as inconsistent; preserve the request
+        and reconcile. Directory loss requires committed/pushed backup. No automatic
+        capture of unsaved chat.
+      cohesion_review: Inspect modules above 300 lines for coherent orchestration
+        or declarative capsule templates; the hard 500-line limit still applies and
+        no size waiver is introduced.
+  visual-review:
+    context: Review the actual OS-owned visual-review component, its public definitions
+      and consumer boundary; preserve unchanged inherited debt while enforcing evidence
+      for changed implementation.
+    reuse: Reuse tooling/visual-review unchanged; no substitute screenshots or artificial
+      acceptance are generated.
+    alternatives: Separate copies of validators and policy names were rejected because
+      they drift. A new class hierarchy was rejected where the operation has no state,
+      invariant or lifecycle requiring a class.
+    architecture:
+      responsibilities: Capture, comparison and reporting provide evidence. Explicit
+        Human Visual Acceptance remains the parity authority.
+      boundaries: Capture, comparison and reporting provide evidence. Explicit Human
+        Visual Acceptance remains the parity authority.
+      abstraction: Use existing Node entrypoints and stable public browser/test APIs.
+        Keep comparison algorithms separate from capture and acceptance.
+      rationale: Reuse tooling/visual-review unchanged; no substitute screenshots
+        or artificial acceptance are generated.
+      duplication_review: Canonical inventory, parsing and snapshot helpers are shared.
+        Lexical and Python-clone sensors supplement review; semantic duplication is
+        not automatically proven absent.
+      risks: Recorded evidence can be dishonest; hashes prove freshness, not truth.
+        Human/agent review and relevant behavior tests remain necessary. Product code
+        is never enrolled by infrastructure export.
+      cohesion_review: Inspect modules above 300 lines for coherent orchestration
+        or declarative capsule templates; the hard 500-line limit still applies and
+        no size waiver is introduced.
+  governance:
+    context: Review the actual OS-owned governance component, its public definitions
+      and consumer boundary; preserve unchanged inherited debt while enforcing evidence
+      for changed implementation.
+    reuse: Reuse governance scripts and engineering-quality change_validation. Generated
+      capsule checks call these canonical packages.
+    alternatives: Separate copies of validators and policy names were rejected because
+      they drift. A new class hierarchy was rejected where the operation has no state,
+      invariant or lifecycle requiring a class.
+    architecture:
+      responsibilities: Independent entrypoints enforce capsule completeness, release
+        metadata and state while invoking the canonical validation packages.
+      boundaries: Independent entrypoints enforce capsule completeness, release metadata
+        and state while invoking the canonical validation packages.
+      abstraction: Thin command entrypoints delegate to cohesive reusable functions.
+        Avoid parallel implementations of staged or committed validation.
+      rationale: Reuse governance scripts and engineering-quality change_validation.
+        Generated capsule checks call these canonical packages.
+      duplication_review: Canonical inventory, parsing and snapshot helpers are shared.
+        Lexical and Python-clone sensors supplement review; semantic duplication is
+        not automatically proven absent.
+      risks: Recorded evidence can be dishonest; hashes prove freshness, not truth.
+        Human/agent review and relevant behavior tests remain necessary. Product code
+        is never enrolled by infrastructure export.
+      cohesion_review: Inspect modules above 300 lines for coherent orchestration
+        or declarative capsule templates; the hard 500-line limit still applies and
+        no size waiver is introduced.

@@ -1,0 +1,993 @@
+schema_version: 2.0.0
+revisions:
+- doc_id: HDS-HDS-POLICIES-AUDIENCE-POLICY
+  version: 2.0.0
+  date: '2026-10-12'
+  author: hyst
+  change: Document identity and metadata registered during explicit hDS adoption.
+  action: created
+- doc_id: HDS-HDS-POLICIES-DOCUMENTATION-POLICY
+  version: 2.0.0
+  date: '2026-10-12'
+  author: hyst
+  change: Document identity and metadata registered during explicit hDS adoption.
+  action: created
+- doc_id: HDS-HDS-POLICIES-DUAL-DOCUMENT-POLICY
+  version: 2.0.0
+  date: '2026-10-12'
+  author: hyst
+  change: Document identity and metadata registered during explicit hDS adoption.
+  action: created
+- doc_id: HDS-POL-005
+  version: 1.0.1
+  date: '2026-10-12'
+  author: hyst
+  change: Document identity and metadata registered during explicit hDS adoption.
+  action: created
+- doc_id: HDS-POL-006
+  version: 1.0.1
+  date: '2026-10-12'
+  author: hyst
+  change: Document identity and metadata registered during explicit hDS adoption.
+  action: created
+- doc_id: HDS-HDS-POLICIES-MIGRATION-POLICY
+  version: 2.0.0
+  date: '2026-10-12'
+  author: hyst
+  change: Document identity and metadata registered during explicit hDS adoption.
+  action: created
+- doc_id: HDS-POL-007
+  version: 1.0.1
+  date: '2026-10-12'
+  author: hyst
+  change: Document identity and metadata registered during explicit hDS adoption.
+  action: created
+- doc_id: OS-00-NEXT-AGENT-STARTUP-MD
+  version: 0.1.0
+  date: '2026-10-12'
+  author: hyst
+  change: Document identity and metadata registered during explicit hDS adoption.
+  action: created
+- doc_id: OS-AGENTS-MD
+  version: 0.1.0
+  date: '2026-10-12'
+  author: hyst
+  change: Document identity and metadata registered during explicit hDS adoption.
+  action: created
+- doc_id: OS-AGENT-BLOCKERS-MD
+  version: 0.1.0
+  date: '2026-10-12'
+  author: hyst
+  change: Document identity and metadata registered during explicit hDS adoption.
+  action: created
+- doc_id: OS-AGENT-DECISIONS-MD
+  version: 0.1.0
+  date: '2026-10-12'
+  author: hyst
+  change: Document identity and metadata registered during explicit hDS adoption.
+  action: created
+- doc_id: OS-AGENT-HANDOFF-MD
+  version: 0.1.0
+  date: '2026-10-12'
+  author: hyst
+  change: Document identity and metadata registered during explicit hDS adoption.
+  action: created
+- doc_id: OS-AGENT-PROGRESS-MD
+  version: 0.1.0
+  date: '2026-10-12'
+  author: hyst
+  change: Document identity and metadata registered during explicit hDS adoption.
+  action: created
+- doc_id: OS-AGENT-STATE-MD
+  version: 0.1.0
+  date: '2026-10-12'
+  author: hyst
+  change: Document identity and metadata registered during explicit hDS adoption.
+  action: created
+- doc_id: OS-AGENT-TODO-MD
+  version: 0.1.0
+  date: '2026-10-12'
+  author: hyst
+  change: Document identity and metadata registered during explicit hDS adoption.
+  action: created
+- doc_id: OS-AGENT-VALIDATION-MD
+  version: 0.1.0
+  date: '2026-10-12'
+  author: hyst
+  change: Document identity and metadata registered during explicit hDS adoption.
+  action: created
+- doc_id: OS-DOCS-ENGINEERING-GUARDRAILS-MD
+  version: 1.3.0
+  date: '2026-10-12'
+  author: hyst
+  change: Document identity and metadata registered during explicit hDS adoption.
+  action: created
+- doc_id: OS-GUARDRAILS-MD
+  version: 0.1.0
+  date: '2026-10-12'
+  author: hyst
+  change: Document identity and metadata registered during explicit hDS adoption.
+  action: created
+- doc_id: OS-PRODUCT-VERSION-MD
+  version: 0.1.0
+  date: '2026-10-12'
+  author: hyst
+  change: Document identity and metadata registered during explicit hDS adoption.
+  action: created
+- doc_id: OS-PRODUCT-VERSION-MD
+  version: 0.1.1
+  date: '2026-10-12'
+  author: hyst
+  change: Record actual product version source (package.json via semantic-release)
+    and production maturity.
+  action: updated
+- doc_id: OS-PROJECT-BRIEF-MD
+  version: 0.1.0
+  date: '2026-10-12'
+  author: hyst
+  change: Document identity and metadata registered during explicit hDS adoption.
+  action: created
+- doc_id: OS-START-HERE-FOR-AGENTS-MD
+  version: 0.1.0
+  date: '2026-10-12'
+  author: hyst
+  change: Document identity and metadata registered during explicit hDS adoption.
+  action: created
+- doc_id: OS-DOCS-VISUAL-REFERENCE-HUMAN-PARITY-STANDARD-MD
+  version: 1.0.1
+  date: '2026-10-12'
+  author: hyst
+  change: Document identity and metadata registered during explicit hDS adoption.
+  action: created
+- doc_id: OS-DOCS-CONTINUITY-STANDARD-MD
+  version: 0.1.1
+  date: '2026-10-12'
+  author: hyst
+  change: Document identity and metadata registered during explicit hDS adoption.
+  action: created
+- doc_id: OS-DOCS-DOCUMENTED-ENGINEERING-STANDARD-MD
+  version: 0.1.3
+  date: '2026-10-12'
+  author: hyst
+  change: Document identity and metadata registered during explicit hDS adoption.
+  action: created
+- doc_id: OS-DOCS-ENGINEERING-EVIDENCE-STANDARD-MD
+  version: 0.1.0
+  date: '2026-10-12'
+  author: hyst
+  change: Document identity and metadata registered during explicit hDS adoption.
+  action: created
+- doc_id: HDS-DOCS-SHARED-FRONT-MATTER-STANDARD
+  version: 2.0.0
+  date: '2026-10-12'
+  author: hyst
+  change: Document identity and metadata registered during explicit hDS adoption.
+  action: created
+- doc_id: HDS-DOCS-TEMPLATES-TEMPLATE-ADR
+  version: 2.0.0
+  date: '2026-10-12'
+  author: hyst
+  change: Document identity and metadata registered during explicit hDS adoption.
+  action: created
+- doc_id: HDS-DOCS-TEMPLATES-TEMPLATE-API-ENDPOINT
+  version: 2.0.0
+  date: '2026-10-12'
+  author: hyst
+  change: Document identity and metadata registered during explicit hDS adoption.
+  action: created
+- doc_id: HDS-DOCS-TEMPLATES-TEMPLATE-ARCHITECTURE
+  version: 2.0.0
+  date: '2026-10-12'
+  author: hyst
+  change: Document identity and metadata registered during explicit hDS adoption.
+  action: created
+- doc_id: HDS-DOCS-TEMPLATES-TEMPLATE-BIBLIOGRAPHY
+  version: 2.0.0
+  date: '2026-10-12'
+  author: hyst
+  change: Document identity and metadata registered during explicit hDS adoption.
+  action: created
+- doc_id: HDS-DOCS-TEMPLATES-TEMPLATE-BUSINESS-RULES-PAIR
+  version: 2.0.0
+  date: '2026-10-12'
+  author: hyst
+  change: Document identity and metadata registered during explicit hDS adoption.
+  action: created
+- doc_id: HDS-DOCS-TEMPLATES-TEMPLATE-C-LEVEL
+  version: 2.0.0
+  date: '2026-10-12'
+  author: hyst
+  change: Document identity and metadata registered during explicit hDS adoption.
+  action: created
+- doc_id: HDS-DOCS-TEMPLATES-TEMPLATE-DATA-DICTIONARY
+  version: 2.0.0
+  date: '2026-10-12'
+  author: hyst
+  change: Document identity and metadata registered during explicit hDS adoption.
+  action: created
+- doc_id: HDS-DOCS-TEMPLATES-TEMPLATE-DATA-MODEL
+  version: 2.0.0
+  date: '2026-10-12'
+  author: hyst
+  change: Document identity and metadata registered during explicit hDS adoption.
+  action: created
+- doc_id: HDS-DOCS-TEMPLATES-TEMPLATE-DOCUMENT
+  version: 2.0.0
+  date: '2026-10-12'
+  author: hyst
+  change: Document identity and metadata registered during explicit hDS adoption.
+  action: created
+- doc_id: HDS-DOCS-TEMPLATES-TEMPLATE-ENVIRONMENT
+  version: 2.0.0
+  date: '2026-10-12'
+  author: hyst
+  change: Document identity and metadata registered during explicit hDS adoption.
+  action: created
+- doc_id: HDS-DOCS-TEMPLATES-TEMPLATE-GLOSSARY
+  version: 2.0.0
+  date: '2026-10-12'
+  author: hyst
+  change: Document identity and metadata registered during explicit hDS adoption.
+  action: created
+- doc_id: HDS-DOCS-TEMPLATES-TEMPLATE-HUMAN-AI-AI
+  version: 2.0.0
+  date: '2026-10-12'
+  author: hyst
+  change: Document identity and metadata registered during explicit hDS adoption.
+  action: created
+- doc_id: HDS-DOCS-TEMPLATES-TEMPLATE-HUMAN-AI-HUMAN
+  version: 2.0.0
+  date: '2026-10-12'
+  author: hyst
+  change: Document identity and metadata registered during explicit hDS adoption.
+  action: created
+- doc_id: HDS-DOCS-TEMPLATES-TEMPLATE-INSTALLATION
+  version: 2.0.0
+  date: '2026-10-12'
+  author: hyst
+  change: Document identity and metadata registered during explicit hDS adoption.
+  action: created
+- doc_id: HDS-DOCS-TEMPLATES-TEMPLATE-MANAGER
+  version: 2.0.0
+  date: '2026-10-12'
+  author: hyst
+  change: Document identity and metadata registered during explicit hDS adoption.
+  action: created
+- doc_id: HDS-DOCS-TEMPLATES-TEMPLATE-PERSONAS
+  version: 2.0.0
+  date: '2026-10-12'
+  author: hyst
+  change: Document identity and metadata registered during explicit hDS adoption.
+  action: created
+- doc_id: HDS-DOCS-TEMPLATES-TEMPLATE-RFC
+  version: 2.0.0
+  date: '2026-10-12'
+  author: hyst
+  change: Document identity and metadata registered during explicit hDS adoption.
+  action: created
+- doc_id: HDS-DOCS-TEMPLATES-TEMPLATE-RUNBOOK
+  version: 2.0.0
+  date: '2026-10-12'
+  author: hyst
+  change: Document identity and metadata registered during explicit hDS adoption.
+  action: created
+- doc_id: HDS-DOCS-TEMPLATES-TEMPLATE-SECURITY-PRIVACY
+  version: 2.0.0
+  date: '2026-10-12'
+  author: hyst
+  change: Document identity and metadata registered during explicit hDS adoption.
+  action: created
+- doc_id: HDS-DOCS-TEMPLATES-TEMPLATE-SYSTEM-OVERVIEW
+  version: 2.0.0
+  date: '2026-10-12'
+  author: hyst
+  change: Document identity and metadata registered during explicit hDS adoption.
+  action: created
+- doc_id: HDS-DOCS-TEMPLATES-TEMPLATE-TECH
+  version: 2.0.0
+  date: '2026-10-12'
+  author: hyst
+  change: Document identity and metadata registered during explicit hDS adoption.
+  action: created
+- doc_id: HDS-TEMPLATE-TECHNICAL-AI
+  version: 1.0.0
+  date: '2026-10-12'
+  author: hyst
+  change: Document identity and metadata registered during explicit hDS adoption.
+  action: created
+- doc_id: HDS-TEMPLATE-TECHNICAL-HUMAN
+  version: 1.0.0
+  date: '2026-10-12'
+  author: hyst
+  change: Document identity and metadata registered during explicit hDS adoption.
+  action: created
+- doc_id: HDS-DOCS-TEMPLATES-TEMPLATE-USER-STORY
+  version: 2.0.0
+  date: '2026-10-12'
+  author: hyst
+  change: Document identity and metadata registered during explicit hDS adoption.
+  action: created
+- doc_id: OS-DOCS-ARCHITECTURE-FILE-SIZE-AUDIT-MD
+  version: 0.1.0
+  date: '2026-10-12'
+  author: hyst
+  change: Document identity and metadata registered during explicit hDS adoption.
+  action: created
+- doc_id: OS-DOCS-ARCHITECTURE-STRUCTURAL-REFACTOR-PLAN-MD
+  version: 0.1.0
+  date: '2026-10-12'
+  author: hyst
+  change: Document identity and metadata registered during explicit hDS adoption.
+  action: created
+- doc_id: OS-DOCS-ARCHITECTURE-ADR-0001-INITIAL-ARCHITECTURE-POSTURE-MD
+  version: 0.1.0
+  date: '2026-10-12'
+  author: hyst
+  change: Document identity and metadata registered during explicit hDS adoption.
+  action: created
+- doc_id: OS-DOCS-EVIDENCE-DOCUMENTATION-REVIEW-MD
+  version: 0.1.0
+  date: '2026-10-12'
+  author: hyst
+  change: Document identity and metadata registered during explicit hDS adoption.
+  action: created
+- doc_id: OS-DOCS-EVIDENCE-ENGINEERING-REVIEW-MD
+  version: 0.1.0
+  date: '2026-10-12'
+  author: hyst
+  change: Document identity and metadata registered during explicit hDS adoption.
+  action: created
+- doc_id: OS-DOCS-EVIDENCE-GOVERNANCE-REVIEW-MD
+  version: 0.1.0
+  date: '2026-10-12'
+  author: hyst
+  change: Document identity and metadata registered during explicit hDS adoption.
+  action: created
+- doc_id: OS-DOCS-EVIDENCE-VISUAL-REVIEW-REVIEW-MD
+  version: 0.1.0
+  date: '2026-10-12'
+  author: hyst
+  change: Document identity and metadata registered during explicit hDS adoption.
+  action: created
+- doc_id: OS-DOCS-HARNESS-DISCIPLINE-ANTI-HALLUCINATION-AND-EVIDENCE-POLICY-AI-MD
+  version: 1.4.2
+  date: '2026-10-12'
+  author: hyst
+  change: Document identity and metadata registered during explicit hDS adoption.
+  action: created
+- doc_id: OS-DOCS-HARNESS-DISCIPLINE-ANTI-HALLUCINATION-AND-EVIDENCE-POLICY-HUMAN-MD
+  version: 1.4.2
+  date: '2026-10-12'
+  author: hyst
+  change: Document identity and metadata registered during explicit hDS adoption.
+  action: created
+- doc_id: OS-DOCS-HARNESS-DISCIPLINE-DETERMINISTIC-EXECUTION-POLICY-AI-MD
+  version: 1.4.2
+  date: '2026-10-12'
+  author: hyst
+  change: Document identity and metadata registered during explicit hDS adoption.
+  action: created
+- doc_id: OS-DOCS-HARNESS-DISCIPLINE-DETERMINISTIC-EXECUTION-POLICY-HUMAN-MD
+  version: 1.4.2
+  date: '2026-10-12'
+  author: hyst
+  change: Document identity and metadata registered during explicit hDS adoption.
+  action: created
+- doc_id: OS-DOCS-HARNESS-DISCIPLINE-NO-WORKAROUNDS-AND-REAL-RESOLUTION-POLICY-AI-MD
+  version: 1.4.2
+  date: '2026-10-12'
+  author: hyst
+  change: Document identity and metadata registered during explicit hDS adoption.
+  action: created
+- doc_id: OS-DOCS-HARNESS-DISCIPLINE-NO-WORKAROUNDS-AND-REAL-RESOLUTION-POLICY-HUMAN-MD
+  version: 1.4.2
+  date: '2026-10-12'
+  author: hyst
+  change: Document identity and metadata registered during explicit hDS adoption.
+  action: created
+- doc_id: OS-DOCS-HARNESS-SOFTWARE-ENGINEERING-API-CONTRACT-POLICY-AI-MD
+  version: 1.2.2
+  date: '2026-10-12'
+  author: hyst
+  change: Document identity and metadata registered during explicit hDS adoption.
+  action: created
+- doc_id: OS-DOCS-HARNESS-SOFTWARE-ENGINEERING-API-CONTRACT-POLICY-HUMAN-MD
+  version: 1.2.2
+  date: '2026-10-12'
+  author: hyst
+  change: Document identity and metadata registered during explicit hDS adoption.
+  action: created
+- doc_id: OS-DOCS-HARNESS-SOFTWARE-ENGINEERING-CLASS-DESIGN-POLICY-AI-MD
+  version: 1.2.2
+  date: '2026-10-12'
+  author: hyst
+  change: Document identity and metadata registered during explicit hDS adoption.
+  action: created
+- doc_id: OS-DOCS-HARNESS-SOFTWARE-ENGINEERING-CLASS-DESIGN-POLICY-HUMAN-MD
+  version: 1.2.2
+  date: '2026-10-12'
+  author: hyst
+  change: Document identity and metadata registered during explicit hDS adoption.
+  action: created
+- doc_id: OS-DOCS-HARNESS-SOFTWARE-ENGINEERING-CODE-ORGANIZATION-POLICY-AI-MD
+  version: 1.2.2
+  date: '2026-10-12'
+  author: hyst
+  change: Document identity and metadata registered during explicit hDS adoption.
+  action: created
+- doc_id: OS-DOCS-HARNESS-SOFTWARE-ENGINEERING-CODE-ORGANIZATION-POLICY-HUMAN-MD
+  version: 1.2.2
+  date: '2026-10-12'
+  author: hyst
+  change: Document identity and metadata registered during explicit hDS adoption.
+  action: created
+- doc_id: OS-DOCS-HARNESS-SOFTWARE-ENGINEERING-DATA-PRIVACY-AND-TENANT-ISOLATION-POLICY-AI-MD
+  version: 1.2.2
+  date: '2026-10-12'
+  author: hyst
+  change: Document identity and metadata registered during explicit hDS adoption.
+  action: created
+- doc_id: OS-DOCS-HARNESS-SOFTWARE-ENGINEERING-DATA-PRIVACY-AND-TENANT-ISOLATION-POLICY-HUMAN-MD
+  version: 1.2.2
+  date: '2026-10-12'
+  author: hyst
+  change: Document identity and metadata registered during explicit hDS adoption.
+  action: created
+- doc_id: OS-DOCS-HARNESS-SOFTWARE-ENGINEERING-DEPENDENCY-POLICY-AI-MD
+  version: 1.2.2
+  date: '2026-10-12'
+  author: hyst
+  change: Document identity and metadata registered during explicit hDS adoption.
+  action: created
+- doc_id: OS-DOCS-HARNESS-SOFTWARE-ENGINEERING-DEPENDENCY-POLICY-HUMAN-MD
+  version: 1.2.2
+  date: '2026-10-12'
+  author: hyst
+  change: Document identity and metadata registered during explicit hDS adoption.
+  action: created
+- doc_id: OS-DOCS-HARNESS-SOFTWARE-ENGINEERING-ENGINEERING-STANDARDS-AI-MD
+  version: 1.2.2
+  date: '2026-10-12'
+  author: hyst
+  change: Document identity and metadata registered during explicit hDS adoption.
+  action: created
+- doc_id: OS-DOCS-HARNESS-SOFTWARE-ENGINEERING-ENGINEERING-STANDARDS-HUMAN-MD
+  version: 1.2.2
+  date: '2026-10-12'
+  author: hyst
+  change: Document identity and metadata registered during explicit hDS adoption.
+  action: created
+- doc_id: OS-DOCS-HARNESS-SOFTWARE-ENGINEERING-HELPER-POLICY-AI-MD
+  version: 1.2.2
+  date: '2026-10-12'
+  author: hyst
+  change: Document identity and metadata registered during explicit hDS adoption.
+  action: created
+- doc_id: OS-DOCS-HARNESS-SOFTWARE-ENGINEERING-HELPER-POLICY-HUMAN-MD
+  version: 1.2.2
+  date: '2026-10-12'
+  author: hyst
+  change: Document identity and metadata registered during explicit hDS adoption.
+  action: created
+- doc_id: OS-DOCS-HARNESS-SOFTWARE-ENGINEERING-OBSERVABILITY-AND-OPERABILITY-POLICY-AI-MD
+  version: 1.2.2
+  date: '2026-10-12'
+  author: hyst
+  change: Document identity and metadata registered during explicit hDS adoption.
+  action: created
+- doc_id: OS-DOCS-HARNESS-SOFTWARE-ENGINEERING-OBSERVABILITY-AND-OPERABILITY-POLICY-HUMAN-MD
+  version: 1.2.2
+  date: '2026-10-12'
+  author: hyst
+  change: Document identity and metadata registered during explicit hDS adoption.
+  action: created
+- doc_id: OS-DOCS-HARNESS-SOFTWARE-ENGINEERING-PERFORMANCE-AND-SCALABILITY-POLICY-AI-MD
+  version: 1.2.2
+  date: '2026-10-12'
+  author: hyst
+  change: Document identity and metadata registered during explicit hDS adoption.
+  action: created
+- doc_id: OS-DOCS-HARNESS-SOFTWARE-ENGINEERING-PERFORMANCE-AND-SCALABILITY-POLICY-HUMAN-MD
+  version: 1.2.2
+  date: '2026-10-12'
+  author: hyst
+  change: Document identity and metadata registered during explicit hDS adoption.
+  action: created
+- doc_id: OS-DOCS-HARNESS-SOFTWARE-ENGINEERING-REFACTORING-POLICY-AI-MD
+  version: 1.2.2
+  date: '2026-10-12'
+  author: hyst
+  change: Document identity and metadata registered during explicit hDS adoption.
+  action: created
+- doc_id: OS-DOCS-HARNESS-SOFTWARE-ENGINEERING-REFACTORING-POLICY-HUMAN-MD
+  version: 1.2.2
+  date: '2026-10-12'
+  author: hyst
+  change: Document identity and metadata registered during explicit hDS adoption.
+  action: created
+- doc_id: OS-DOCS-HARNESS-SOFTWARE-ENGINEERING-REUSE-AND-EXTENSION-POLICY-AI-MD
+  version: 1.2.2
+  date: '2026-10-12'
+  author: hyst
+  change: Document identity and metadata registered during explicit hDS adoption.
+  action: created
+- doc_id: OS-DOCS-HARNESS-SOFTWARE-ENGINEERING-REUSE-AND-EXTENSION-POLICY-HUMAN-MD
+  version: 1.2.2
+  date: '2026-10-12'
+  author: hyst
+  change: Document identity and metadata registered during explicit hDS adoption.
+  action: created
+- doc_id: OS-DOCS-HARNESS-SOFTWARE-ENGINEERING-SECURE-CODING-AND-THREAT-MODEL-POLICY-AI-MD
+  version: 1.2.2
+  date: '2026-10-12'
+  author: hyst
+  change: Document identity and metadata registered during explicit hDS adoption.
+  action: created
+- doc_id: OS-DOCS-HARNESS-SOFTWARE-ENGINEERING-SECURE-CODING-AND-THREAT-MODEL-POLICY-HUMAN-MD
+  version: 1.2.2
+  date: '2026-10-12'
+  author: hyst
+  change: Document identity and metadata registered during explicit hDS adoption.
+  action: created
+- doc_id: OS-DOCS-HARNESS-SOFTWARE-ENGINEERING-TESTING-STRATEGY-AI-MD
+  version: 1.2.2
+  date: '2026-10-12'
+  author: hyst
+  change: Document identity and metadata registered during explicit hDS adoption.
+  action: created
+- doc_id: OS-DOCS-HARNESS-SOFTWARE-ENGINEERING-TESTING-STRATEGY-HUMAN-MD
+  version: 1.2.2
+  date: '2026-10-12'
+  author: hyst
+  change: Document identity and metadata registered during explicit hDS adoption.
+  action: created
+- doc_id: HDS-DOCS-HDS-CORE-DOCUMENT-CATALOG
+  version: 2.0.0
+  date: '2026-10-12'
+  author: hyst
+  change: Document identity and metadata registered during explicit hDS adoption.
+  action: created
+- doc_id: HDS-DOCS-HDS-CORE-HDS-OVERVIEW-AI
+  version: 2.0.0
+  date: '2026-10-12'
+  author: hyst
+  change: Document identity and metadata registered during explicit hDS adoption.
+  action: created
+- doc_id: HDS-DOCS-HDS-CORE-HDS-OVERVIEW-HUMAN
+  version: 2.0.0
+  date: '2026-10-12'
+  author: hyst
+  change: Document identity and metadata registered during explicit hDS adoption.
+  action: created
+- doc_id: HDS-DOCS-HDS-CORE-REPOSITORY-STRUCTURE
+  version: 2.0.0
+  date: '2026-10-12'
+  author: hyst
+  change: Document identity and metadata registered during explicit hDS adoption.
+  action: created
+- doc_id: OS-DOCS-HDS-DISCOVERY-PROJECT-BRIEF-MD
+  version: 0.1.0
+  date: '2026-10-12'
+  author: hyst
+  change: Document identity and metadata registered during explicit hDS adoption.
+  action: created
+- doc_id: OS-DOCS-HDS-DISCOVERY-ASSUMPTIONS-MD
+  version: 0.1.0
+  date: '2026-10-12'
+  author: hyst
+  change: Document identity and metadata registered during explicit hDS adoption.
+  action: created
+- doc_id: OS-DOCS-HDS-DISCOVERY-OPEN-QUESTIONS-MD
+  version: 0.1.0
+  date: '2026-10-12'
+  author: hyst
+  change: Document identity and metadata registered during explicit hDS adoption.
+  action: created
+- doc_id: HDS-DOCS-HDS-GOVERNANCE-CHANGE-CONTROL-FLOW-AI
+  version: 2.0.0
+  date: '2026-10-12'
+  author: hyst
+  change: Document identity and metadata registered during explicit hDS adoption.
+  action: created
+- doc_id: HDS-DOCS-HDS-GOVERNANCE-CHANGE-CONTROL-FLOW-HUMAN
+  version: 2.0.0
+  date: '2026-10-12'
+  author: hyst
+  change: Document identity and metadata registered during explicit hDS adoption.
+  action: created
+- doc_id: HDS-DOCS-HDS-GOVERNANCE-DOCUMENTATION-GOVERNANCE-AI
+  version: 2.0.0
+  date: '2026-10-12'
+  author: hyst
+  change: Document identity and metadata registered during explicit hDS adoption.
+  action: created
+- doc_id: HDS-DOCS-HDS-GOVERNANCE-DOCUMENTATION-GOVERNANCE-HUMAN
+  version: 2.0.0
+  date: '2026-10-12'
+  author: hyst
+  change: Document identity and metadata registered during explicit hDS adoption.
+  action: created
+- doc_id: HDS-DOCS-HDS-GOVERNANCE-EVIDENCE-TRAIL-AI
+  version: 2.0.0
+  date: '2026-10-12'
+  author: hyst
+  change: Document identity and metadata registered during explicit hDS adoption.
+  action: created
+- doc_id: HDS-DOCS-HDS-GOVERNANCE-EVIDENCE-TRAIL-HUMAN
+  version: 2.0.0
+  date: '2026-10-12'
+  author: hyst
+  change: Document identity and metadata registered during explicit hDS adoption.
+  action: created
+- doc_id: HDS-DOCS-HDS-GOVERNANCE-PR-MERGE-SEMVER-POLICY-AI
+  version: 2.0.0
+  date: '2026-10-12'
+  author: hyst
+  change: Document identity and metadata registered during explicit hDS adoption.
+  action: created
+- doc_id: HDS-DOCS-HDS-GOVERNANCE-PR-MERGE-SEMVER-POLICY-HUMAN
+  version: 2.0.0
+  date: '2026-10-12'
+  author: hyst
+  change: Document identity and metadata registered during explicit hDS adoption.
+  action: created
+- doc_id: HDS-DOCS-HDS-GOVERNANCE-QUALITY-CONTRACT-AI
+  version: 2.0.0
+  date: '2026-10-12'
+  author: hyst
+  change: Document identity and metadata registered during explicit hDS adoption.
+  action: created
+- doc_id: HDS-DOCS-HDS-GOVERNANCE-QUALITY-CONTRACT-HUMAN
+  version: 2.0.0
+  date: '2026-10-12'
+  author: hyst
+  change: Document identity and metadata registered during explicit hDS adoption.
+  action: created
+- doc_id: HDS-DOCS-HDS-GOVERNANCE-REGISTRY-SCHEMAS
+  version: 2.0.0
+  date: '2026-10-12'
+  author: hyst
+  change: Document identity and metadata registered during explicit hDS adoption.
+  action: created
+- doc_id: HDS-DOCS-HDS-OPERATIONS-ADOPTION-RUNBOOK-AI
+  version: 2.0.0
+  date: '2026-10-12'
+  author: hyst
+  change: Document identity and metadata registered during explicit hDS adoption.
+  action: created
+- doc_id: HDS-DOCS-HDS-OPERATIONS-ADOPTION-RUNBOOK-HUMAN
+  version: 2.0.0
+  date: '2026-10-12'
+  author: hyst
+  change: Document identity and metadata registered during explicit hDS adoption.
+  action: created
+- doc_id: HDS-DOCS-HDS-OPERATIONS-ASSETS-AND-DIAGRAMS-AI
+  version: 2.0.0
+  date: '2026-10-12'
+  author: hyst
+  change: Document identity and metadata registered during explicit hDS adoption.
+  action: created
+- doc_id: HDS-DOCS-HDS-OPERATIONS-ASSETS-AND-DIAGRAMS-HUMAN
+  version: 2.0.0
+  date: '2026-10-12'
+  author: hyst
+  change: Document identity and metadata registered during explicit hDS adoption.
+  action: created
+- doc_id: HDS-DOCS-HDS-OPERATIONS-GITHUB-SETTINGS-CHECKLIST-AI
+  version: 2.0.0
+  date: '2026-10-12'
+  author: hyst
+  change: Document identity and metadata registered during explicit hDS adoption.
+  action: created
+- doc_id: HDS-DOCS-HDS-OPERATIONS-GITHUB-SETTINGS-CHECKLIST-HUMAN
+  version: 2.0.0
+  date: '2026-10-12'
+  author: hyst
+  change: Document identity and metadata registered during explicit hDS adoption.
+  action: created
+- doc_id: HDS-DOCS-HDS-OPERATIONS-MIGRATION-RUNBOOK-AI
+  version: 2.0.0
+  date: '2026-10-12'
+  author: hyst
+  change: Document identity and metadata registered during explicit hDS adoption.
+  action: created
+- doc_id: HDS-DOCS-HDS-OPERATIONS-MIGRATION-RUNBOOK-HUMAN
+  version: 2.0.0
+  date: '2026-10-12'
+  author: hyst
+  change: Document identity and metadata registered during explicit hDS adoption.
+  action: created
+- doc_id: HDS-DOCS-HDS-OPERATIONS-SCM-PLATFORM-MAPPING-AI
+  version: 2.0.0
+  date: '2026-10-12'
+  author: hyst
+  change: Document identity and metadata registered during explicit hDS adoption.
+  action: created
+- doc_id: HDS-DOCS-HDS-OPERATIONS-SCM-PLATFORM-MAPPING-HUMAN
+  version: 2.0.0
+  date: '2026-10-12'
+  author: hyst
+  change: Document identity and metadata registered during explicit hDS adoption.
+  action: created
+- doc_id: HDS-DOCS-HDS-OPERATIONS-UPGRADE-V2-AI
+  version: 2.0.0
+  date: '2026-10-12'
+  author: hyst
+  change: Document identity and metadata registered during explicit hDS adoption.
+  action: created
+- doc_id: HDS-DOCS-HDS-OPERATIONS-UPGRADE-V2-HUMAN
+  version: 2.0.0
+  date: '2026-10-12'
+  author: hyst
+  change: Document identity and metadata registered during explicit hDS adoption.
+  action: created
+- doc_id: HDS-DOCS-HDS-RELEASE-CONSOLIDATION-RECORD
+  version: 2.0.0
+  date: '2026-10-12'
+  author: hyst
+  change: Document identity and metadata registered during explicit hDS adoption.
+  action: created
+- doc_id: OS-DOCS-TECH-DOCUMENTATION-AI-MD
+  version: 0.1.0
+  date: '2026-10-12'
+  author: hyst
+  change: Document identity and metadata registered during explicit hDS adoption.
+  action: created
+- doc_id: OS-DOCS-TECH-DOCUMENTATION-HUMAN-MD
+  version: 0.1.0
+  date: '2026-10-12'
+  author: hyst
+  change: Document identity and metadata registered during explicit hDS adoption.
+  action: created
+- doc_id: OS-DOCS-TECH-ENGINEERING-AI-MD
+  version: 0.1.0
+  date: '2026-10-12'
+  author: hyst
+  change: Document identity and metadata registered during explicit hDS adoption.
+  action: created
+- doc_id: OS-DOCS-TECH-ENGINEERING-HUMAN-MD
+  version: 0.1.0
+  date: '2026-10-12'
+  author: hyst
+  change: Document identity and metadata registered during explicit hDS adoption.
+  action: created
+- doc_id: OS-DOCS-TECH-GOVERNANCE-AI-MD
+  version: 0.1.0
+  date: '2026-10-12'
+  author: hyst
+  change: Document identity and metadata registered during explicit hDS adoption.
+  action: created
+- doc_id: OS-DOCS-TECH-GOVERNANCE-HUMAN-MD
+  version: 0.1.0
+  date: '2026-10-12'
+  author: hyst
+  change: Document identity and metadata registered during explicit hDS adoption.
+  action: created
+- doc_id: OS-DOCS-TECH-VISUAL-REVIEW-AI-MD
+  version: 0.1.0
+  date: '2026-10-12'
+  author: hyst
+  change: Document identity and metadata registered during explicit hDS adoption.
+  action: created
+- doc_id: OS-DOCS-TECH-VISUAL-REVIEW-HUMAN-MD
+  version: 0.1.0
+  date: '2026-10-12'
+  author: hyst
+  change: Document identity and metadata registered during explicit hDS adoption.
+  action: created
+- doc_id: OS-TOOLING-VISUAL-REVIEW-README-MD
+  version: 0.1.0
+  date: '2026-10-12'
+  author: hyst
+  change: Document identity and metadata registered during explicit hDS adoption.
+  action: created
+- doc_id: OS-AGENT-STATE-MD
+  version: 0.1.1
+  date: '2026-10-12'
+  author: ADOS explicit capsule bootstrap operation
+  change: Explicit continuity checkpoint bootstrap-created
+  action: updated
+- doc_id: OS-AGENT-PROGRESS-MD
+  version: 0.1.1
+  date: '2026-10-12'
+  author: ADOS explicit capsule bootstrap operation
+  change: Explicit continuity checkpoint bootstrap-created
+  action: updated
+- doc_id: OS-AGENT-TODO-MD
+  version: 0.1.1
+  date: '2026-10-12'
+  author: ADOS explicit capsule bootstrap operation
+  change: Explicit continuity checkpoint bootstrap-created
+  action: updated
+- doc_id: OS-AGENT-DECISIONS-MD
+  version: 0.1.1
+  date: '2026-10-12'
+  author: ADOS explicit capsule bootstrap operation
+  change: Explicit continuity checkpoint bootstrap-created
+  action: updated
+- doc_id: OS-AGENT-BLOCKERS-MD
+  version: 0.1.1
+  date: '2026-10-12'
+  author: ADOS explicit capsule bootstrap operation
+  change: Explicit continuity checkpoint bootstrap-created
+  action: updated
+- doc_id: OS-AGENT-VALIDATION-MD
+  version: 0.1.1
+  date: '2026-10-12'
+  author: ADOS explicit capsule bootstrap operation
+  change: Explicit continuity checkpoint bootstrap-created
+  action: updated
+- doc_id: OS-AGENT-HANDOFF-MD
+  version: 0.1.1
+  date: '2026-10-12'
+  author: ADOS explicit capsule bootstrap operation
+  change: Explicit continuity checkpoint bootstrap-created
+  action: updated
+- doc_id: OS-AGENT-STATE-MD
+  version: 0.1.2
+  date: '2026-10-12'
+  author: ADOS explicit capsule bootstrap operation
+  change: Explicit continuity checkpoint bootstrap-validated
+  action: updated
+- doc_id: OS-AGENT-PROGRESS-MD
+  version: 0.1.2
+  date: '2026-10-12'
+  author: ADOS explicit capsule bootstrap operation
+  change: Explicit continuity checkpoint bootstrap-validated
+  action: updated
+- doc_id: OS-AGENT-TODO-MD
+  version: 0.1.2
+  date: '2026-10-12'
+  author: ADOS explicit capsule bootstrap operation
+  change: Explicit continuity checkpoint bootstrap-validated
+  action: updated
+- doc_id: OS-AGENT-DECISIONS-MD
+  version: 0.1.2
+  date: '2026-10-12'
+  author: ADOS explicit capsule bootstrap operation
+  change: Explicit continuity checkpoint bootstrap-validated
+  action: updated
+- doc_id: OS-AGENT-BLOCKERS-MD
+  version: 0.1.2
+  date: '2026-10-12'
+  author: ADOS explicit capsule bootstrap operation
+  change: Explicit continuity checkpoint bootstrap-validated
+  action: updated
+- doc_id: OS-AGENT-VALIDATION-MD
+  version: 0.1.2
+  date: '2026-10-12'
+  author: ADOS explicit capsule bootstrap operation
+  change: Explicit continuity checkpoint bootstrap-validated
+  action: updated
+- doc_id: OS-AGENT-HANDOFF-MD
+  version: 0.1.2
+  date: '2026-10-12'
+  author: ADOS explicit capsule bootstrap operation
+  change: Explicit continuity checkpoint bootstrap-validated
+  action: updated
+- doc_id: OS-AGENT-STATE-MD
+  version: 0.1.3
+  date: '2026-10-12'
+  author: Claude Code ADOS adoption into existing repository
+  change: Explicit continuity checkpoint ados-adoption-in-progress
+  action: updated
+- doc_id: OS-AGENT-PROGRESS-MD
+  version: 0.1.3
+  date: '2026-10-12'
+  author: Claude Code ADOS adoption into existing repository
+  change: Explicit continuity checkpoint ados-adoption-in-progress
+  action: updated
+- doc_id: OS-AGENT-TODO-MD
+  version: 0.1.3
+  date: '2026-10-12'
+  author: Claude Code ADOS adoption into existing repository
+  change: Explicit continuity checkpoint ados-adoption-in-progress
+  action: updated
+- doc_id: OS-AGENT-DECISIONS-MD
+  version: 0.1.3
+  date: '2026-10-12'
+  author: Claude Code ADOS adoption into existing repository
+  change: Explicit continuity checkpoint ados-adoption-in-progress
+  action: updated
+- doc_id: OS-AGENT-BLOCKERS-MD
+  version: 0.1.3
+  date: '2026-10-12'
+  author: Claude Code ADOS adoption into existing repository
+  change: Explicit continuity checkpoint ados-adoption-in-progress
+  action: updated
+- doc_id: OS-AGENT-VALIDATION-MD
+  version: 0.1.3
+  date: '2026-10-12'
+  author: Claude Code ADOS adoption into existing repository
+  change: Explicit continuity checkpoint ados-adoption-in-progress
+  action: updated
+- doc_id: OS-AGENT-HANDOFF-MD
+  version: 0.1.3
+  date: '2026-10-12'
+  author: Claude Code ADOS adoption into existing repository
+  change: Explicit continuity checkpoint ados-adoption-in-progress
+  action: updated
+- doc_id: OS-AGENT-STATE-MD
+  version: 0.1.4
+  date: '2026-10-12'
+  author: Claude Code ADOS adoption into existing repository
+  change: Explicit continuity checkpoint ados-adoption-integrated
+  action: updated
+- doc_id: OS-AGENT-PROGRESS-MD
+  version: 0.1.4
+  date: '2026-10-12'
+  author: Claude Code ADOS adoption into existing repository
+  change: Explicit continuity checkpoint ados-adoption-integrated
+  action: updated
+- doc_id: OS-AGENT-TODO-MD
+  version: 0.1.4
+  date: '2026-10-12'
+  author: Claude Code ADOS adoption into existing repository
+  change: Explicit continuity checkpoint ados-adoption-integrated
+  action: updated
+- doc_id: OS-AGENT-DECISIONS-MD
+  version: 0.1.4
+  date: '2026-10-12'
+  author: Claude Code ADOS adoption into existing repository
+  change: Explicit continuity checkpoint ados-adoption-integrated
+  action: updated
+- doc_id: OS-AGENT-BLOCKERS-MD
+  version: 0.1.4
+  date: '2026-10-12'
+  author: Claude Code ADOS adoption into existing repository
+  change: Explicit continuity checkpoint ados-adoption-integrated
+  action: updated
+- doc_id: OS-AGENT-VALIDATION-MD
+  version: 0.1.4
+  date: '2026-10-12'
+  author: Claude Code ADOS adoption into existing repository
+  change: Explicit continuity checkpoint ados-adoption-integrated
+  action: updated
+- doc_id: OS-AGENT-HANDOFF-MD
+  version: 0.1.4
+  date: '2026-10-12'
+  author: Claude Code ADOS adoption into existing repository
+  change: Explicit continuity checkpoint ados-adoption-integrated
+  action: updated
+- doc_id: OS-AGENT-STATE-MD
+  version: 0.1.5
+  date: '2026-10-12'
+  author: Claude Code ADOS adoption into existing repository
+  change: Explicit continuity checkpoint ados-adoption-validated
+  action: updated
+- doc_id: OS-AGENT-PROGRESS-MD
+  version: 0.1.5
+  date: '2026-10-12'
+  author: Claude Code ADOS adoption into existing repository
+  change: Explicit continuity checkpoint ados-adoption-validated
+  action: updated
+- doc_id: OS-AGENT-TODO-MD
+  version: 0.1.5
+  date: '2026-10-12'
+  author: Claude Code ADOS adoption into existing repository
+  change: Explicit continuity checkpoint ados-adoption-validated
+  action: updated
+- doc_id: OS-AGENT-DECISIONS-MD
+  version: 0.1.5
+  date: '2026-10-12'
+  author: Claude Code ADOS adoption into existing repository
+  change: Explicit continuity checkpoint ados-adoption-validated
+  action: updated
+- doc_id: OS-AGENT-BLOCKERS-MD
+  version: 0.1.5
+  date: '2026-10-12'
+  author: Claude Code ADOS adoption into existing repository
+  change: Explicit continuity checkpoint ados-adoption-validated
+  action: updated
+- doc_id: OS-AGENT-VALIDATION-MD
+  version: 0.1.5
+  date: '2026-10-12'
+  author: Claude Code ADOS adoption into existing repository
+  change: Explicit continuity checkpoint ados-adoption-validated
+  action: updated
+- doc_id: OS-AGENT-HANDOFF-MD
+  version: 0.1.5
+  date: '2026-10-12'
+  author: Claude Code ADOS adoption into existing repository
+  change: Explicit continuity checkpoint ados-adoption-validated
+  action: updated

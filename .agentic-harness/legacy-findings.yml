@@ -1,0 +1,1346 @@
+schema_version: 1.0.0
+findings:
+- finding_id: LEGACY-4E8ACF4995B55A41
+  rule: duplication
+  location: src/routes/+error.svelte
+  status: open
+  owner: project-owner
+  evidence: 'duplicate code: src/routes/+error.svelte:56 and src/routes/403/+page.svelte:44
+    (100+ exact tokens); consolidate'
+  source_sha256: eb7ba3627752ab91ddc60f5deea6f4114c5fdd63d7b5ede1aa25fa63d03e7641
+  impact: Inherited debt; blocks a change when the affected file is edited.
+  next_action: Repair the whole touched file and update its documentation before commit.
+  closure_criteria: Current scoped engineering checks and review pass.
+  first_seen: '2026-10-12'
+- finding_id: LEGACY-D47BA51B9DDC5D6D
+  rule: duplication
+  location: src/routes/403/+page.svelte
+  status: open
+  owner: project-owner
+  evidence: 'duplicate code: src/routes/+error.svelte:56 and src/routes/403/+page.svelte:44
+    (100+ exact tokens); consolidate'
+  source_sha256: de971c9634db665c75e58ca374a22728f494b26284a98578ee9be8620cfef277
+  impact: Inherited debt; blocks a change when the affected file is edited.
+  next_action: Repair the whole touched file and update its documentation before commit.
+  closure_criteria: Current scoped engineering checks and review pass.
+  first_seen: '2026-10-12'
+- finding_id: LEGACY-1DEB915B736AED5A
+  rule: documentation
+  location: drizzle.config.ts
+  status: open
+  owner: project-owner
+  evidence: Source has no reviewed human/AI technical documentation coverage.
+  source_sha256: 50addeeb33a75cf85868ce83b616de7cbe75b1f14862337581fdde0d362a621d
+  impact: Inherited debt; blocks a change when the affected file is edited.
+  next_action: Repair the whole touched file and update its documentation before commit.
+  closure_criteria: Current scoped engineering checks and review pass.
+  first_seen: '2026-10-12'
+- finding_id: LEGACY-90D0B2FF9EC2CC05
+  rule: documentation
+  location: drizzle.prod.config.ts
+  status: open
+  owner: project-owner
+  evidence: Source has no reviewed human/AI technical documentation coverage.
+  source_sha256: 12e0673e045b1882efc2e26acc517309d6fef5137e057c915373a073b53be352
+  impact: Inherited debt; blocks a change when the affected file is edited.
+  next_action: Repair the whole touched file and update its documentation before commit.
+  closure_criteria: Current scoped engineering checks and review pass.
+  first_seen: '2026-10-12'
+- finding_id: LEGACY-3C74A65E9781280E
+  rule: documentation
+  location: eslint.config.js
+  status: open
+  owner: project-owner
+  evidence: Source has no reviewed human/AI technical documentation coverage.
+  source_sha256: 1ea973e368cca522630480713c53ef6bf1f5b78428f285c6ebb5a92de93e50e4
+  impact: Inherited debt; blocks a change when the affected file is edited.
+  next_action: Repair the whole touched file and update its documentation before commit.
+  closure_criteria: Current scoped engineering checks and review pass.
+  first_seen: '2026-10-12'
+- finding_id: LEGACY-3DBF3922B3487576
+  rule: documentation
+  location: migrations/0000_awesome_wasp.sql
+  status: open
+  owner: project-owner
+  evidence: Source has no reviewed human/AI technical documentation coverage.
+  source_sha256: 0d9aa4e62a4301989cead655360fad4e65c317fb3c926488da23673c01f5d92c
+  impact: Inherited debt; blocks a change when the affected file is edited.
+  next_action: Repair the whole touched file and update its documentation before commit.
+  closure_criteria: Current scoped engineering checks and review pass.
+  first_seen: '2026-10-12'
+- finding_id: LEGACY-06834E3EF67F0EED
+  rule: documentation
+  location: release.config.js
+  status: open
+  owner: project-owner
+  evidence: Source has no reviewed human/AI technical documentation coverage.
+  source_sha256: 3c60610377a650d640f7c6990b46156d45554375b0c8f90ee20b9986536534ec
+  impact: Inherited debt; blocks a change when the affected file is edited.
+  next_action: Repair the whole touched file and update its documentation before commit.
+  closure_criteria: Current scoped engineering checks and review pass.
+  first_seen: '2026-10-12'
+- finding_id: LEGACY-B40FD2696D7C9546
+  rule: documentation
+  location: src/app.d.ts
+  status: open
+  owner: project-owner
+  evidence: Source has no reviewed human/AI technical documentation coverage.
+  source_sha256: 22d624580a1b1b06de3359595fcce8760b7312b55a6a409130d6dbcf3f8f0325
+  impact: Inherited debt; blocks a change when the affected file is edited.
+  next_action: Repair the whole touched file and update its documentation before commit.
+  closure_criteria: Current scoped engineering checks and review pass.
+  first_seen: '2026-10-12'
+- finding_id: LEGACY-E75F30EC4EF93520
+  rule: documentation
+  location: src/hooks.client.ts
+  status: open
+  owner: project-owner
+  evidence: Source has no reviewed human/AI technical documentation coverage.
+  source_sha256: 2072ddd8d90da8ece51ac9c76b0baa713f698ebb36385da8208cbb34d663a4bf
+  impact: Inherited debt; blocks a change when the affected file is edited.
+  next_action: Repair the whole touched file and update its documentation before commit.
+  closure_criteria: Current scoped engineering checks and review pass.
+  first_seen: '2026-10-12'
+- finding_id: LEGACY-101914241AEFBB15
+  rule: documentation
+  location: src/hooks.server.test.ts
+  status: open
+  owner: project-owner
+  evidence: Source has no reviewed human/AI technical documentation coverage.
+  source_sha256: cc68856eabe3feeed95ca37db20d3aa5bdf201b1d8453f83c3d907e59723bb66
+  impact: Inherited debt; blocks a change when the affected file is edited.
+  next_action: Repair the whole touched file and update its documentation before commit.
+  closure_criteria: Current scoped engineering checks and review pass.
+  first_seen: '2026-10-12'
+- finding_id: LEGACY-74C1079E4F334596
+  rule: documentation
+  location: src/hooks.server.ts
+  status: open
+  owner: project-owner
+  evidence: Source has no reviewed human/AI technical documentation coverage.
+  source_sha256: f054929a1c63119c98e98f745daa6c7218b9ac9e4658e5d3b37cad13b17e7d68
+  impact: Inherited debt; blocks a change when the affected file is edited.
+  next_action: Repair the whole touched file and update its documentation before commit.
+  closure_criteria: Current scoped engineering checks and review pass.
+  first_seen: '2026-10-12'
+- finding_id: LEGACY-FAC733A378A7131E
+  rule: documentation
+  location: src/lib/adapters/analytics.test.ts
+  status: open
+  owner: project-owner
+  evidence: Source has no reviewed human/AI technical documentation coverage.
+  source_sha256: 698290df2bdee55d9cb2e0d3f2b0e449ea8fda9c5cf5e99cd71b8ad108861f4c
+  impact: Inherited debt; blocks a change when the affected file is edited.
+  next_action: Repair the whole touched file and update its documentation before commit.
+  closure_criteria: Current scoped engineering checks and review pass.
+  first_seen: '2026-10-12'
+- finding_id: LEGACY-211BC74C5106F135
+  rule: documentation
+  location: src/lib/adapters/analytics.ts
+  status: open
+  owner: project-owner
+  evidence: Source has no reviewed human/AI technical documentation coverage.
+  source_sha256: c57f33e114dcee2581ec74594dd151f022c44f90ab5ce4d6c1ac40f92bda28d5
+  impact: Inherited debt; blocks a change when the affected file is edited.
+  next_action: Repair the whole touched file and update its documentation before commit.
+  closure_criteria: Current scoped engineering checks and review pass.
+  first_seen: '2026-10-12'
+- finding_id: LEGACY-337AC4C2CF6191D5
+  rule: documentation
+  location: src/lib/adapters/cache.ts
+  status: open
+  owner: project-owner
+  evidence: Source has no reviewed human/AI technical documentation coverage.
+  source_sha256: b20962909d5379e3a563f570e454ac0d9d4ea1d9575011a52bece7b710acef64
+  impact: Inherited debt; blocks a change when the affected file is edited.
+  next_action: Repair the whole touched file and update its documentation before commit.
+  closure_criteria: Current scoped engineering checks and review pass.
+  first_seen: '2026-10-12'
+- finding_id: LEGACY-DF58EE649E8DB2B5
+  rule: documentation
+  location: src/lib/adapters/factory.ts
+  status: open
+  owner: project-owner
+  evidence: Source has no reviewed human/AI technical documentation coverage.
+  source_sha256: 6c9f89c5e1a8cc6964c0f1d386be2b3c9326052b96fef71a9de0f5e296acd694
+  impact: Inherited debt; blocks a change when the affected file is edited.
+  next_action: Repair the whole touched file and update its documentation before commit.
+  closure_criteria: Current scoped engineering checks and review pass.
+  first_seen: '2026-10-12'
+- finding_id: LEGACY-2E0DB5086E0E29EF
+  rule: documentation
+  location: src/lib/adapters/id-generator.test.ts
+  status: open
+  owner: project-owner
+  evidence: Source has no reviewed human/AI technical documentation coverage.
+  source_sha256: 52f8e010d366124c3811be3813b8258eec25f70c56b7c939dbd9e960599aea4f
+  impact: Inherited debt; blocks a change when the affected file is edited.
+  next_action: Repair the whole touched file and update its documentation before commit.
+  closure_criteria: Current scoped engineering checks and review pass.
+  first_seen: '2026-10-12'
+- finding_id: LEGACY-70F129C2F1EE7FAB
+  rule: documentation
+  location: src/lib/adapters/id-generator.ts
+  status: open
+  owner: project-owner
+  evidence: Source has no reviewed human/AI technical documentation coverage.
+  source_sha256: 8e07901dc60c85c426724d737b5ba881f33da9572c4199328f37c3ccdc24ea80
+  impact: Inherited debt; blocks a change when the affected file is edited.
+  next_action: Repair the whole touched file and update its documentation before commit.
+  closure_criteria: Current scoped engineering checks and review pass.
+  first_seen: '2026-10-12'
+- finding_id: LEGACY-5D7F4F934C16D8A3
+  rule: documentation
+  location: src/lib/client/clerk-errors.test.ts
+  status: open
+  owner: project-owner
+  evidence: Source has no reviewed human/AI technical documentation coverage.
+  source_sha256: 4f841b1a5008544d16cd5948ba28f0dcc8ffd1378ee7cdaaaa6af00441d159ec
+  impact: Inherited debt; blocks a change when the affected file is edited.
+  next_action: Repair the whole touched file and update its documentation before commit.
+  closure_criteria: Current scoped engineering checks and review pass.
+  first_seen: '2026-10-12'
+- finding_id: LEGACY-390492DB4E2B5E13
+  rule: documentation
+  location: src/lib/client/clerk-errors.ts
+  status: open
+  owner: project-owner
+  evidence: Source has no reviewed human/AI technical documentation coverage.
+  source_sha256: 996e20b288b502f75e0aab41214ae16649e227c640aacb21b43249b7129a1f02
+  impact: Inherited debt; blocks a change when the affected file is edited.
+  next_action: Repair the whole touched file and update its documentation before commit.
+  closure_criteria: Current scoped engineering checks and review pass.
+  first_seen: '2026-10-12'
+- finding_id: LEGACY-C70659C626C26927
+  rule: documentation
+  location: src/lib/client/clerk.test.ts
+  status: open
+  owner: project-owner
+  evidence: Source has no reviewed human/AI technical documentation coverage.
+  source_sha256: 09159c49787be151ae94e557f50bf9e25b06d3a2f591b63d09433ca548db69a7
+  impact: Inherited debt; blocks a change when the affected file is edited.
+  next_action: Repair the whole touched file and update its documentation before commit.
+  closure_criteria: Current scoped engineering checks and review pass.
+  first_seen: '2026-10-12'
+- finding_id: LEGACY-A375BA5258597002
+  rule: documentation
+  location: src/lib/client/clerk.ts
+  status: open
+  owner: project-owner
+  evidence: Source has no reviewed human/AI technical documentation coverage.
+  source_sha256: f7d6c9c9ad11d4c9818d8733a530f76f48c949086ef3eec5720c189c2894f7be
+  impact: Inherited debt; blocks a change when the affected file is edited.
+  next_action: Repair the whole touched file and update its documentation before commit.
+  closure_criteria: Current scoped engineering checks and review pass.
+  first_seen: '2026-10-12'
+- finding_id: LEGACY-64EE13415B2D4991
+  rule: documentation
+  location: src/lib/client/rate-limit.test.ts
+  status: open
+  owner: project-owner
+  evidence: Source has no reviewed human/AI technical documentation coverage.
+  source_sha256: 388e69d0be8b4ab38aea0013f109676654e7e4be3ed97d6d657997c10c8f3d1e
+  impact: Inherited debt; blocks a change when the affected file is edited.
+  next_action: Repair the whole touched file and update its documentation before commit.
+  closure_criteria: Current scoped engineering checks and review pass.
+  first_seen: '2026-10-12'
+- finding_id: LEGACY-DF82C96DB447A191
+  rule: documentation
+  location: src/lib/client/rate-limit.ts
+  status: open
+  owner: project-owner
+  evidence: Source has no reviewed human/AI technical documentation coverage.
+  source_sha256: 0e33331aacc4c5ffca07f45df6d4cfeacbb7e58fb2e307dfcd82c68faf46a6b8
+  impact: Inherited debt; blocks a change when the affected file is edited.
+  next_action: Repair the whole touched file and update its documentation before commit.
+  closure_criteria: Current scoped engineering checks and review pass.
+  first_seen: '2026-10-12'
+- finding_id: LEGACY-8050845CB33FBF3C
+  rule: documentation
+  location: src/lib/client/redirect.ts
+  status: open
+  owner: project-owner
+  evidence: Source has no reviewed human/AI technical documentation coverage.
+  source_sha256: 0cb1ab7715a9c256eb0fbb14be63c3d0f46480912544c2b4cc15ebe65a170de1
+  impact: Inherited debt; blocks a change when the affected file is edited.
+  next_action: Repair the whole touched file and update its documentation before commit.
+  closure_criteria: Current scoped engineering checks and review pass.
+  first_seen: '2026-10-12'
+- finding_id: LEGACY-5378A0BBA1BA58DD
+  rule: documentation
+  location: src/lib/components/AnalyticsDashboard.svelte
+  status: open
+  owner: project-owner
+  evidence: Source has no reviewed human/AI technical documentation coverage.
+  source_sha256: 7e6d6b0a3e3a48ed94de97824c91aa3f2fd90cd0324b8d45d5c0b57e68c2ec59
+  impact: Inherited debt; blocks a change when the affected file is edited.
+  next_action: Repair the whole touched file and update its documentation before commit.
+  closure_criteria: Current scoped engineering checks and review pass.
+  first_seen: '2026-10-12'
+- finding_id: LEGACY-6A391C996C9C4F53
+  rule: documentation
+  location: src/lib/components/ErrorAlert.svelte
+  status: open
+  owner: project-owner
+  evidence: Source has no reviewed human/AI technical documentation coverage.
+  source_sha256: df89e0414a06981ded36495a3a33f1cbdfa1292d2a4a57ab60c274b377e6cb40
+  impact: Inherited debt; blocks a change when the affected file is edited.
+  next_action: Repair the whole touched file and update its documentation before commit.
+  closure_criteria: Current scoped engineering checks and review pass.
+  first_seen: '2026-10-12'
+- finding_id: LEGACY-B5F0194927B364D5
+  rule: documentation
+  location: src/lib/components/ErrorAlert.test.ts
+  status: open
+  owner: project-owner
+  evidence: Source has no reviewed human/AI technical documentation coverage.
+  source_sha256: 5421ab365e289773a6730f3f3b4ea0025fabe5229bd7b8dbc38e9d422d82f36d
+  impact: Inherited debt; blocks a change when the affected file is edited.
+  next_action: Repair the whole touched file and update its documentation before commit.
+  closure_criteria: Current scoped engineering checks and review pass.
+  first_seen: '2026-10-12'
+- finding_id: LEGACY-052DFBACCA082DE8
+  rule: documentation
+  location: src/lib/components/FormInput.svelte
+  status: open
+  owner: project-owner
+  evidence: Source has no reviewed human/AI technical documentation coverage.
+  source_sha256: d08700e7ed985bd56840f408654b9eedb5e9d66a8568532a0ca0830a2994893d
+  impact: Inherited debt; blocks a change when the affected file is edited.
+  next_action: Repair the whole touched file and update its documentation before commit.
+  closure_criteria: Current scoped engineering checks and review pass.
+  first_seen: '2026-10-12'
+- finding_id: LEGACY-DA4329C755EC784B
+  rule: documentation
+  location: src/lib/components/LoadingSpinner.svelte
+  status: open
+  owner: project-owner
+  evidence: Source has no reviewed human/AI technical documentation coverage.
+  source_sha256: 65d3a1d9eec3e8ed6de1e44197a085459a7adb4439697e948e1d1ef535e703a1
+  impact: Inherited debt; blocks a change when the affected file is edited.
+  next_action: Repair the whole touched file and update its documentation before commit.
+  closure_criteria: Current scoped engineering checks and review pass.
+  first_seen: '2026-10-12'
+- finding_id: LEGACY-392A81DBFB9D2FC8
+  rule: documentation
+  location: src/lib/components/LoadingSpinner.test.ts
+  status: open
+  owner: project-owner
+  evidence: Source has no reviewed human/AI technical documentation coverage.
+  source_sha256: 485c7088d597d8b8dffa91c6d45f0f33b1d6793a21255c4f50ad2de0a92dfa50
+  impact: Inherited debt; blocks a change when the affected file is edited.
+  next_action: Repair the whole touched file and update its documentation before commit.
+  closure_criteria: Current scoped engineering checks and review pass.
+  first_seen: '2026-10-12'
+- finding_id: LEGACY-F3422D196CE15C02
+  rule: documentation
+  location: src/lib/components/SEO.svelte
+  status: open
+  owner: project-owner
+  evidence: Source has no reviewed human/AI technical documentation coverage.
+  source_sha256: 2bed78877dd9543ab0d567ecae1c0270b40723c176fa9d2d9136e3d63a030e57
+  impact: Inherited debt; blocks a change when the affected file is edited.
+  next_action: Repair the whole touched file and update its documentation before commit.
+  closure_criteria: Current scoped engineering checks and review pass.
+  first_seen: '2026-10-12'
+- finding_id: LEGACY-970C5C66747AF951
+  rule: documentation
+  location: src/lib/components/SocialLoginButtons.svelte
+  status: open
+  owner: project-owner
+  evidence: Source has no reviewed human/AI technical documentation coverage.
+  source_sha256: 43ccdd7d8bfaeb16f0ca1b67679ca2d0e352aed6de3acf722b597d4e3601e096
+  impact: Inherited debt; blocks a change when the affected file is edited.
+  next_action: Repair the whole touched file and update its documentation before commit.
+  closure_criteria: Current scoped engineering checks and review pass.
+  first_seen: '2026-10-12'
+- finding_id: LEGACY-B050A8BC92459E88
+  rule: documentation
+  location: src/lib/components/SubmitButton.svelte
+  status: open
+  owner: project-owner
+  evidence: Source has no reviewed human/AI technical documentation coverage.
+  source_sha256: 8a9b05ce727e3ab455f214fa2df57a061daa66d977319dd542ad221b8379d689
+  impact: Inherited debt; blocks a change when the affected file is edited.
+  next_action: Repair the whole touched file and update its documentation before commit.
+  closure_criteria: Current scoped engineering checks and review pass.
+  first_seen: '2026-10-12'
+- finding_id: LEGACY-ADABD6B33717E3E5
+  rule: documentation
+  location: src/lib/components/Toast.svelte
+  status: open
+  owner: project-owner
+  evidence: Source has no reviewed human/AI technical documentation coverage.
+  source_sha256: ad3c01bbb5050a706249211d13a234c6329d176e87e7c9cd04f7095524d4c823
+  impact: Inherited debt; blocks a change when the affected file is edited.
+  next_action: Repair the whole touched file and update its documentation before commit.
+  closure_criteria: Current scoped engineering checks and review pass.
+  first_seen: '2026-10-12'
+- finding_id: LEGACY-F8C7AFBA2CB61446
+  rule: documentation
+  location: src/lib/components/UserProfile.svelte
+  status: open
+  owner: project-owner
+  evidence: Source has no reviewed human/AI technical documentation coverage.
+  source_sha256: 8d941a12f8ecca5755e65a642734cf35c612de4b041d66ebe28fa76e15abf384
+  impact: Inherited debt; blocks a change when the affected file is edited.
+  next_action: Repair the whole touched file and update its documentation before commit.
+  closure_criteria: Current scoped engineering checks and review pass.
+  first_seen: '2026-10-12'
+- finding_id: LEGACY-A660DA0E301AA39A
+  rule: documentation
+  location: src/lib/components/charts/BarChart.svelte
+  status: open
+  owner: project-owner
+  evidence: Source has no reviewed human/AI technical documentation coverage.
+  source_sha256: 06614190077e111caf095aeff9ba254d6b9c444343197e9a624c99a4431f5338
+  impact: Inherited debt; blocks a change when the affected file is edited.
+  next_action: Repair the whole touched file and update its documentation before commit.
+  closure_criteria: Current scoped engineering checks and review pass.
+  first_seen: '2026-10-12'
+- finding_id: LEGACY-21A8625EEE41D738
+  rule: documentation
+  location: src/lib/components/charts/DoughnutChart.svelte
+  status: open
+  owner: project-owner
+  evidence: Source has no reviewed human/AI technical documentation coverage.
+  source_sha256: 85dc5e2ad2f2c579b63c74e8ed0ab6ded93b70490a6b7471938227677976387e
+  impact: Inherited debt; blocks a change when the affected file is edited.
+  next_action: Repair the whole touched file and update its documentation before commit.
+  closure_criteria: Current scoped engineering checks and review pass.
+  first_seen: '2026-10-12'
+- finding_id: LEGACY-51980A71C1C088E5
+  rule: documentation
+  location: src/lib/components/charts/LineChart.svelte
+  status: open
+  owner: project-owner
+  evidence: Source has no reviewed human/AI technical documentation coverage.
+  source_sha256: fd9d28b68b3cf032c9a4ce0a5f3985716328828a1f818b3c173a92e61ac17e79
+  impact: Inherited debt; blocks a change when the affected file is edited.
+  next_action: Repair the whole touched file and update its documentation before commit.
+  closure_criteria: Current scoped engineering checks and review pass.
+  first_seen: '2026-10-12'
+- finding_id: LEGACY-294BE1789C0095AD
+  rule: documentation
+  location: src/lib/components/charts/layercake/Arcs.svelte
+  status: open
+  owner: project-owner
+  evidence: Source has no reviewed human/AI technical documentation coverage.
+  source_sha256: 670fbfe1af9e0396b9704e8d67501eed87126ffa6c45b392e943d784cb744221
+  impact: Inherited debt; blocks a change when the affected file is edited.
+  next_action: Repair the whole touched file and update its documentation before commit.
+  closure_criteria: Current scoped engineering checks and review pass.
+  first_seen: '2026-10-12'
+- finding_id: LEGACY-1953CA0B879FD2ED
+  rule: documentation
+  location: src/lib/components/charts/layercake/Area.svelte
+  status: open
+  owner: project-owner
+  evidence: Source has no reviewed human/AI technical documentation coverage.
+  source_sha256: 90f640a1ed0af37c934692b4e008709ff13c4e7727ff6c58bf6f95b364ebb562
+  impact: Inherited debt; blocks a change when the affected file is edited.
+  next_action: Repair the whole touched file and update its documentation before commit.
+  closure_criteria: Current scoped engineering checks and review pass.
+  first_seen: '2026-10-12'
+- finding_id: LEGACY-DDC92377A91F118A
+  rule: documentation
+  location: src/lib/components/charts/layercake/AxisX.svelte
+  status: open
+  owner: project-owner
+  evidence: Source has no reviewed human/AI technical documentation coverage.
+  source_sha256: 575d8ebaabbb1f04f50222f36c7952777dcf339eafe85c6c6b72e36a6d269338
+  impact: Inherited debt; blocks a change when the affected file is edited.
+  next_action: Repair the whole touched file and update its documentation before commit.
+  closure_criteria: Current scoped engineering checks and review pass.
+  first_seen: '2026-10-12'
+- finding_id: LEGACY-235C855F6736D38A
+  rule: documentation
+  location: src/lib/components/charts/layercake/AxisY.svelte
+  status: open
+  owner: project-owner
+  evidence: Source has no reviewed human/AI technical documentation coverage.
+  source_sha256: c85ed2bf8cfa4b21639fb6fb47f04c622ce45b5e353994bc39f1c8aa319ca50c
+  impact: Inherited debt; blocks a change when the affected file is edited.
+  next_action: Repair the whole touched file and update its documentation before commit.
+  closure_criteria: Current scoped engineering checks and review pass.
+  first_seen: '2026-10-12'
+- finding_id: LEGACY-43CB6408297FAA24
+  rule: documentation
+  location: src/lib/components/charts/layercake/BarTooltip.svelte
+  status: open
+  owner: project-owner
+  evidence: Source has no reviewed human/AI technical documentation coverage.
+  source_sha256: cc4f2c93159dd2c7906b5d8ed01e0456bf41118ca30dc1da5ac45624c8424790
+  impact: Inherited debt; blocks a change when the affected file is edited.
+  next_action: Repair the whole touched file and update its documentation before commit.
+  closure_criteria: Current scoped engineering checks and review pass.
+  first_seen: '2026-10-12'
+- finding_id: LEGACY-3EC3EA02794D0B3A
+  rule: documentation
+  location: src/lib/components/charts/layercake/Bars.svelte
+  status: open
+  owner: project-owner
+  evidence: Source has no reviewed human/AI technical documentation coverage.
+  source_sha256: 0a9d18843076159a4c6eb6d41064c7da9fee398661b36130ad6bf2e0098dea7f
+  impact: Inherited debt; blocks a change when the affected file is edited.
+  next_action: Repair the whole touched file and update its documentation before commit.
+  closure_criteria: Current scoped engineering checks and review pass.
+  first_seen: '2026-10-12'
+- finding_id: LEGACY-ADA273B224C455A1
+  rule: documentation
+  location: src/lib/components/charts/layercake/Line.svelte
+  status: open
+  owner: project-owner
+  evidence: Source has no reviewed human/AI technical documentation coverage.
+  source_sha256: 0701add056b6f92593683e71c80d2a9e45fb4fbcf9ce846c516ab62f1725016f
+  impact: Inherited debt; blocks a change when the affected file is edited.
+  next_action: Repair the whole touched file and update its documentation before commit.
+  closure_criteria: Current scoped engineering checks and review pass.
+  first_seen: '2026-10-12'
+- finding_id: LEGACY-F318116BE5C310A5
+  rule: documentation
+  location: src/lib/components/charts/layercake/Tooltip.svelte
+  status: open
+  owner: project-owner
+  evidence: Source has no reviewed human/AI technical documentation coverage.
+  source_sha256: a15aa61a3ef9a6a914974e6e6ad8821801b6bb56162376bb75b9feddd0feddde
+  impact: Inherited debt; blocks a change when the affected file is edited.
+  next_action: Repair the whole touched file and update its documentation before commit.
+  closure_criteria: Current scoped engineering checks and review pass.
+  first_seen: '2026-10-12'
+- finding_id: LEGACY-742077A0FA2375F6
+  rule: documentation
+  location: src/lib/components/charts/layercake/context.ts
+  status: open
+  owner: project-owner
+  evidence: Source has no reviewed human/AI technical documentation coverage.
+  source_sha256: 6fc4741051b25b0339317872aa12b7fe7850af0eea51a3fcf4d5b7a14eb3fa6b
+  impact: Inherited debt; blocks a change when the affected file is edited.
+  next_action: Repair the whole touched file and update its documentation before commit.
+  closure_criteria: Current scoped engineering checks and review pass.
+  first_seen: '2026-10-12'
+- finding_id: LEGACY-B69D166CF70C8AD6
+  rule: documentation
+  location: src/lib/routes/public.ts
+  status: open
+  owner: project-owner
+  evidence: Source has no reviewed human/AI technical documentation coverage.
+  source_sha256: 7d06e408010ead48437827bc9f92a44fb141507966f2e6707370460e168d52fb
+  impact: Inherited debt; blocks a change when the affected file is edited.
+  next_action: Repair the whole touched file and update its documentation before commit.
+  closure_criteria: Current scoped engineering checks and review pass.
+  first_seen: '2026-10-12'
+- finding_id: LEGACY-BF6BC36A4218A4DA
+  rule: documentation
+  location: src/lib/server/analytics.test.ts
+  status: open
+  owner: project-owner
+  evidence: Source has no reviewed human/AI technical documentation coverage.
+  source_sha256: c9a3eecf84df72200dff53aef1d5896174f53af98aacb4370790a575f6940465
+  impact: Inherited debt; blocks a change when the affected file is edited.
+  next_action: Repair the whole touched file and update its documentation before commit.
+  closure_criteria: Current scoped engineering checks and review pass.
+  first_seen: '2026-10-12'
+- finding_id: LEGACY-C49874D96D017568
+  rule: documentation
+  location: src/lib/server/analytics.ts
+  status: open
+  owner: project-owner
+  evidence: Source has no reviewed human/AI technical documentation coverage.
+  source_sha256: b6438c638393462da07cd2db87143797dab2a948638109debee94959e87fbdfd
+  impact: Inherited debt; blocks a change when the affected file is edited.
+  next_action: Repair the whole touched file and update its documentation before commit.
+  closure_criteria: Current scoped engineering checks and review pass.
+  first_seen: '2026-10-12'
+- finding_id: LEGACY-ACF732F67F5C5012
+  rule: documentation
+  location: src/lib/server/auth-handle.test.ts
+  status: open
+  owner: project-owner
+  evidence: Source has no reviewed human/AI technical documentation coverage.
+  source_sha256: 2fa2b717913abe1462e349bfe069138777b91746d8cc6f797d705cd06e1f0ac4
+  impact: Inherited debt; blocks a change when the affected file is edited.
+  next_action: Repair the whole touched file and update its documentation before commit.
+  closure_criteria: Current scoped engineering checks and review pass.
+  first_seen: '2026-10-12'
+- finding_id: LEGACY-D03CB626BD56A56E
+  rule: documentation
+  location: src/lib/server/auth-handle.ts
+  status: open
+  owner: project-owner
+  evidence: Source has no reviewed human/AI technical documentation coverage.
+  source_sha256: a77622c32b129d413be911a0b5b54768041b53b2bc97d60014b1ce3ab73cdf18
+  impact: Inherited debt; blocks a change when the affected file is edited.
+  next_action: Repair the whole touched file and update its documentation before commit.
+  closure_criteria: Current scoped engineering checks and review pass.
+  first_seen: '2026-10-12'
+- finding_id: LEGACY-9093ECB69D4FEE25
+  rule: documentation
+  location: src/lib/server/auth.test.ts
+  status: open
+  owner: project-owner
+  evidence: Source has no reviewed human/AI technical documentation coverage.
+  source_sha256: c76a0e9b7e96abb291dd373114072a6e94e46306ce0edbdf1a2333b7911146b7
+  impact: Inherited debt; blocks a change when the affected file is edited.
+  next_action: Repair the whole touched file and update its documentation before commit.
+  closure_criteria: Current scoped engineering checks and review pass.
+  first_seen: '2026-10-12'
+- finding_id: LEGACY-2644BF00AC7AAD65
+  rule: documentation
+  location: src/lib/server/auth.ts
+  status: open
+  owner: project-owner
+  evidence: Source has no reviewed human/AI technical documentation coverage.
+  source_sha256: 11d19f6028c8cf3599d9d0602e713fcb73ce44ab3c0938eb9e9a7dd686690f17
+  impact: Inherited debt; blocks a change when the affected file is edited.
+  next_action: Repair the whole touched file and update its documentation before commit.
+  closure_criteria: Current scoped engineering checks and review pass.
+  first_seen: '2026-10-12'
+- finding_id: LEGACY-B32694369330E95E
+  rule: documentation
+  location: src/lib/server/clerk.ts
+  status: open
+  owner: project-owner
+  evidence: Source has no reviewed human/AI technical documentation coverage.
+  source_sha256: 49bf946bb5374afdf472d8dc07a13de095a5ca811244966a6df1c473b548b800
+  impact: Inherited debt; blocks a change when the affected file is edited.
+  next_action: Repair the whole touched file and update its documentation before commit.
+  closure_criteria: Current scoped engineering checks and review pass.
+  first_seen: '2026-10-12'
+- finding_id: LEGACY-D873A4F11BAC0D16
+  rule: documentation
+  location: src/lib/server/db/client.ts
+  status: open
+  owner: project-owner
+  evidence: Source has no reviewed human/AI technical documentation coverage.
+  source_sha256: 1c0f8f3d747051549388f021de8f65c77c121cec527115317389629ab3081d7d
+  impact: Inherited debt; blocks a change when the affected file is edited.
+  next_action: Repair the whole touched file and update its documentation before commit.
+  closure_criteria: Current scoped engineering checks and review pass.
+  first_seen: '2026-10-12'
+- finding_id: LEGACY-01BD95EA94168D52
+  rule: documentation
+  location: src/lib/server/db/queries/urls.test.ts
+  status: open
+  owner: project-owner
+  evidence: Source has no reviewed human/AI technical documentation coverage.
+  source_sha256: a0e51c24afe1a49c728f0c222b8c2b91360b22637cdf23811b2c4b1c3e49787d
+  impact: Inherited debt; blocks a change when the affected file is edited.
+  next_action: Repair the whole touched file and update its documentation before commit.
+  closure_criteria: Current scoped engineering checks and review pass.
+  first_seen: '2026-10-12'
+- finding_id: LEGACY-424899DB72F2B3AF
+  rule: documentation
+  location: src/lib/server/db/queries/urls.ts
+  status: open
+  owner: project-owner
+  evidence: Source has no reviewed human/AI technical documentation coverage.
+  source_sha256: bf80ed68079c0f95d9dcdd432c414362d7d58ddceb9502ea25e564ce2f62db05
+  impact: Inherited debt; blocks a change when the affected file is edited.
+  next_action: Repair the whole touched file and update its documentation before commit.
+  closure_criteria: Current scoped engineering checks and review pass.
+  first_seen: '2026-10-12'
+- finding_id: LEGACY-EE0AC76D01313B0D
+  rule: documentation
+  location: src/lib/server/db/schemas/index.ts
+  status: open
+  owner: project-owner
+  evidence: Source has no reviewed human/AI technical documentation coverage.
+  source_sha256: fc710c747a8808296b4c7dba6d937785d6c0557d997d0e1f4823fecc3f04698c
+  impact: Inherited debt; blocks a change when the affected file is edited.
+  next_action: Repair the whole touched file and update its documentation before commit.
+  closure_criteria: Current scoped engineering checks and review pass.
+  first_seen: '2026-10-12'
+- finding_id: LEGACY-A4516E444244B4BC
+  rule: documentation
+  location: src/lib/server/db/schemas/urls.ts
+  status: open
+  owner: project-owner
+  evidence: Source has no reviewed human/AI technical documentation coverage.
+  source_sha256: 7d129b7887cfce15bcfbab2cfd2042d2b07e07bad8b6483ce6da3ab986289905
+  impact: Inherited debt; blocks a change when the affected file is edited.
+  next_action: Repair the whole touched file and update its documentation before commit.
+  closure_criteria: Current scoped engineering checks and review pass.
+  first_seen: '2026-10-12'
+- finding_id: LEGACY-6528C524C0C89816
+  rule: documentation
+  location: src/lib/server/logger.test.ts
+  status: open
+  owner: project-owner
+  evidence: Source has no reviewed human/AI technical documentation coverage.
+  source_sha256: c99bd108624a4cb63ea2b38d3497350edbb3ab330f5175a9d54439d371154980
+  impact: Inherited debt; blocks a change when the affected file is edited.
+  next_action: Repair the whole touched file and update its documentation before commit.
+  closure_criteria: Current scoped engineering checks and review pass.
+  first_seen: '2026-10-12'
+- finding_id: LEGACY-EEE44F71B9E841F7
+  rule: documentation
+  location: src/lib/server/logger.ts
+  status: open
+  owner: project-owner
+  evidence: Source has no reviewed human/AI technical documentation coverage.
+  source_sha256: ab652c30e58948a7fb5172097ac15f99bfbd42bdf2d63f8b675217f9a04ae3c7
+  impact: Inherited debt; blocks a change when the affected file is edited.
+  next_action: Repair the whole touched file and update its documentation before commit.
+  closure_criteria: Current scoped engineering checks and review pass.
+  first_seen: '2026-10-12'
+- finding_id: LEGACY-A162BD7A1D7955B1
+  rule: documentation
+  location: src/lib/server/rate-limit.test.ts
+  status: open
+  owner: project-owner
+  evidence: Source has no reviewed human/AI technical documentation coverage.
+  source_sha256: d47a189068896451388c103fbcf5ce3c57ec50c22209bd86910039cac38a86f6
+  impact: Inherited debt; blocks a change when the affected file is edited.
+  next_action: Repair the whole touched file and update its documentation before commit.
+  closure_criteria: Current scoped engineering checks and review pass.
+  first_seen: '2026-10-12'
+- finding_id: LEGACY-BB23C51164CD8381
+  rule: documentation
+  location: src/lib/server/rate-limit.ts
+  status: open
+  owner: project-owner
+  evidence: Source has no reviewed human/AI technical documentation coverage.
+  source_sha256: 356535be3ea6c7ec3ba503103252ea6b61e31e5d7a1e8412df2f99e926e825c4
+  impact: Inherited debt; blocks a change when the affected file is edited.
+  next_action: Repair the whole touched file and update its documentation before commit.
+  closure_criteria: Current scoped engineering checks and review pass.
+  first_seen: '2026-10-12'
+- finding_id: LEGACY-0CDBF4DDEE9E5E1A
+  rule: documentation
+  location: src/lib/server/responses.test.ts
+  status: open
+  owner: project-owner
+  evidence: Source has no reviewed human/AI technical documentation coverage.
+  source_sha256: 2a3418ae20498f7cedd02deaf8cc0a4e4de505ec7605a62a2c0cc8057b222c7b
+  impact: Inherited debt; blocks a change when the affected file is edited.
+  next_action: Repair the whole touched file and update its documentation before commit.
+  closure_criteria: Current scoped engineering checks and review pass.
+  first_seen: '2026-10-12'
+- finding_id: LEGACY-D03428A33B7ACF2F
+  rule: documentation
+  location: src/lib/server/responses.ts
+  status: open
+  owner: project-owner
+  evidence: Source has no reviewed human/AI technical documentation coverage.
+  source_sha256: c306adbda7a779f470bbe32314e5aa374c3d84152ad2a9fdf7249fcf38c67eec
+  impact: Inherited debt; blocks a change when the affected file is edited.
+  next_action: Repair the whole touched file and update its documentation before commit.
+  closure_criteria: Current scoped engineering checks and review pass.
+  first_seen: '2026-10-12'
+- finding_id: LEGACY-E4FF800F734AFCB0
+  rule: documentation
+  location: src/lib/server/url-maintenance.ts
+  status: open
+  owner: project-owner
+  evidence: Source has no reviewed human/AI technical documentation coverage.
+  source_sha256: 45b348784193642235eb99a2728cbdaca295a25ae031e6a4632042b83ede3616
+  impact: Inherited debt; blocks a change when the affected file is edited.
+  next_action: Repair the whole touched file and update its documentation before commit.
+  closure_criteria: Current scoped engineering checks and review pass.
+  first_seen: '2026-10-12'
+- finding_id: LEGACY-43D3AD77450B0B28
+  rule: documentation
+  location: src/lib/server/validation-schemas.test.ts
+  status: open
+  owner: project-owner
+  evidence: Source has no reviewed human/AI technical documentation coverage.
+  source_sha256: d8ca087368cc04fcc7cac34dd141f7efde35642dab23f907eb958b945d000f03
+  impact: Inherited debt; blocks a change when the affected file is edited.
+  next_action: Repair the whole touched file and update its documentation before commit.
+  closure_criteria: Current scoped engineering checks and review pass.
+  first_seen: '2026-10-12'
+- finding_id: LEGACY-280B906F92DFE4A1
+  rule: documentation
+  location: src/lib/server/validation-schemas.ts
+  status: open
+  owner: project-owner
+  evidence: Source has no reviewed human/AI technical documentation coverage.
+  source_sha256: c957abd8623c8c7b904598d67ef8356a624aafab9dc659997e5bf94f467ec6a6
+  impact: Inherited debt; blocks a change when the affected file is edited.
+  next_action: Repair the whole touched file and update its documentation before commit.
+  closure_criteria: Current scoped engineering checks and review pass.
+  first_seen: '2026-10-12'
+- finding_id: LEGACY-92FE24BDBDC55F93
+  rule: documentation
+  location: src/lib/stores/toast.svelte.ts
+  status: open
+  owner: project-owner
+  evidence: Source has no reviewed human/AI technical documentation coverage.
+  source_sha256: fa7a7869f3923e496905a146c0deead36abe7bf8f5a62abbe206430af2a24c42
+  impact: Inherited debt; blocks a change when the affected file is edited.
+  next_action: Repair the whole touched file and update its documentation before commit.
+  closure_criteria: Current scoped engineering checks and review pass.
+  first_seen: '2026-10-12'
+- finding_id: LEGACY-42217650CEA9726D
+  rule: documentation
+  location: src/lib/utils/constants.test.ts
+  status: open
+  owner: project-owner
+  evidence: Source has no reviewed human/AI technical documentation coverage.
+  source_sha256: 1e44da45d381ee448da6efc4625cc051d9ebc63331e01500580b2d637d8bf71f
+  impact: Inherited debt; blocks a change when the affected file is edited.
+  next_action: Repair the whole touched file and update its documentation before commit.
+  closure_criteria: Current scoped engineering checks and review pass.
+  first_seen: '2026-10-12'
+- finding_id: LEGACY-2D176A07A94CD9DE
+  rule: documentation
+  location: src/lib/utils/constants.ts
+  status: open
+  owner: project-owner
+  evidence: Source has no reviewed human/AI technical documentation coverage.
+  source_sha256: 38675e9b3be52a0248595a559e16bdb7d870c2be996571f2f7dabab2f89dae67
+  impact: Inherited debt; blocks a change when the affected file is edited.
+  next_action: Repair the whole touched file and update its documentation before commit.
+  closure_criteria: Current scoped engineering checks and review pass.
+  first_seen: '2026-10-12'
+- finding_id: LEGACY-2A7AEB3C2887175E
+  rule: documentation
+  location: src/lib/utils/date.test.ts
+  status: open
+  owner: project-owner
+  evidence: Source has no reviewed human/AI technical documentation coverage.
+  source_sha256: 0630aa54d62534e1eb2325b89743fe4fb0d4c15d156311f3f984e9427082f181
+  impact: Inherited debt; blocks a change when the affected file is edited.
+  next_action: Repair the whole touched file and update its documentation before commit.
+  closure_criteria: Current scoped engineering checks and review pass.
+  first_seen: '2026-10-12'
+- finding_id: LEGACY-D8400E0DF77D7CE8
+  rule: documentation
+  location: src/lib/utils/date.ts
+  status: open
+  owner: project-owner
+  evidence: Source has no reviewed human/AI technical documentation coverage.
+  source_sha256: 2b63f4315766f8e9235132f0193cd88e257f6b8fbc04c79b7873b0e8aea85106
+  impact: Inherited debt; blocks a change when the affected file is edited.
+  next_action: Repair the whole touched file and update its documentation before commit.
+  closure_criteria: Current scoped engineering checks and review pass.
+  first_seen: '2026-10-12'
+- finding_id: LEGACY-D327D2CAA51D829D
+  rule: documentation
+  location: src/lib/utils/format.test.ts
+  status: open
+  owner: project-owner
+  evidence: Source has no reviewed human/AI technical documentation coverage.
+  source_sha256: 7535e1e949b582ffb9e685f4f299ad49f99c151a306f8558aba7e7ae9fc4b3c8
+  impact: Inherited debt; blocks a change when the affected file is edited.
+  next_action: Repair the whole touched file and update its documentation before commit.
+  closure_criteria: Current scoped engineering checks and review pass.
+  first_seen: '2026-10-12'
+- finding_id: LEGACY-881FA9AE9E2802F2
+  rule: documentation
+  location: src/lib/utils/format.ts
+  status: open
+  owner: project-owner
+  evidence: Source has no reviewed human/AI technical documentation coverage.
+  source_sha256: 8d98ca9e12a2306602c4cece82e8a58ece41fc078a03ea2170a2ed385cda487e
+  impact: Inherited debt; blocks a change when the affected file is edited.
+  next_action: Repair the whole touched file and update its documentation before commit.
+  closure_criteria: Current scoped engineering checks and review pass.
+  first_seen: '2026-10-12'
+- finding_id: LEGACY-F2FB7D00A411EA51
+  rule: documentation
+  location: src/lib/utils/hashids.test.ts
+  status: open
+  owner: project-owner
+  evidence: Source has no reviewed human/AI technical documentation coverage.
+  source_sha256: 0892a2166a2fdcd144dba2e45ca31014afeb091a568754374cd5f6033d56b5ea
+  impact: Inherited debt; blocks a change when the affected file is edited.
+  next_action: Repair the whole touched file and update its documentation before commit.
+  closure_criteria: Current scoped engineering checks and review pass.
+  first_seen: '2026-10-12'
+- finding_id: LEGACY-F3A8E2D9BB70F3A5
+  rule: documentation
+  location: src/lib/utils/hashids.ts
+  status: open
+  owner: project-owner
+  evidence: Source has no reviewed human/AI technical documentation coverage.
+  source_sha256: abb193ad7d90ea3c64e9ca1f7fa8d96b27f492f53548d796ef02cce538e20876
+  impact: Inherited debt; blocks a change when the affected file is edited.
+  next_action: Repair the whole touched file and update its documentation before commit.
+  closure_criteria: Current scoped engineering checks and review pass.
+  first_seen: '2026-10-12'
+- finding_id: LEGACY-C6DD0A2C16ED9A9E
+  rule: documentation
+  location: src/lib/utils/index.test.ts
+  status: open
+  owner: project-owner
+  evidence: Source has no reviewed human/AI technical documentation coverage.
+  source_sha256: 2f0b1848901e3d6b54ebf35e2e0c068e034473de73e3d18073044a17402fc74b
+  impact: Inherited debt; blocks a change when the affected file is edited.
+  next_action: Repair the whole touched file and update its documentation before commit.
+  closure_criteria: Current scoped engineering checks and review pass.
+  first_seen: '2026-10-12'
+- finding_id: LEGACY-01A806D7A6595188
+  rule: documentation
+  location: src/lib/utils/index.ts
+  status: open
+  owner: project-owner
+  evidence: Source has no reviewed human/AI technical documentation coverage.
+  source_sha256: c4360a6f06f7be7e9094118b7d37489f636a1b423a2868e79c1e8518540584c7
+  impact: Inherited debt; blocks a change when the affected file is edited.
+  next_action: Repair the whole touched file and update its documentation before commit.
+  closure_criteria: Current scoped engineering checks and review pass.
+  first_seen: '2026-10-12'
+- finding_id: LEGACY-1EA233990D13F39B
+  rule: documentation
+  location: src/lib/utils/validation.test.ts
+  status: open
+  owner: project-owner
+  evidence: Source has no reviewed human/AI technical documentation coverage.
+  source_sha256: 6cfbb9bf9526190482d8503516078571abd4ea45b44661208830a3ae2ff8f06c
+  impact: Inherited debt; blocks a change when the affected file is edited.
+  next_action: Repair the whole touched file and update its documentation before commit.
+  closure_criteria: Current scoped engineering checks and review pass.
+  first_seen: '2026-10-12'
+- finding_id: LEGACY-D407AB261CED8FF3
+  rule: documentation
+  location: src/lib/utils/validation.ts
+  status: open
+  owner: project-owner
+  evidence: Source has no reviewed human/AI technical documentation coverage.
+  source_sha256: 5f08ca0cc4183be0a97163ecbd0e3e99262faa83557412335b41b8520b542a38
+  impact: Inherited debt; blocks a change when the affected file is edited.
+  next_action: Repair the whole touched file and update its documentation before commit.
+  closure_criteria: Current scoped engineering checks and review pass.
+  first_seen: '2026-10-12'
+- finding_id: LEGACY-8FB8B68657DCE638
+  rule: documentation
+  location: src/routes/+error.svelte
+  status: open
+  owner: project-owner
+  evidence: Source has no reviewed human/AI technical documentation coverage.
+  source_sha256: eb7ba3627752ab91ddc60f5deea6f4114c5fdd63d7b5ede1aa25fa63d03e7641
+  impact: Inherited debt; blocks a change when the affected file is edited.
+  next_action: Repair the whole touched file and update its documentation before commit.
+  closure_criteria: Current scoped engineering checks and review pass.
+  first_seen: '2026-10-12'
+- finding_id: LEGACY-816489EECA6A44D4
+  rule: documentation
+  location: src/routes/+layout.server.ts
+  status: open
+  owner: project-owner
+  evidence: Source has no reviewed human/AI technical documentation coverage.
+  source_sha256: 380312175187d4a8837f9a21af26609092f989e6fe45ba65a7f09231badbbfeb
+  impact: Inherited debt; blocks a change when the affected file is edited.
+  next_action: Repair the whole touched file and update its documentation before commit.
+  closure_criteria: Current scoped engineering checks and review pass.
+  first_seen: '2026-10-12'
+- finding_id: LEGACY-A2979EEEAFBFFAFE
+  rule: documentation
+  location: src/routes/+layout.svelte
+  status: open
+  owner: project-owner
+  evidence: Source has no reviewed human/AI technical documentation coverage.
+  source_sha256: db8ced9d8772683dc0d4c6ebbbcd4d0a16adccfae5dfc7a79de667d638f7dad6
+  impact: Inherited debt; blocks a change when the affected file is edited.
+  next_action: Repair the whole touched file and update its documentation before commit.
+  closure_criteria: Current scoped engineering checks and review pass.
+  first_seen: '2026-10-12'
+- finding_id: LEGACY-05FBC583436EEC39
+  rule: documentation
+  location: src/routes/+page.svelte
+  status: open
+  owner: project-owner
+  evidence: Source has no reviewed human/AI technical documentation coverage.
+  source_sha256: dfbbadca0d8de34a32cc260bb717d72c155bc8df1444937b2e135d350e6126eb
+  impact: Inherited debt; blocks a change when the affected file is edited.
+  next_action: Repair the whole touched file and update its documentation before commit.
+  closure_criteria: Current scoped engineering checks and review pass.
+  first_seen: '2026-10-12'
+- finding_id: LEGACY-739ECE1DECF104F8
+  rule: documentation
+  location: src/routes/403/+page.svelte
+  status: open
+  owner: project-owner
+  evidence: Source has no reviewed human/AI technical documentation coverage.
+  source_sha256: de971c9634db665c75e58ca374a22728f494b26284a98578ee9be8620cfef277
+  impact: Inherited debt; blocks a change when the affected file is edited.
+  next_action: Repair the whole touched file and update its documentation before commit.
+  closure_criteria: Current scoped engineering checks and review pass.
+  first_seen: '2026-10-12'
+- finding_id: LEGACY-B685F6F4DA679BF4
+  rule: documentation
+  location: src/routes/about/+page.svelte
+  status: open
+  owner: project-owner
+  evidence: Source has no reviewed human/AI technical documentation coverage.
+  source_sha256: 6554c09d75e56460f08145a02be88f931385fb3243252d1872cdeb0f84143a0b
+  impact: Inherited debt; blocks a change when the affected file is edited.
+  next_action: Repair the whole touched file and update its documentation before commit.
+  closure_criteria: Current scoped engineering checks and review pass.
+  first_seen: '2026-10-12'
+- finding_id: LEGACY-A6DE19023FCD8FD9
+  rule: documentation
+  location: src/routes/admin/+layout.svelte
+  status: open
+  owner: project-owner
+  evidence: Source has no reviewed human/AI technical documentation coverage.
+  source_sha256: 079c69714dedb47162ba44fed2d80c31b0789b2e954ad54926af98d838bac883
+  impact: Inherited debt; blocks a change when the affected file is edited.
+  next_action: Repair the whole touched file and update its documentation before commit.
+  closure_criteria: Current scoped engineering checks and review pass.
+  first_seen: '2026-10-12'
+- finding_id: LEGACY-78A04A31FA1224D0
+  rule: documentation
+  location: src/routes/admin/+page.server.ts
+  status: open
+  owner: project-owner
+  evidence: Source has no reviewed human/AI technical documentation coverage.
+  source_sha256: 8b24fcd05e8a2eb9da7c9a99e8ef72ccae86f09a3842c9f130c81adb64f3bd51
+  impact: Inherited debt; blocks a change when the affected file is edited.
+  next_action: Repair the whole touched file and update its documentation before commit.
+  closure_criteria: Current scoped engineering checks and review pass.
+  first_seen: '2026-10-12'
+- finding_id: LEGACY-73905C93BCB4172F
+  rule: documentation
+  location: src/routes/admin/analytics/+page.server.ts
+  status: open
+  owner: project-owner
+  evidence: Source has no reviewed human/AI technical documentation coverage.
+  source_sha256: 771bde08ddc44068f7e1b504eaf7332d7f9573effaf0df968280483febb168ae
+  impact: Inherited debt; blocks a change when the affected file is edited.
+  next_action: Repair the whole touched file and update its documentation before commit.
+  closure_criteria: Current scoped engineering checks and review pass.
+  first_seen: '2026-10-12'
+- finding_id: LEGACY-EBB6053DA4943FEF
+  rule: documentation
+  location: src/routes/admin/analytics/+page.svelte
+  status: open
+  owner: project-owner
+  evidence: Source has no reviewed human/AI technical documentation coverage.
+  source_sha256: c6af50411f83a7a4c13e726a302f536fc0be5f109a0ae374fe27a26cf4a521b9
+  impact: Inherited debt; blocks a change when the affected file is edited.
+  next_action: Repair the whole touched file and update its documentation before commit.
+  closure_criteria: Current scoped engineering checks and review pass.
+  first_seen: '2026-10-12'
+- finding_id: LEGACY-5D5EB2360FCC21F5
+  rule: documentation
+  location: src/routes/admin/urls/+page.server.ts
+  status: open
+  owner: project-owner
+  evidence: Source has no reviewed human/AI technical documentation coverage.
+  source_sha256: 88c1a29275798a3193e14a0dd228085b3e2d2470b0974501cfb801abd5d92030
+  impact: Inherited debt; blocks a change when the affected file is edited.
+  next_action: Repair the whole touched file and update its documentation before commit.
+  closure_criteria: Current scoped engineering checks and review pass.
+  first_seen: '2026-10-12'
+- finding_id: LEGACY-049146C852344BC5
+  rule: documentation
+  location: src/routes/admin/urls/+page.svelte
+  status: open
+  owner: project-owner
+  evidence: Source has no reviewed human/AI technical documentation coverage.
+  source_sha256: 507aaa43580439ef1d5c9089f8a732ff7f29a835bcacc12fc6dba1b9df270571
+  impact: Inherited debt; blocks a change when the affected file is edited.
+  next_action: Repair the whole touched file and update its documentation before commit.
+  closure_criteria: Current scoped engineering checks and review pass.
+  first_seen: '2026-10-12'
+- finding_id: LEGACY-8227FEF31099306E
+  rule: documentation
+  location: src/routes/admin/users/+page.server.ts
+  status: open
+  owner: project-owner
+  evidence: Source has no reviewed human/AI technical documentation coverage.
+  source_sha256: d5821c5d81a5117d3e44f04c0053b05be9c825959243a0de200f3ce0c32ee983
+  impact: Inherited debt; blocks a change when the affected file is edited.
+  next_action: Repair the whole touched file and update its documentation before commit.
+  closure_criteria: Current scoped engineering checks and review pass.
+  first_seen: '2026-10-12'
+- finding_id: LEGACY-1EEE2C1035D4D8A0
+  rule: documentation
+  location: src/routes/admin/users/+page.svelte
+  status: open
+  owner: project-owner
+  evidence: Source has no reviewed human/AI technical documentation coverage.
+  source_sha256: 30b840b2ceaa0899b7d935739e73fdc053985dc16ed49a0d8be40a65180bac6b
+  impact: Inherited debt; blocks a change when the affected file is edited.
+  next_action: Repair the whole touched file and update its documentation before commit.
+  closure_criteria: Current scoped engineering checks and review pass.
+  first_seen: '2026-10-12'
+- finding_id: LEGACY-8C04170F5FA276A8
+  rule: documentation
+  location: src/routes/admin/users/server.test.ts
+  status: open
+  owner: project-owner
+  evidence: Source has no reviewed human/AI technical documentation coverage.
+  source_sha256: 76cef4621d56bee11b631c7cdf5d42b2ed2b13f8476e7bf8f2ced88f85818df2
+  impact: Inherited debt; blocks a change when the affected file is edited.
+  next_action: Repair the whole touched file and update its documentation before commit.
+  closure_criteria: Current scoped engineering checks and review pass.
+  first_seen: '2026-10-12'
+- finding_id: LEGACY-47B3B1C97AAA9B30
+  rule: documentation
+  location: src/routes/api/v1/admin/cleanup-expired/+server.ts
+  status: open
+  owner: project-owner
+  evidence: Source has no reviewed human/AI technical documentation coverage.
+  source_sha256: b077b289757fbe7a055180ba7d2b9c6e875ed3aed727fb3497fd696ae7af3f85
+  impact: Inherited debt; blocks a change when the affected file is edited.
+  next_action: Repair the whole touched file and update its documentation before commit.
+  closure_criteria: Current scoped engineering checks and review pass.
+  first_seen: '2026-10-12'
+- finding_id: LEGACY-B8D01284DDF87F4B
+  rule: documentation
+  location: src/routes/api/v1/analytics-log/+server.ts
+  status: open
+  owner: project-owner
+  evidence: Source has no reviewed human/AI technical documentation coverage.
+  source_sha256: ea1bacf1b4a52695574bac22c9f7d84fe2bb9016dd344a0b2dfc65a1b6826c1a
+  impact: Inherited debt; blocks a change when the affected file is edited.
+  next_action: Repair the whole touched file and update its documentation before commit.
+  closure_criteria: Current scoped engineering checks and review pass.
+  first_seen: '2026-10-12'
+- finding_id: LEGACY-D1B7C901A36EBEA2
+  rule: documentation
+  location: src/routes/api/v1/reset/+server.ts
+  status: open
+  owner: project-owner
+  evidence: Source has no reviewed human/AI technical documentation coverage.
+  source_sha256: 92b7fb7f0b45ac5442761a9c435f182699ea7e7a6d5352e6aa898308639d8575
+  impact: Inherited debt; blocks a change when the affected file is edited.
+  next_action: Repair the whole touched file and update its documentation before commit.
+  closure_criteria: Current scoped engineering checks and review pass.
+  first_seen: '2026-10-12'
+- finding_id: LEGACY-218865FAA301BDF7
+  rule: documentation
+  location: src/routes/api/v1/reset/server.test.ts
+  status: open
+  owner: project-owner
+  evidence: Source has no reviewed human/AI technical documentation coverage.
+  source_sha256: 739ed4746a280782b741d84e6b08a92cf132322519e165ee6fd961ed4ec37848
+  impact: Inherited debt; blocks a change when the affected file is edited.
+  next_action: Repair the whole touched file and update its documentation before commit.
+  closure_criteria: Current scoped engineering checks and review pass.
+  first_seen: '2026-10-12'
+- finding_id: LEGACY-754C7C5950C85753
+  rule: documentation
+  location: src/routes/api/v1/shorten/+server.ts
+  status: open
+  owner: project-owner
+  evidence: Source has no reviewed human/AI technical documentation coverage.
+  source_sha256: bf579ebf74e5a0aa8dfa0cc979c515fecf0df270c4aa9b89435a79b25ceaea90
+  impact: Inherited debt; blocks a change when the affected file is edited.
+  next_action: Repair the whole touched file and update its documentation before commit.
+  closure_criteria: Current scoped engineering checks and review pass.
+  first_seen: '2026-10-12'
+- finding_id: LEGACY-1FE2D09CD90F5745
+  rule: documentation
+  location: src/routes/api/v1/shorten/server.test.ts
+  status: open
+  owner: project-owner
+  evidence: Source has no reviewed human/AI technical documentation coverage.
+  source_sha256: 131ddc764daa6b72e45753948fa6951a8aa14a303a68acf360b0a14db97efa2f
+  impact: Inherited debt; blocks a change when the affected file is edited.
+  next_action: Repair the whole touched file and update its documentation before commit.
+  closure_criteria: Current scoped engineering checks and review pass.
+  first_seen: '2026-10-12'
+- finding_id: LEGACY-DDCBEB1E87E1A736
+  rule: documentation
+  location: src/routes/api/webhooks/clerk/+server.ts
+  status: open
+  owner: project-owner
+  evidence: Source has no reviewed human/AI technical documentation coverage.
+  source_sha256: efff78e125df2685ddf1823a288ce9a1bc3f6f9f27e61572e23b2f46f8d05843
+  impact: Inherited debt; blocks a change when the affected file is edited.
+  next_action: Repair the whole touched file and update its documentation before commit.
+  closure_criteria: Current scoped engineering checks and review pass.
+  first_seen: '2026-10-12'
+- finding_id: LEGACY-47E1ED5CE469DA84
+  rule: documentation
+  location: src/routes/api/webhooks/clerk/server.test.ts
+  status: open
+  owner: project-owner
+  evidence: Source has no reviewed human/AI technical documentation coverage.
+  source_sha256: 6382719c4e44c98b8c428a49f78e17564cbe1b7ac3d2b60263b7c7cb5152ca62
+  impact: Inherited debt; blocks a change when the affected file is edited.
+  next_action: Repair the whole touched file and update its documentation before commit.
+  closure_criteria: Current scoped engineering checks and review pass.
+  first_seen: '2026-10-12'
+- finding_id: LEGACY-8F2BDF774BCAB3E0
+  rule: documentation
+  location: src/routes/dashboard/+page.server.ts
+  status: open
+  owner: project-owner
+  evidence: Source has no reviewed human/AI technical documentation coverage.
+  source_sha256: 1385519000d432245e49311bfd1ba9f305acf80f2126a018caefe3a94f69fdae
+  impact: Inherited debt; blocks a change when the affected file is edited.
+  next_action: Repair the whole touched file and update its documentation before commit.
+  closure_criteria: Current scoped engineering checks and review pass.
+  first_seen: '2026-10-12'
+- finding_id: LEGACY-2E860DA408E227F6
+  rule: documentation
+  location: src/routes/dashboard/+page.svelte
+  status: open
+  owner: project-owner
+  evidence: Source has no reviewed human/AI technical documentation coverage.
+  source_sha256: 3b8f62b1a5e47f39328cf62d44e4e47cdc37fef521bc2f1f18d45013b17be627
+  impact: Inherited debt; blocks a change when the affected file is edited.
+  next_action: Repair the whole touched file and update its documentation before commit.
+  closure_criteria: Current scoped engineering checks and review pass.
+  first_seen: '2026-10-12'
+- finding_id: LEGACY-52458F27F849F964
+  rule: documentation
+  location: src/routes/forgot-password/+page.svelte
+  status: open
+  owner: project-owner
+  evidence: Source has no reviewed human/AI technical documentation coverage.
+  source_sha256: 8a47441cd3f8236b7066465ebce171f0d2d08bb8815ef862befbb8e10bf24713
+  impact: Inherited debt; blocks a change when the affected file is edited.
+  next_action: Repair the whole touched file and update its documentation before commit.
+  closure_criteria: Current scoped engineering checks and review pass.
+  first_seen: '2026-10-12'
+- finding_id: LEGACY-363C2D74E0EEF1B4
+  rule: documentation
+  location: src/routes/login/+page.svelte
+  status: open
+  owner: project-owner
+  evidence: Source has no reviewed human/AI technical documentation coverage.
+  source_sha256: d4e64a430f298d5ea765484231abd948b20321dc726ca4ab980deb676e5e3766
+  impact: Inherited debt; blocks a change when the affected file is edited.
+  next_action: Repair the whole touched file and update its documentation before commit.
+  closure_criteria: Current scoped engineering checks and review pass.
+  first_seen: '2026-10-12'
+- finding_id: LEGACY-08424CBF87A9B13F
+  rule: documentation
+  location: src/routes/profile/+page.svelte
+  status: open
+  owner: project-owner
+  evidence: Source has no reviewed human/AI technical documentation coverage.
+  source_sha256: 7df8dc887a99abbc868e4dd86d488c9d6c2fac4e0b20fa7aa4bac8737f339ca6
+  impact: Inherited debt; blocks a change when the affected file is edited.
+  next_action: Repair the whole touched file and update its documentation before commit.
+  closure_criteria: Current scoped engineering checks and review pass.
+  first_seen: '2026-10-12'
+- finding_id: LEGACY-64F8B6DE19B3CD1B
+  rule: documentation
+  location: src/routes/register/+page.svelte
+  status: open
+  owner: project-owner
+  evidence: Source has no reviewed human/AI technical documentation coverage.
+  source_sha256: b9be2ca8a41be2ce603c479bc11981e2b0c03797f0f48978e9f84683a6a3c1aa
+  impact: Inherited debt; blocks a change when the affected file is edited.
+  next_action: Repair the whole touched file and update its documentation before commit.
+  closure_criteria: Current scoped engineering checks and review pass.
+  first_seen: '2026-10-12'
+- finding_id: LEGACY-2E7C923A9A61828C
+  rule: documentation
+  location: src/routes/s/[shortCode]/+server.ts
+  status: open
+  owner: project-owner
+  evidence: Source has no reviewed human/AI technical documentation coverage.
+  source_sha256: a34f4875c56b4a866805e8b54d11f6f223124d7f76a1daeb3951971a22534810
+  impact: Inherited debt; blocks a change when the affected file is edited.
+  next_action: Repair the whole touched file and update its documentation before commit.
+  closure_criteria: Current scoped engineering checks and review pass.
+  first_seen: '2026-10-12'
+- finding_id: LEGACY-5AFA16DB40A48D11
+  rule: documentation
+  location: src/routes/s/[shortCode]/server.test.ts
+  status: open
+  owner: project-owner
+  evidence: Source has no reviewed human/AI technical documentation coverage.
+  source_sha256: 798368df9aa3487ab39bcaf2eff89245c4431bccb117cd935c909c8999bcb442
+  impact: Inherited debt; blocks a change when the affected file is edited.
+  next_action: Repair the whole touched file and update its documentation before commit.
+  closure_criteria: Current scoped engineering checks and review pass.
+  first_seen: '2026-10-12'
+- finding_id: LEGACY-0F2F4B53A1FE7DCD
+  rule: documentation
+  location: src/routes/shortener/+page.svelte
+  status: open
+  owner: project-owner
+  evidence: Source has no reviewed human/AI technical documentation coverage.
+  source_sha256: fa1826424ffdf9bc6b095f43f765a8cab19f1ab050506a0f422b684a324964e5
+  impact: Inherited debt; blocks a change when the affected file is edited.
+  next_action: Repair the whole touched file and update its documentation before commit.
+  closure_criteria: Current scoped engineering checks and review pass.
+  first_seen: '2026-10-12'
+- finding_id: LEGACY-FDC121F1A424687B
+  rule: documentation
+  location: src/routes/sitemap.xml/+server.ts
+  status: open
+  owner: project-owner
+  evidence: Source has no reviewed human/AI technical documentation coverage.
+  source_sha256: b30cd2ed13367a0c8197e11d1a41f2849ca18a598963d4f81bf6f3ce4a916b4c
+  impact: Inherited debt; blocks a change when the affected file is edited.
+  next_action: Repair the whole touched file and update its documentation before commit.
+  closure_criteria: Current scoped engineering checks and review pass.
+  first_seen: '2026-10-12'
+- finding_id: LEGACY-6857DA6AD377A0C7
+  rule: documentation
+  location: src/routes/sso-callback/+page.server.ts
+  status: open
+  owner: project-owner
+  evidence: Source has no reviewed human/AI technical documentation coverage.
+  source_sha256: be3804c601dbff28e6e437a5239f0d5a87c271b5355f8dce1a2ebd555006093f
+  impact: Inherited debt; blocks a change when the affected file is edited.
+  next_action: Repair the whole touched file and update its documentation before commit.
+  closure_criteria: Current scoped engineering checks and review pass.
+  first_seen: '2026-10-12'
+- finding_id: LEGACY-7DD56A326A2B2D87
+  rule: documentation
+  location: src/routes/sso-callback/+page.svelte
+  status: open
+  owner: project-owner
+  evidence: Source has no reviewed human/AI technical documentation coverage.
+  source_sha256: f55c5faa716ef8fb9ae958dca7c1c924cdfa5c1f4f2bd64f6c069dd07971628a
+  impact: Inherited debt; blocks a change when the affected file is edited.
+  next_action: Repair the whole touched file and update its documentation before commit.
+  closure_criteria: Current scoped engineering checks and review pass.
+  first_seen: '2026-10-12'
+- finding_id: LEGACY-34475E9A38299430
+  rule: documentation
+  location: svelte.config.js
+  status: open
+  owner: project-owner
+  evidence: Source has no reviewed human/AI technical documentation coverage.
+  source_sha256: b7c2c532cfd8c011e8f072f540a834b262c06760ba69eb8476632387a87155c4
+  impact: Inherited debt; blocks a change when the affected file is edited.
+  next_action: Repair the whole touched file and update its documentation before commit.
+  closure_criteria: Current scoped engineering checks and review pass.
+  first_seen: '2026-10-12'
+- finding_id: LEGACY-E8496DBE7811ED0F
+  rule: documentation
+  location: vite.config.ts
+  status: open
+  owner: project-owner
+  evidence: Source has no reviewed human/AI technical documentation coverage.
+  source_sha256: f678057185ce87eefaa3b2a2681d579995244f9a1c161859967609dd2a265eed
+  impact: Inherited debt; blocks a change when the affected file is edited.
+  next_action: Repair the whole touched file and update its documentation before commit.
+  closure_criteria: Current scoped engineering checks and review pass.
+  first_seen: '2026-10-12'
+- finding_id: LEGACY-DD283C3D09EC26F7
+  rule: documentation
+  location: CLAUDE.md
+  status: open
+  owner: project-owner
+  evidence: missing YAML front matter
+  source_sha256: 3db9527447249d924841d12e3fa59a527a026303616e027e372b0087fc73ddde
+  impact: Inherited debt; blocks a change when the affected file is edited.
+  next_action: Repair the whole touched file and update its documentation before commit.
+  closure_criteria: Current scoped engineering checks and review pass.
+  first_seen: '2026-10-12'
+- finding_id: LEGACY-8DAB7D3DB59FD444
+  rule: documentation
+  location: GEMINI.md
+  status: open
+  owner: project-owner
+  evidence: missing YAML front matter
+  source_sha256: 6b3dce1d7c65a14621730a0b5582879a0814bc37723a054024614d8561e9fd01
+  impact: Inherited debt; blocks a change when the affected file is edited.
+  next_action: Repair the whole touched file and update its documentation before commit.
+  closure_criteria: Current scoped engineering checks and review pass.
+  first_seen: '2026-10-12'
+- finding_id: LEGACY-8CB4852DBAA1AD90
+  rule: documentation
+  location: docs/CLERK_SETUP.md
+  status: open
+  owner: project-owner
+  evidence: missing YAML front matter
+  source_sha256: eb7183671f84ce965d92103cc93b42727fe782aef27c05e52fda4e2bae2b4d84
+  impact: Inherited debt; blocks a change when the affected file is edited.
+  next_action: Repair the whole touched file and update its documentation before commit.
+  closure_criteria: Current scoped engineering checks and review pass.
+  first_seen: '2026-10-12'

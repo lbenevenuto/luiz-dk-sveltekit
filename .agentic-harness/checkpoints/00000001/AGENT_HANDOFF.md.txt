@@ -1,0 +1,56 @@
+---
+doc_id: OS-AGENT-HANDOFF-MD
+title: Agent Handoff
+owner: hyst
+lang: en
+audience: tech
+tags:
+- agentic-os
+- continuity
+document_type: record
+pair_required: false
+status: review
+version: 0.1.1
+last_updated: '2026-10-12'
+checkpoint_id: bootstrap-created
+phase: project_readiness
+outcome: in_progress
+---
+
+# Agent Handoff
+
+## Active checkpoint
+
+Checkpoint: bootstrap-created. Phase: project_readiness. Outcome: in_progress. Current task: BOOTSTRAP. Recorded by: ADOS explicit capsule bootstrap operation.
+
+Capsule files have been generated. Product implementation and project-readiness approval have not started.
+
+## Where work stopped
+
+- BOOTSTRAP [in_progress]: Validate the generated capsule before creating its baseline commit.
+  Acceptance: All capsule checks pass and the baseline commit is confirmed before product implementation.
+  Remaining: Run the complete capsule suite, inspect actual inputs and confirm the initial Git baseline.
+
+## Next action
+
+Run capsule checks, confirm baseline, inspect PROJECT_BRIEF.md and define the first approved implementation contract.
+
+## Reconciliation before resuming
+
+Run resume_project.py; compare checkpoint facts with actual Git status and files, preserve uncommitted work, inspect briefing and rerun applicable checks.
+
+## First files to read
+
+- `00-NEXT_AGENT_STARTUP.md`
+- `AGENTS.md`
+- `AGENT_STATE.md`
+- `AGENT_HANDOFF.md`
+- `PROJECT_BRIEF.md`
+- `docs/CONTINUITY_STANDARD.md`
+
+Read the project briefing and PROJECT_BRIEF.md when present. Consult raw briefing policy; do not infer missing requirements or approval from a recorded checkpoint. Read 00-NEXT_AGENT_STARTUP.md in a capsule.
+
+
+## Continuity contract
+
+The active structured record and immutable archived states live in .agentic-harness/checkpoints/. Run `python3 scripts/resume_project.py` and inspect actual Git status before continuing. A checkpoint preserves saved facts only; it does not capture unsaved conversations or certify decision truth. Preserve untouched legacy findings in .agentic-harness/legacy-findings.yml and repair the complete files changed by this unit.
